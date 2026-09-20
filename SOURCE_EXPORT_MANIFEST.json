@@ -1,7 +1,7 @@
 {
   "status": "exported",
   "file_count": 371,
-  "total_bytes": 3538001,
+  "total_bytes": 3538030,
   "credential_value_scan": "passed",
   "secret_pattern_scan": "passed",
   "excluded": [
@@ -1175,8 +1175,8 @@
     },
     {
       "path": "scripts/export_github_source.py",
-      "bytes": 8651,
-      "sha256": "1f47162c0b09ca2c27da5812b1a994091799c0eaeb9a4a45c5cdff6e84844fd0"
+      "bytes": 8680,
+      "sha256": "f05f9d00c158bbb2bb5c0fe5acc8144dbc537fe42899a1aa2025c9746bf801e6"
     },
     {
       "path": "scripts/extend_astra_episode.py",

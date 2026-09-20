@@ -146,7 +146,9 @@ def export(destination: Path) -> dict:
                            'browser profiles and sessions', 'third-party external source trees', 'downloaded vendor/runtime packages',
                            'generated research transcripts and frames', 'run logs and local progress notes', 'brand media'],
               'workflow_transformations': transformations, 'files': files}
-    (destination / 'SOURCE_EXPORT_MANIFEST.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    (destination / 'SOURCE_EXPORT_MANIFEST.json').write_text(
+        json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n',
+    )
     print(json.dumps({k: v for k, v in report.items() if k != 'files'}, indent=2))
     return report
 
