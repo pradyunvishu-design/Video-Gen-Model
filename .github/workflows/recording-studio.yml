@@ -1,0 +1,59 @@
+name: Recording Studio
+on:
+  push:
+    paths: ['apps/recording-studio/**', '.github/workflows/recording-studio.yml']
+  pull_request:
+    paths: ['apps/recording-studio/**', '.github/workflows/recording-studio.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: apps/recording-studio
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/recording-studio/package-lock.json
+      - name: Install FFmpeg (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg -y --no-progress
+      - name: Install FFmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - name: Select stable Rust
+        run: rustup default stable
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            apps/recording-studio/src-tauri/target
+          key: ${{ runner.os }}-studio-rust-${{ hashFiles('apps/recording-studio/src-tauri/Cargo.lock') }}
+      - run: npm ci
+      - run: npm run test:bootstrap
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install chromium
+      - run: npm run test:e2e
+        env:
+          STUDIO_TEST_BROWSER: chromium
+      - run: cargo fmt --manifest-path src-tauri/Cargo.toml --check
+      - run: cargo test --locked --manifest-path src-tauri/Cargo.toml
+      - run: cargo test --locked --manifest-path src-tauri/Cargo.toml synthetic_export_end_to_end -- --ignored --nocapture
+      - run: cargo clippy --locked --manifest-path src-tauri/Cargo.toml -- -D warnings
+      - name: Compile desktop and native platform helper
+        run: npm run desktop:build
+      # Build/tests do not prove screen/microphone permission behavior on a real
+      # interactive desktop. That acceptance is deliberately tracked separately.

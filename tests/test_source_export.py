@@ -56,3 +56,29 @@ def test_export_fails_closed_on_known_secret(tmp_path, monkeypatch, capsys):
         exporter.export(dest)
     assert secret not in capsys.readouterr().out
     assert not (dest / 'pipeline' / 'bad.py').exists()
+
+
+def test_desktop_sources_export_without_build_outputs_or_secrets(tmp_path, monkeypatch):
+    source, dest = tmp_path / 'source', tmp_path / 'checkout'
+    studio = source / 'apps/recording-studio'
+    (studio / 'src-tauri/target').mkdir(parents=True)
+    (studio / 'node_modules').mkdir()
+    (studio / 'test-results').mkdir()
+    (dest / '.git').mkdir(parents=True)
+    (studio / '.env').write_text('TOKEN=not-for-export-12345')
+    (studio / '.env.example').write_text('FFMPEG_PATH=ffmpeg\n')
+    (studio / 'src-tauri/main.rs').write_text('fn main() {}\n')
+    (studio / 'src-tauri/Cargo.lock').write_text('# lock\n')
+    (studio / 'src-tauri/target/generated.rs').write_text('never export\n')
+    (studio / 'node_modules/dependency.js').write_text('never export\n')
+    (studio / 'test-results/log.json').write_text('{}')
+    monkeypatch.setattr(exporter, 'ROOT', source)
+    exporter.export(dest)
+    copied = dest / 'apps/recording-studio'
+    assert (copied / 'src-tauri/main.rs').exists()
+    assert (copied / 'src-tauri/Cargo.lock').exists()
+    assert (copied / '.env.example').exists()
+    assert not (copied / '.env').exists()
+    assert not (copied / 'src-tauri/target').exists()
+    assert not (copied / 'node_modules').exists()
+    assert not (copied / 'test-results').exists()

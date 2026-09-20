@@ -12,9 +12,11 @@ private drafts; it does **not** upload to YouTube.
 
 Browser demos now use a single 1080p encode with restrained, action-led focus
 moves; narration caching validates the script, voice, and returned audio.
-The [local recording studio plan](research/screen_studio_local_first_plan.md)
-describes the proposed Tauri 2 / React / TypeScript / FFmpeg / SQLite app. That Mac
-desktop app is not implemented yet; cloud hosting is deliberately deferred.
+The [local Recording Studio](apps/recording-studio/README.md) now provides a
+separate Tauri 2 / React / TypeScript / FFmpeg / SQLite app with Windows and macOS
+capture implementations. From `apps/recording-studio`, run `npm run dev` after
+installing its native prerequisites. See the app's verification record for tested
+platform behavior. Cloud hosting is deliberately deferred.
 
 For a no-key, local browser capture preview (requires Chrome and FFmpeg):
 

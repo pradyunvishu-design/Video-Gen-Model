@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>local.magichour.recording-studio.capture</string>
+<key>CFBundleName</key><string>Local Recording Studio Capture</string>
+<key>NSMicrophoneUsageDescription</key><string>Record the microphone selected for this recording.</string>
+<key>NSScreenCaptureUsageDescription</key><string>Record the screen, window, or region explicitly selected in Local Recording Studio.</string>
+</dict></plist>

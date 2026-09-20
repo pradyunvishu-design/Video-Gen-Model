@@ -9,19 +9,24 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIRS = ('pipeline', 'scripts', 'tests', 'configs', 'n8n', 'remotion/src',
-               'thumbnail_system', '.agents/skills', 'research', 'tools')
+               'thumbnail_system', '.agents/skills', 'research', 'tools', 'apps/recording-studio')
 ROOT_FILES = ('README.md', 'SOURCE_PACKAGE.md', 'requirements.txt', 'requirements-dev.txt', 'pytest.ini',
               '.env.example', '.env.worker.example', '.gitignore',
-              'remotion/package.json', 'remotion/package-lock.json', 'remotion/tsconfig.json')
+              'remotion/package.json', 'remotion/package-lock.json', 'remotion/tsconfig.json',
+              'apps/recording-studio/.env.example', 'apps/recording-studio/.gitignore',
+              '.github/workflows/recording-studio.yml')
 SKIP_PARTS = {'node_modules', '__pycache__', 'vendor', 'runtime_vendor', 'feedback',
-              '.git', '.cache', '.venv', 'venv'}
+              '.git', '.cache', '.venv', 'venv', 'target', 'dist', 'gen', 'bin',
+              'test-results', 'playwright-report', 'recordings'}
 TEXT_EXTENSIONS = {'.py', '.cjs', '.mjs', '.js', '.jsx', '.ts', '.tsx', '.css', '.html',
-                   '.md', '.json', '.yaml', '.yml', '.toml', '.ini', '.txt', '.ps1', '.sh', '.svg'}
+                   '.md', '.json', '.yaml', '.yml', '.toml', '.ini', '.txt', '.ps1', '.sh', '.svg',
+                   '.rs', '.swift', '.lock', '.plist'}
 SECRET_PATTERNS = {
     'provider_key': re.compile(r'(?:sk-or-v1-|sk-proj-|mhk_live_|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{20,}'),
     'google_api_key': re.compile(r'AIza[0-9A-Za-z_-]{30,}'),
@@ -34,7 +39,7 @@ SECRET_PATTERNS = {
 def local_secrets() -> set[str]:
     """Read local environment files only to prevent their values being exported."""
     values = set()
-    paths = [ROOT / '.env']
+    paths = [ROOT / '.env', ROOT / 'apps/recording-studio/.env']
     if (ROOT / 'secrets').is_dir():
         paths.extend((ROOT / 'secrets').glob('*.env'))
         paths.extend((ROOT / 'secrets').glob('.env*'))
@@ -86,12 +91,13 @@ def export(destination: Path) -> dict:
         base = ROOT / directory
         if not base.exists():
             continue
-        for path in base.rglob('*'):
-            rel = path.relative_to(ROOT)
-            if path.is_symlink() or any(part in SKIP_PARTS for part in rel.parts):
-                continue
-            if path.is_file() and path.suffix.lower() in TEXT_EXTENSIONS:
-                candidates.add(path)
+        for folder, directories, filenames in os.walk(base, followlinks=False):
+            directories[:] = [name for name in directories
+                              if name not in SKIP_PARTS and not (Path(folder) / name).is_symlink()]
+            for name in filenames:
+                path = Path(folder) / name
+                if not path.is_symlink() and path.suffix.lower() in TEXT_EXTENSIONS:
+                    candidates.add(path)
     secrets = local_secrets()
     previous_manifest = destination / 'SOURCE_EXPORT_MANIFEST.json'
     previous_files = {}

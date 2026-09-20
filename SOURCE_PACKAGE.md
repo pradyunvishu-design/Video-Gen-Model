@@ -5,6 +5,12 @@ n8n workflow templates, Remotion scenes, thumbnail tooling, scripts, tests,
 configuration profiles, and project-local editorial/art-direction skills.
 It is a source snapshot, not a pretrained model or a bundle of finished episodes.
 
+The standalone local recorder is under `apps/recording-studio/`. It uses Tauri 2,
+React/TypeScript, Rust, FFmpeg and SQLite, with Windows capture and a native macOS
+15+ ScreenCaptureKit helper. It needs no API key or Python pipeline setup. See its
+README for native prerequisites and the one-command `npm run dev` startup. Build
+outputs, recordings and local databases are intentionally excluded from GitHub.
+
 ## What is deliberately not published
 
 - API keys, live environment files, private Google Sheets IDs, saved credential

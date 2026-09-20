@@ -3,6 +3,11 @@
 Status: **planning for the desktop application; targeted existing-pipeline fixes implemented.**
 No Tauri app, Mac capture backend, cloud worker, or hosted service has been built in this pass.
 
+**2026-09-20 follow-up:** the local desktop implementation now lives in
+`apps/recording-studio/`. This document preserves the earlier proposal; use that
+app's README and VERIFICATION.md for current implementation and platform-test
+status. Cloud hosting remains out of scope.
+
 ## What makes the channel better
 
 Reuse the project's 18-video AI Search opening study rather than buying another
