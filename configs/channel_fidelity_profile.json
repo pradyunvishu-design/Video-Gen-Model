@@ -1,0 +1,1041 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "ai-search-x-ai-labs-fidelity-v1",
+  "created_at": "2026-08-30T20:33:55.110086+00:00",
+  "corpus_sha256": "dbab01e01ca678aee7747c2c8faf3131787a63969e45aef330616db85725aa39",
+  "channels": {
+    "ai_search": {
+      "title": "AI Search",
+      "handle": "@theAIsearch",
+      "channel_id": "UCIgnGlGkVRhd4qNFcEwLL4A",
+      "url": "https://www.youtube.com/@theAIsearch/videos",
+      "video_count": 30
+    },
+    "ai_labs": {
+      "title": "AI LABS",
+      "handle": "@AILABS-393",
+      "channel_id": "UCelfWQr9sXVMTvBzviPGlFw",
+      "url": "https://www.youtube.com/@AILABS-393/videos",
+      "video_count": 30
+    }
+  },
+  "reused_project_research": {
+    "script_profile": "C:\\Youtube Automation for Magic hour\\configs\\conversational_script_profile.json",
+    "script_profile_id": "conversational_ai_news_v2",
+    "script_sample_size": 18,
+    "motion_study": "C:\\Youtube Automation for Magic hour\\research\\ai_labs_motion_refresh_2026_08_18.md",
+    "motion_study_sha256": "4d97ea009fbd5f6bfa59563a0c574f997e8c4a2c80d3e3285f06e081ed0d84fe"
+  },
+  "reference_clips": {
+    "script": [
+      {
+        "video_id": "4wjHNgMLeyY",
+        "url": "https://www.youtube.com/watch?v=4wjHNgMLeyY",
+        "timecodes": [
+          0.0,
+          376.143,
+          752.286
+        ],
+        "transcript_segment": "AI never sleeps and this week has been absolutely insane. The mysterious stealth model under the name Ox Alpha has been revealed this week to"
+      },
+      {
+        "video_id": "rQ4yX5qNYdY",
+        "url": "https://www.youtube.com/watch?v=rQ4yX5qNYdY",
+        "timecodes": [
+          0.0,
+          275.857,
+          551.714
+        ],
+        "transcript_segment": "AI never sleeps and this week has been absolutely insane. We have a ton of new robot waifuss. This AI can turn anyone into a"
+      },
+      {
+        "video_id": "ig3PUfSow5Y",
+        "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+        "timecodes": [
+          0.0,
+          146.286,
+          292.571
+        ],
+        "transcript_segment": "LTX 2.5 just came out and this is the fastest open source model you can use right now. In this video, we're going to go"
+      },
+      {
+        "video_id": "ZSNMw8U5h-c",
+        "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+        "timecodes": [
+          0.0,
+          265.286,
+          530.571
+        ],
+        "transcript_segment": "We have a new number one open-source model. So, my favorite lab ZAI just released GLM 5.3. And this is an absolute beast. For most"
+      },
+      {
+        "video_id": "62HSUsS0ypo",
+        "url": "https://www.youtube.com/watch?v=62HSUsS0ypo",
+        "timecodes": [
+          0.0,
+          393.857,
+          787.714
+        ],
+        "transcript_segment": "AI never sleeps, and this week has been absolutely exhausting. Deep Seek releases their latest model. XAI also releases their best model Grok 4.6, and"
+      },
+      {
+        "video_id": "aUcDyeZgz_k",
+        "url": "https://www.youtube.com/watch?v=aUcDyeZgz_k",
+        "timecodes": [
+          0.0,
+          185.0,
+          370.0
+        ],
+        "transcript_segment": "The best open-source AI music generator is here. It's called Minimax music and not only can this create super clean and great sounding songs, but"
+      },
+      {
+        "video_id": "G3YHSvXZP_g",
+        "url": "https://www.youtube.com/watch?v=G3YHSvXZP_g",
+        "timecodes": [
+          0.0,
+          242.571,
+          485.143
+        ],
+        "transcript_segment": "Last week the best open-source AI video generator Min Max H3 was released and this is an absolute beast. It can do so many things."
+      },
+      {
+        "video_id": "uJgzFn0GT7M",
+        "url": "https://www.youtube.com/watch?v=uJgzFn0GT7M",
+        "timecodes": [
+          0.0,
+          287.857,
+          575.714
+        ],
+        "transcript_segment": "AI never sleeps and this week has been absolutely insane. We have a new open-source AI for medical research and reporting. Alibaba releases their latest"
+      },
+      {
+        "video_id": "8HutJ9W5pTg",
+        "url": "https://www.youtube.com/watch?v=8HutJ9W5pTg",
+        "timecodes": [
+          0.0,
+          203.857,
+          407.714
+        ],
+        "transcript_segment": "We have a new open source video generator that you can run locally on your computer. It's called Min Max H3 and this is by"
+      },
+      {
+        "video_id": "Vpvne2istKg",
+        "url": "https://www.youtube.com/watch?v=Vpvne2istKg",
+        "timecodes": [
+          0.0,
+          173.0,
+          346.0
+        ],
+        "transcript_segment": "We have two new state-of-the-art video generators that were launched recently, Seed Dance 2.5 and Minimax H3, and both are ridiculously good. In this video,"
+      },
+      {
+        "video_id": "OrcBSpADCGk",
+        "url": "https://www.youtube.com/watch?v=OrcBSpADCGk",
+        "timecodes": [
+          0.0,
+          241.429,
+          482.857
+        ],
+        "transcript_segment": "AI never sleeps and this week has been absolutely insane. ByteDance releases the best video model out there, Seed Dance 2.5. MiniMax also releases their"
+      },
+      {
+        "video_id": "RCsBJz4W4bA",
+        "url": "https://www.youtube.com/watch?v=RCsBJz4W4bA",
+        "timecodes": [
+          0.0,
+          280.571,
+          561.143
+        ],
+        "transcript_segment": "The orange sphincter is back. Anthropic releases their latest and best model, Claude Opus 5. And this is an incredibly capable model. In this video,"
+      }
+    ],
+    "visual": [
+      {
+        "video_id": "jwje1JK8Nqs",
+        "url": "https://www.youtube.com/watch?v=jwje1JK8Nqs",
+        "timecodes": [
+          0.0,
+          163.0,
+          326.0
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\jwje1JK8Nqs_858d03ccf1bf.jpg"
+      },
+      {
+        "video_id": "Ysr7oNDajJI",
+        "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+        "timecodes": [
+          0.0,
+          110.714,
+          221.429
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\Ysr7oNDajJI_3a2922f1f77e.jpg"
+      },
+      {
+        "video_id": "c47uqR7XB_c",
+        "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+        "timecodes": [
+          0.0,
+          110.571,
+          221.143
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\c47uqR7XB_c_777e464ca6fb.jpg"
+      },
+      {
+        "video_id": "PLyRe6Zk--8",
+        "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+        "timecodes": [
+          0.0,
+          197.714,
+          395.429
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\PLyRe6Zk--8_ed3970773cf1.jpg"
+      },
+      {
+        "video_id": "D_uojDHkbw4",
+        "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+        "timecodes": [
+          0.0,
+          124.429,
+          248.857
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\D_uojDHkbw4_04eabfe8d6f5.jpg"
+      },
+      {
+        "video_id": "bBlY5YOsKN8",
+        "url": "https://www.youtube.com/watch?v=bBlY5YOsKN8",
+        "timecodes": [
+          0.0,
+          159.0,
+          318.0
+        ],
+        "frame_strip": "C:\\Youtube Automation for Magic hour\\data\\fidelity_runs\\_reference_cache\\ai_labs\\frame_strips\\bBlY5YOsKN8_2d052ab29cbd.jpg"
+      },
+      {
+        "video_id": "b9k-AE4v5yI",
+        "url": "https://www.youtube.com/watch?v=b9k-AE4v5yI",
+        "timecodes": [
+          0.0,
+          102.857,
+          205.714
+        ],
+        "frame_strip": ""
+      },
+      {
+        "video_id": "AD-EmZ3v6-g",
+        "url": "https://www.youtube.com/watch?v=AD-EmZ3v6-g",
+        "timecodes": [
+          0.0,
+          129.0,
+          258.0
+        ],
+        "frame_strip": ""
+      },
+      {
+        "video_id": "a8tLTd4q-fU",
+        "url": "https://www.youtube.com/watch?v=a8tLTd4q-fU",
+        "timecodes": [
+          0.0,
+          115.0,
+          230.0
+        ],
+        "frame_strip": ""
+      },
+      {
+        "video_id": "pGro_uKt-_M",
+        "url": "https://www.youtube.com/watch?v=pGro_uKt-_M",
+        "timecodes": [
+          0.0,
+          123.143,
+          246.286
+        ],
+        "frame_strip": ""
+      },
+      {
+        "video_id": "H7t3uUp3HVw",
+        "url": "https://www.youtube.com/watch?v=H7t3uUp3HVw",
+        "timecodes": [
+          0.0,
+          121.0,
+          242.0
+        ],
+        "frame_strip": ""
+      },
+      {
+        "video_id": "EwTOiqWWqEc",
+        "url": "https://www.youtube.com/watch?v=EwTOiqWWqEc",
+        "timecodes": [
+          0.0,
+          130.571,
+          261.143
+        ],
+        "frame_strip": ""
+      }
+    ]
+  },
+  "script": {
+    "hook_style": {
+      "rule": "Open on a concrete result, contradiction, or consequence; translate why it matters within two sentences.",
+      "references": [
+        "4wjHNgMLeyY",
+        "rQ4yX5qNYdY",
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c"
+      ],
+      "confidence": 0.9,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "opening_excerpt_words": [
+          25.0,
+          25.0
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "4wjHNgMLeyY",
+          "url": "https://www.youtube.com/watch?v=4wjHNgMLeyY",
+          "timecodes": [
+            0.0,
+            376.143,
+            752.286
+          ]
+        },
+        {
+          "video_id": "rQ4yX5qNYdY",
+          "url": "https://www.youtube.com/watch?v=rQ4yX5qNYdY",
+          "timecodes": [
+            0.0,
+            275.857,
+            551.714
+          ]
+        },
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        }
+      ]
+    },
+    "sentence_rhythm": {
+      "rule": "Alternate compact landings with fuller explanations; avoid metronomic sentence lengths.",
+      "mean_sentence_words": [
+        13.912,
+        17.146
+      ],
+      "sentence_stdev": [
+        8.009,
+        9.336
+      ],
+      "references": [
+        "rQ4yX5qNYdY",
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c",
+        "62HSUsS0ypo"
+      ],
+      "confidence": 0.88,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "mean_sentence_words": [
+          13.912,
+          17.146
+        ],
+        "sentence_word_stdev": [
+          8.009,
+          9.336
+        ],
+        "short_sentence_share": [
+          0.202,
+          0.325
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "rQ4yX5qNYdY",
+          "url": "https://www.youtube.com/watch?v=rQ4yX5qNYdY",
+          "timecodes": [
+            0.0,
+            275.857,
+            551.714
+          ]
+        },
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        },
+        {
+          "video_id": "62HSUsS0ypo",
+          "url": "https://www.youtube.com/watch?v=62HSUsS0ypo",
+          "timecodes": [
+            0.0,
+            393.857,
+            787.714
+          ]
+        }
+      ]
+    },
+    "question_use": {
+      "rule": "Questions must open a real information gap and receive a nearby answer; never use them as filler.",
+      "questions_per_1000_words": [
+        0.431,
+        2.017
+      ],
+      "references": [
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c",
+        "62HSUsS0ypo",
+        "aUcDyeZgz_k"
+      ],
+      "confidence": 0.86,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "questions_per_1000_words": [
+          0.431,
+          2.017
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        },
+        {
+          "video_id": "62HSUsS0ypo",
+          "url": "https://www.youtube.com/watch?v=62HSUsS0ypo",
+          "timecodes": [
+            0.0,
+            393.857,
+            787.714
+          ]
+        },
+        {
+          "video_id": "aUcDyeZgz_k",
+          "url": "https://www.youtube.com/watch?v=aUcDyeZgz_k",
+          "timecodes": [
+            0.0,
+            185.0,
+            370.0
+          ]
+        }
+      ]
+    },
+    "callbacks": {
+      "rule": "Reuse an early concrete example only when it simplifies a later mechanism or verdict.",
+      "references": [
+        "4wjHNgMLeyY",
+        "rQ4yX5qNYdY",
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c"
+      ],
+      "confidence": 0.82,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "qualitative_band": "one purposeful return to an earlier concrete example per section"
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "4wjHNgMLeyY",
+          "url": "https://www.youtube.com/watch?v=4wjHNgMLeyY",
+          "timecodes": [
+            0.0,
+            376.143,
+            752.286
+          ]
+        },
+        {
+          "video_id": "rQ4yX5qNYdY",
+          "url": "https://www.youtube.com/watch?v=rQ4yX5qNYdY",
+          "timecodes": [
+            0.0,
+            275.857,
+            551.714
+          ]
+        },
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        }
+      ]
+    },
+    "pacing": {
+      "rule": "Earn attention every 45-75 seconds with proof, a visible example, or a changed conclusion.",
+      "references": [
+        "rQ4yX5qNYdY",
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c",
+        "62HSUsS0ypo"
+      ],
+      "confidence": 0.9,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "proof_or_conclusion_change_seconds": [
+          45,
+          75
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "rQ4yX5qNYdY",
+          "url": "https://www.youtube.com/watch?v=rQ4yX5qNYdY",
+          "timecodes": [
+            0.0,
+            275.857,
+            551.714
+          ]
+        },
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        },
+        {
+          "video_id": "62HSUsS0ypo",
+          "url": "https://www.youtube.com/watch?v=62HSUsS0ypo",
+          "timecodes": [
+            0.0,
+            393.857,
+            787.714
+          ]
+        }
+      ]
+    },
+    "structure": {
+      "rule": "Consequence or result, proof, plain-language mechanism, practical implication, limitation, verdict.",
+      "references": [
+        "ig3PUfSow5Y",
+        "ZSNMw8U5h-c",
+        "62HSUsS0ypo",
+        "aUcDyeZgz_k"
+      ],
+      "confidence": 0.91,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "chapter_count": [
+          13.0,
+          23.0
+        ],
+        "observed_order": [
+          "consequence",
+          "proof",
+          "mechanism",
+          "implication",
+          "limitation",
+          "verdict"
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "ig3PUfSow5Y",
+          "url": "https://www.youtube.com/watch?v=ig3PUfSow5Y",
+          "timecodes": [
+            0.0,
+            146.286,
+            292.571
+          ]
+        },
+        {
+          "video_id": "ZSNMw8U5h-c",
+          "url": "https://www.youtube.com/watch?v=ZSNMw8U5h-c",
+          "timecodes": [
+            0.0,
+            265.286,
+            530.571
+          ]
+        },
+        {
+          "video_id": "62HSUsS0ypo",
+          "url": "https://www.youtube.com/watch?v=62HSUsS0ypo",
+          "timecodes": [
+            0.0,
+            393.857,
+            787.714
+          ]
+        },
+        {
+          "video_id": "aUcDyeZgz_k",
+          "url": "https://www.youtube.com/watch?v=aUcDyeZgz_k",
+          "timecodes": [
+            0.0,
+            185.0,
+            370.0
+          ]
+        }
+      ]
+    }
+  },
+  "visual": {
+    "typography": {
+      "rule": "One dominant statement, large readable type, restrained labels, and functional negative space.",
+      "references": [
+        "jwje1JK8Nqs",
+        "Ysr7oNDajJI",
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8"
+      ],
+      "confidence": 0.86,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "dominant_statements_per_frame": [
+          1,
+          1
+        ],
+        "supporting_labels_per_frame": [
+          0,
+          3
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "jwje1JK8Nqs",
+          "url": "https://www.youtube.com/watch?v=jwje1JK8Nqs",
+          "timecodes": [
+            0.0,
+            163.0,
+            326.0
+          ]
+        },
+        {
+          "video_id": "Ysr7oNDajJI",
+          "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+          "timecodes": [
+            0.0,
+            110.714,
+            221.429
+          ]
+        },
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        }
+      ]
+    },
+    "motion_style": {
+      "rule": "Lock the camera and animate state changes inside the interface or diagram; use cuts or short fades.",
+      "references": [
+        "Ysr7oNDajJI",
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8",
+        "D_uojDHkbw4"
+      ],
+      "confidence": 0.9,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "camera_behavior": [
+          "locked",
+          "short purposeful reframe"
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "Ysr7oNDajJI",
+          "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+          "timecodes": [
+            0.0,
+            110.714,
+            221.429
+          ]
+        },
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        },
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            0.0,
+            124.429,
+            248.857
+          ]
+        }
+      ]
+    },
+    "color_palette": {
+      "rule": "Neutral editorial base with small product-native accents; no broad yellow or generic purple glow.",
+      "references": [
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8",
+        "D_uojDHkbw4",
+        "bBlY5YOsKN8"
+      ],
+      "confidence": 0.86,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "base": [
+          "neutral light",
+          "neutral dark"
+        ],
+        "accent_scope": [
+          "single product accent",
+          "two coordinated accents"
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        },
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            0.0,
+            124.429,
+            248.857
+          ]
+        },
+        {
+          "video_id": "bBlY5YOsKN8",
+          "url": "https://www.youtube.com/watch?v=bBlY5YOsKN8",
+          "timecodes": [
+            0.0,
+            159.0,
+            318.0
+          ]
+        }
+      ]
+    },
+    "chart_data_viz": {
+      "rule": "Direct labels, visible source, narration-led reveal, and no decorative chart furniture.",
+      "references": [
+        "jwje1JK8Nqs",
+        "Ysr7oNDajJI",
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8"
+      ],
+      "confidence": 0.82,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "simultaneous_series": [
+          1,
+          3
+        ],
+        "source_label_required": true
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "jwje1JK8Nqs",
+          "url": "https://www.youtube.com/watch?v=jwje1JK8Nqs",
+          "timecodes": [
+            0.0,
+            163.0,
+            326.0
+          ]
+        },
+        {
+          "video_id": "Ysr7oNDajJI",
+          "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+          "timecodes": [
+            0.0,
+            110.714,
+            221.429
+          ]
+        },
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        }
+      ]
+    },
+    "information_density": {
+      "rule": "One claim per frame and one dominant proof object occupying most of the usable stage.",
+      "references": [
+        "Ysr7oNDajJI",
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8",
+        "D_uojDHkbw4"
+      ],
+      "confidence": 0.9,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "dominant_proof_objects_per_frame": [
+          1,
+          1
+        ],
+        "supporting_items_per_frame": [
+          0,
+          3
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "Ysr7oNDajJI",
+          "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+          "timecodes": [
+            0.0,
+            110.714,
+            221.429
+          ]
+        },
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        },
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            0.0,
+            124.429,
+            248.857
+          ]
+        }
+      ]
+    },
+    "visual_reveal_pacing": {
+      "rule": "Change a meaningful state every two to three seconds without ambient drift.",
+      "references": [
+        "c47uqR7XB_c",
+        "PLyRe6Zk--8",
+        "D_uojDHkbw4",
+        "bBlY5YOsKN8"
+      ],
+      "confidence": 0.89,
+      "applicable_episode_formats": [
+        "tool_test",
+        "weekly_roundup",
+        "deep_dive"
+      ],
+      "originality_warning": "Transfer the underlying editorial function only; do not copy wording, branded art, or composition.",
+      "observed_range": {
+        "meaningful_state_change_seconds": [
+          2,
+          3
+        ]
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            0.0,
+            110.571,
+            221.143
+          ]
+        },
+        {
+          "video_id": "PLyRe6Zk--8",
+          "url": "https://www.youtube.com/watch?v=PLyRe6Zk--8",
+          "timecodes": [
+            0.0,
+            197.714,
+            395.429
+          ]
+        },
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            0.0,
+            124.429,
+            248.857
+          ]
+        },
+        {
+          "video_id": "bBlY5YOsKN8",
+          "url": "https://www.youtube.com/watch?v=bBlY5YOsKN8",
+          "timecodes": [
+            0.0,
+            159.0,
+            318.0
+          ]
+        }
+      ]
+    }
+  },
+  "originality": {
+    "required": true,
+    "rule": "Use only transferable grammar; never copy wording, catchphrases, proprietary artwork, or recognizable frame compositions."
+  }
+}

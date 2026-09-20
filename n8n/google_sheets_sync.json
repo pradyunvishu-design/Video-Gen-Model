@@ -1,0 +1,883 @@
+{
+  "name": "AI Media v2 - Google Sheets Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Google Sheets operations ledger\n\nPulls a normalized metadata snapshot from the authenticated video-worker every 15 minutes and upserts the native Google Sheet. Large media stays in /data.\n\nSelect a Google Sheets OAuth2 credential on all six sheet nodes before activation.",
+        "height": 300,
+        "width": 460,
+        "color": 4
+      },
+      "id": "setup-note",
+      "name": "Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "sync-schedule",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        20
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "manual-sync",
+      "name": "Manual Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://video-worker.example.com/ledger",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fetch-ledger",
+      "name": "Fetch Worker Ledger",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.activity_log || []).map(row => ({json: row}));"
+      },
+      "id": "build-activity",
+      "name": "Build Activity Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.episodes || []).map(row => ({json: row}));"
+      },
+      "id": "build-episodes",
+      "name": "Build Episode Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.weekly_slate || []).map(row => ({json: row}));"
+      },
+      "id": "build-slate",
+      "name": "Build Slate Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.reviews || []).map(row => ({json: row}));"
+      },
+      "id": "build-reviews",
+      "name": "Build Review Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.sources || []).map(row => ({json: row}));"
+      },
+      "id": "build-sources",
+      "name": "Build Source Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.jobs || []).map(row => ({json: row}));"
+      },
+      "id": "build-jobs",
+      "name": "Build Job Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Activity Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "event_id"
+          ],
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "event_type",
+              "displayName": "event_type",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow",
+              "displayName": "workflow",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slate_id",
+              "displayName": "slate_id",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "credits",
+              "displayName": "credits",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qc_passed",
+              "displayName": "qc_passed",
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "preview_url",
+              "displayName": "preview_url",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details_json",
+              "displayName": "details_json",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "event_time",
+              "displayName": "event_time",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-activity",
+      "name": "Sync Activity Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Episodes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "episode_id"
+          ],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "scheduled_date",
+              "displayName": "scheduled_date",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "format",
+              "displayName": "format",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "word_count",
+              "displayName": "word_count",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duration_seconds",
+              "displayName": "duration_seconds",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "magic_hour_credits",
+              "displayName": "magic_hour_credits",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qc_passed",
+              "displayName": "qc_passed",
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "preview_url",
+              "displayName": "preview_url",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "package_url",
+              "displayName": "package_url",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "synthetic_media",
+              "displayName": "synthetic_media",
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-episodes",
+      "name": "Sync Episodes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Weekly Slate",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "episode_id"
+          ],
+          "schema": [
+            {
+              "id": "slate_id",
+              "displayName": "slate_id",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "scheduled_date",
+              "displayName": "scheduled_date",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "format",
+              "displayName": "format",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thesis",
+              "displayName": "thesis",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "why_now",
+              "displayName": "why_now",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_count",
+              "displayName": "source_count",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "visual_opportunities",
+              "displayName": "visual_opportunities",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "review_notes",
+              "displayName": "review_notes",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production_order",
+              "displayName": "production_order",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-slate",
+      "name": "Sync Weekly Slate",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Reviews",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "episode_id"
+          ],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "review_stage",
+              "displayName": "review_stage",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "revision_scope",
+              "displayName": "revision_scope",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewed_at",
+              "displayName": "reviewed_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-reviews",
+      "name": "Sync Reviews",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sources",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "episode_id",
+            "source_id"
+          ],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "source_id",
+              "displayName": "source_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "source_type",
+              "displayName": "source_type",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publisher",
+              "displayName": "publisher",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rights_note",
+              "displayName": "rights_note",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-sources",
+      "name": "Sync Sources",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Jobs",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "job_id"
+          ],
+          "schema": [
+            {
+              "id": "job_id",
+              "displayName": "job_id",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "defaultMatch": true
+            },
+            {
+              "id": "stage",
+              "displayName": "stage",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "progress",
+              "displayName": "progress",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "credits",
+              "displayName": "credits",
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "sync-jobs",
+      "name": "Sync Jobs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        580
+      ]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch Worker Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Test": {
+      "main": [
+        [
+          {
+            "node": "Fetch Worker Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Worker Ledger": {
+      "main": [
+        [
+          {
+            "node": "Build Activity Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Episode Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Slate Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Review Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Source Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Job Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Activity Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Activity Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Episode Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Episodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Slate Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Weekly Slate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Review Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Source Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Job Rows": {
+      "main": [
+        [
+          {
+            "node": "Sync Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  },
+  "active": false
+}

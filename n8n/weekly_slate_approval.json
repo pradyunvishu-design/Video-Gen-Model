@@ -1,0 +1,315 @@
+{
+  "name": "AI Media v2 - Weekly Slate Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Open the weekly AI-media slate",
+        "formDescription": "Enter the slate ID from the Sunday research workflow. The next page presents all seven evidence-backed briefs together.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Slate ID",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Load seven briefs"
+        }
+      },
+      "id": "form-trigger",
+      "name": "Open Weekly Slate",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://video-worker.example.com/slates/{{ $json['Slate ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "load-slate",
+      "name": "Load Slate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Episode 1 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 1 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 2 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 2 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 3 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 3 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 4 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 4 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 5 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 5 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 6 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 6 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Episode 7 decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Revise"
+                  },
+                  {
+                    "option": "Skip"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Episode 7 notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Production order (episode IDs)",
+              "fieldType": "textarea",
+              "placeholder": "={{ $json.episodes.map(e => e.episode_id).join(', ') }}"
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "Review all seven AI-media briefs",
+          "formDescription": "={{ $json.episodes.map((e,i) => '### ' + (i+1) + '. ' + e.brief.title + '\n**ID:** ' + e.episode_id + ' Â· **Format:** ' + e.brief.episode_format + ' Â· **Evidence:** ' + e.brief.source_ids.length + ' sources\n\n**Thesis:** ' + e.brief.thesis + '\n\n**Why now:** ' + e.brief.why_now + '\n\n**Visual plan:** ' + e.brief.visual_opportunities.join('; ')).join('\n\n---\n\n') }}",
+          "buttonLabel": "Submit weekly decisions"
+        }
+      },
+      "id": "review-form",
+      "name": "Review Seven Briefs",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        520,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const slate = $('Load Slate').first().json;\nconst fallbackOrder = slate.episodes.map(e => e.episode_id);\nconst entered = String($json['Production order (episode IDs)'] || '').split(/[\\n,]+/).map(v => v.trim()).filter(Boolean);\nconst order = entered.length ? entered : fallbackOrder;\nconst known = new Set(fallbackOrder);\nif (order.some(id => !known.has(id)) || new Set(order).size !== order.length) throw new Error('Production order contains an unknown or duplicate episode ID');\nconst decisions = slate.episodes.map((episode, index) => {\n  const action = String($json[`Episode ${index + 1} decision`] || 'Revise').toLowerCase();\n  return {episode_id: episode.episode_id, action, approved: action === 'approve', notes: String($json[`Episode ${index + 1} notes`] || ''), order: order.indexOf(episode.episode_id) + 1};\n});\nreturn [{json:{slate_id:slate.slate_id, decisions}}];"
+      },
+      "id": "build-decisions",
+      "name": "Build Decisions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'review_slate', payload:$json, idempotency_key:'review-' + $json.slate_id + '-' + Date.now()}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "submit",
+      "name": "Submit Slate Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Open Weekly Slate": {
+      "main": [
+        [
+          {
+            "node": "Load Slate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Slate": {
+      "main": [
+        [
+          {
+            "node": "Review Seven Briefs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Seven Briefs": {
+      "main": [
+        [
+          {
+            "node": "Build Decisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Decisions": {
+      "main": [
+        [
+          {
+            "node": "Submit Slate Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago"
+  },
+  "active": false
+}

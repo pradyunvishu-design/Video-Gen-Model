@@ -1,0 +1,408 @@
+{
+  "name": "AI Media v2 - B-roll Review and Insert",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## YouTube b-roll review\n\nDaily production now creates three candidates per selected narration scene. Review the candidate manifest, enter one approved candidate and timestamp range here, and the worker will mute, normalize, insert, and rerender it. Publishing remains disabled.",
+        "height": 280,
+        "width": 440,
+        "color": 4
+      },
+      "id": "note",
+      "name": "B-roll Rights Gate",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Approve one b-roll clip",
+        "formDescription": "Use the episode's broll_candidates manifest. Only approve footage you own, have permission to use, or that is verified Creative Commons/public domain.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Episode ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Candidate ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Start seconds",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "End seconds",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Rights basis",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "creative_commons"
+                  },
+                  {
+                    "option": "owned"
+                  },
+                  {
+                    "option": "written_permission"
+                  },
+                  {
+                    "option": "public_domain"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Approved by",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Attribution",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Rights proof file"
+            },
+            {
+              "fieldLabel": "Rights proof URL"
+            },
+            {
+              "fieldLabel": "Shot IDs"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "form",
+      "name": "B-roll Approval Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const shotIds = String($json['Shot IDs'] || '').split(',').map(v => v.trim()).filter(Boolean);\nreturn [{json:{\n  episode_id:$json['Episode ID'],\n  candidate_id:$json['Candidate ID'],\n  start_seconds:Number($json['Start seconds']),\n  end_seconds:Number($json['End seconds']),\n  shot_ids:shotIds,\n  approval:{\n    rights_status:'approved',\n    rights_basis:$json['Rights basis'],\n    rights_proof_file:$json['Rights proof file'] || '',\n    rights_proof_url:$json['Rights proof URL'] || '',\n    approved_by:$json['Approved by'],\n    attribution:$json.Attribution,\n    keep_audio:false\n  }\n}}];"
+      },
+      "id": "normalize",
+      "name": "Normalize Clip Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'approve_and_ingest_clip', payload:$json, idempotency_key:'broll-approve-' + $json.episode_id + '-' + $json.candidate_id + '-' + $json.start_seconds + '-' + $json.end_seconds}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "submit",
+      "name": "Approve and Ingest Clip",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "wait",
+      "name": "Wait for Clip",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://video-worker.example.com/jobs/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "status",
+      "name": "Check Clip Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "complete",
+      "name": "Clip Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1240,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "error",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "canceled",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "failed",
+      "name": "Clip Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1460,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'produce_episode', payload:{episode_id:$json.result.episode_id}, idempotency_key:'broll-rerender-' + $json.result.episode_id + '-' + $json.result.candidate_id}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "rerender",
+      "name": "Rerender with B-roll",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1480,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "job",
+              "name": "rerender_job_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "message",
+              "name": "message",
+              "value": "Clip accepted, muted, inserted, and queued for a cached rerender.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "queued",
+      "name": "Rerender Queued",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1720,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'B-roll worker failed: ' + ($json.error || 'unknown error') }}"
+      },
+      "id": "stop",
+      "name": "Stop on Clip Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        220
+      ]
+    }
+  ],
+  "connections": {
+    "B-roll Approval Form": {
+      "main": [
+        [
+          {
+            "node": "Normalize Clip Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Clip Approval": {
+      "main": [
+        [
+          {
+            "node": "Approve and Ingest Clip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve and Ingest Clip": {
+      "main": [
+        [
+          {
+            "node": "Wait for Clip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Clip": {
+      "main": [
+        [
+          {
+            "node": "Check Clip Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Clip Job": {
+      "main": [
+        [
+          {
+            "node": "Clip Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clip Ready?": {
+      "main": [
+        [
+          {
+            "node": "Rerender with B-roll",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clip Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clip Failed?": {
+      "main": [
+        [
+          {
+            "node": "Stop on Clip Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Clip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rerender with B-roll": {
+      "main": [
+        [
+          {
+            "node": "Rerender Queued",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  },
+  "active": false
+}

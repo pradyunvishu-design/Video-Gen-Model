@@ -1,0 +1,16 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const sharp=require('C:/Users/kanag/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp');
+const root='C:/Youtube Automation for Magic hour',out=path.join(root,'data/episodes/episode_20260919_astra_jobs/thumbnails');
+const plate='C:/Users/kanag/.codex/generated_images/019fce76-235c-7bb2-b1bc-a81e9a2e52db/exec-7e0377bf-9803-42ae-845e-69a36bff3391.png';
+const logo=path.join(root,'remotion/public/brands/openai.svg');
+(async()=>{fs.mkdirSync(out,{recursive:true});fs.copyFileSync(plate,path.join(out,'jobs_space_plate.png'));
+ const bg=await sharp(plate).resize(1920,1080,{fit:'cover'}).toBuffer();
+ const overlay=Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="95" y="208" font-family="Arial" font-size="60" font-weight="700" fill="#FFFFFF" letter-spacing="3">ChatGPT Astra</text><text x="87" y="443" font-family="Arial" font-size="196" font-weight="900" fill="white" letter-spacing="-8">OUR JOBS</text><rect x="96" y="506" width="741" height="239" rx="2" fill="#B9DEF2"/><text x="110" y="693" font-family="Arial" font-size="208" font-weight="900" fill="#08121B" letter-spacing="-8">NEXT?</text></svg>`);
+ const mark=await sharp(logo).resize(242,242,{fit:'contain',background:{r:0,g:0,b:0,alpha:0}}).png().toBuffer();
+ const final=await sharp(bg).composite([{input:overlay},{input:mark,left:1535,top:127}]).png().toBuffer();
+ await sharp(final).jpeg({quality:95,chromaSubsampling:'4:4:4'}).toFile(path.join(out,'Astra_Our_Jobs_Next_1080p.jpg'));
+ await sharp(final).resize(320,180).png().toFile(path.join(out,'preview.png'));
+ await sharp(final).resize(320,180).grayscale().png().toFile(path.join(out,'grayscale.png'));
+ fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify({headline:'OUR JOBS NEXT?',context:'ChatGPT Astra',style:'Astra space and particle continuity; restrained professional briefcase metaphor',hooks_considered:['OUR JOBS NEXT?','TAKING OUR JOBS?','YOUR NEW COWORKER?','ASTRA GOES TO WORK','WHO CHECKS THE AI?','THE WORK JUST CHANGED','BEYOND THE CHAT','AI JOINS THE OFFICE'],concepts_considered:['Briefcase in Astra space: chosen, jobs question','Official demo receipt: rejected, tiny UI','Task handoff diagram: rejected, too informational','Empty desk consequence: rejected, implies established layoffs'],visual_metaphor:true,claims_avoided:['Confirmed layoffs','Independent product testing','Guaranteed replacement','OpenAI endorsement'],logo:{path:logo,source:'https://openai.com/brand/',sha256:crypto.createHash('sha256').update(fs.readFileSync(logo)).digest('hex'),generated:false},generation_mode:'Built-in imagegen brand-neutral plate; deterministic typography and official logo',publishing_enabled:false},null,2));
+ console.log(path.join(out,'Astra_Our_Jobs_Next_1080p.jpg'));
+})();

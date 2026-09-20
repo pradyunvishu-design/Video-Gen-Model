@@ -1,0 +1,41 @@
+{
+  "profile_id": "original_young_ai_native_host_v5",
+  "scope": "Original young-adult AI-news delivery. This profile is not a clone or imitation of an identifiable creator.",
+  "audience_impression": {
+    "age_range": "20-28",
+    "role": "credible AI-native technology explainer",
+    "tone": ["relaxed", "technically fluent", "slightly nerdy", "matter-of-fact"],
+    "avoid": [
+      "teenage delivery",
+      "influencer cadence",
+      "TikTok cadence",
+      "podcast swagger",
+      "announcer polish",
+      "forced slang",
+      "fake breaths",
+      "stutters",
+      "vocal fry",
+      "performed jokes"
+    ]
+  },
+  "provider": {
+    "name": "Google Gemini TTS",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Iapetus",
+    "official_voice_character": "Clear"
+  },
+  "delivery": {
+    "working_pace_wpm": [150, 158],
+    "sentence_endings": "neutral or slightly downward",
+    "emphasis": "sparse and meaning-led",
+    "lists": "connected rather than performed",
+    "jokes": "underplayed as asides",
+    "master_lufs": -17.0,
+    "true_peak_dbfs": -1.5
+  },
+  "auditions": {
+    "a_clearer_faster": "C:\\Youtube Automation for Magic hour\\output\\voice_canary\\young_ai_native_host_v5\\iapetus_master.wav",
+    "b_calmer_refined": "C:\\Youtube Automation for Magic hour\\output\\voice_canary\\young_ai_native_host_v5_refined\\iapetus_young_adult_master.wav"
+  },
+  "status": "pending human A/B approval before applying to a full episode"
+}

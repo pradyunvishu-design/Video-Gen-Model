@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "profile_id": "ai_media_explainer_v1",
+  "audience_relationship": {
+    "stance": "an informed, curious colleague explaining what changed and why it matters",
+    "authority": "earned through specific evidence and honest limits, never volume or hype",
+    "attitude": "calm, skeptical, lightly nerdy and dry, and genuinely useful",
+    "distance": "speak with the viewer, not at the viewer and not as a brand spokesperson"
+  },
+  "cadence": {
+    "default_sentence_words": "8-18",
+    "short_landing_words": "2-7, used occasionally after dense proof or a verdict",
+    "long_explanation_words": "19-28, used only when splitting would damage clarity",
+    "paragraph_shape": "vary sentence length and energy; avoid repeated question-answer or setup-punchline rhythms",
+    "pause_intent": "pause where a person thinks or where proof changes the point—not after every sentence",
+    "performance": "underplay the copy; mostly neutral downward sentence endings, no theatrical emphasis, no performed punctuation"
+  },
+  "language": {
+    "vocabulary": "smart-generalist English with concrete nouns and active verbs",
+    "jargon": "delay it until the viewer understands the problem, then define it once in plain language",
+    "examples": "prefer one specific creator task, workflow, output, failure, or decision over a list of abstract benefits",
+    "transitions": "use cause, consequence, contrast, or an unresolved practical question; clean cuts are allowed",
+    "uncertainty": "state what the evidence cannot show in direct language",
+    "contractions": "use natural contractions where the speaker would actually say them"
+  },
+  "humor": {
+    "style": "brief dry observations about a documented contradiction, awkward workflow, or familiar human behavior",
+    "frequency": "zero is acceptable; usually no more than one moment every 120-180 words",
+    "boundary": "never invent a punchline, force slang, joke over harm, or interrupt an important explanation"
+  },
+  "avoid": [
+    "greetings before the viewer understands the story",
+    "fake suspense, inflated adjectives, and generic excitement",
+    "stock pivots such as 'but here's the thing', 'that brings us to', or 'here's where it gets interesting'",
+    "mechanical structure labels such as 'next question', 'observation', or 'the key takeaway'; a short concrete preview of what the viewer will learn is allowed",
+    "press-release claims, policy-memo language, and strings of abstract nouns",
+    "repeated rhetorical questions, repeated three-word beat openings, and metronomic sentence lengths",
+    "personal testing claims unless a captured test ledger exists",
+    "copied creator catchphrases, mannerisms, jokes, or persona"
+  ],
+  "read_aloud_gate": [
+    "Can a listener follow every pronoun without seeing the screen?",
+    "Does each technical term arrive after the problem and receive one plain definition?",
+    "Would the speaker naturally say every transition?",
+    "Does each chapter add proof, an example, or a changed conclusion rather than restating the setup?",
+    "Does the ending answer the promise made in the opening?"
+  ]
+}

@@ -1,0 +1,2264 @@
+{
+  "schema_version": "2.0",
+  "profile_id": "ai-labs-motion-expert-v1",
+  "channel": {
+    "title": "AI LABS",
+    "handle": "@AILABS-393",
+    "channel_id": "UCelfWQr9sXVMTvBzviPGlFw",
+    "url": "https://www.youtube.com/@AILABS-393/videos"
+  },
+  "training_video_count": 49,
+  "training_ids": [
+    "jyLKRN36-Dc",
+    "WJgxX0Eib6k",
+    "jwje1JK8Nqs",
+    "Ysr7oNDajJI",
+    "c47uqR7XB_c",
+    "D_uojDHkbw4",
+    "b9k-AE4v5yI",
+    "AD-EmZ3v6-g",
+    "a8tLTd4q-fU",
+    "pGro_uKt-_M",
+    "H7t3uUp3HVw",
+    "EwTOiqWWqEc",
+    "m6IXL_YGqBQ",
+    "qxjII6x2yPY",
+    "pHstb0JGGhE",
+    "STczJBYJf7w",
+    "GM7-ei-4Xc8",
+    "-HEdqzzYKco",
+    "5d02TYoOzfE",
+    "ECQA6oOyfIk",
+    "Ot582-E61ac",
+    "nN6DZi_fiSo",
+    "KiTmBtyaeXg",
+    "AQRDjI5owZI",
+    "8ImlAQOyVTs",
+    "YsdQE6juGXY",
+    "qMEm1bgxnUM",
+    "Sb96po6S67k",
+    "lGalJmyI78w",
+    "hp7n45JqvIw",
+    "b0lwCDNOFUY",
+    "ywIhw15za9Y",
+    "romGzY0Xu0s",
+    "XdtBAm2pM-0",
+    "nBH07G-zayk",
+    "eFCHwtufjJc",
+    "AhXfI1rSUPc",
+    "aMBQB_IJ0dQ",
+    "sncxStbRSwI",
+    "TmsH-RIHvas",
+    "HqD5a2Cae60",
+    "LqN_ItMqovA",
+    "O1XLCh-uA_E",
+    "PJ9CmTODmVo",
+    "X4vAlWtsJD4",
+    "qQ5uObNKBOU",
+    "GbuwosWEvHo",
+    "5lycYTOYbPM",
+    "fMY5Sdj2DMk"
+  ],
+  "observation_count": 49,
+  "observation_hash": "c2f8cda48b6bb973638f8816fb4013c049847c2fe252063f530cb9e9bde71d11",
+  "training_motion_measurements": {
+    "trace_count": 98,
+    "motion_delta_band": [
+      9.5e-05,
+      0.01105
+    ],
+    "motion_distance_proxy_band": [
+      0.0,
+      0.169594
+    ],
+    "fitted_easing_distribution": {
+      "power3.out": 41,
+      "power2.inOut": 30,
+      "power2.in": 27
+    },
+    "trace_hash": "bc31a18ac2d661cc1af266ebada716046c682a82ffb40fa08ab6bbd5c28796af"
+  },
+  "saturation": {
+    "window_required": 8,
+    "consecutive_eligible_training_videos_without_new_signal": 33,
+    "saturated": true,
+    "observed_family_signals": [
+      "animated_diagram",
+      "chart",
+      "code_terminal",
+      "comparison_table",
+      "editorial_title",
+      "list",
+      "progress",
+      "ui_overlay"
+    ],
+    "first_seen_training_position": {
+      "editorial_title": 1,
+      "list": 1,
+      "animated_diagram": 2,
+      "chart": 2,
+      "code_terminal": 3,
+      "progress": 3,
+      "ui_overlay": 4,
+      "comparison_table": 16
+    },
+    "method": "deterministic title and format signal audit; frame measurements remain evidence for visual specs"
+  },
+  "patterns": [
+    {
+      "id": "editorial-title-reset",
+      "family": "title",
+      "variants": [
+        "cold open",
+        "chapter reset",
+        "verdict"
+      ],
+      "narrative_purpose": "Reset context or introduce a chapter",
+      "narrative_triggers": [
+        "hook",
+        "chapter",
+        "conclusion"
+      ],
+      "contraindications": [
+        "dense evidence",
+        "active demonstration"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "jyLKRN36-Dc",
+          "url": "https://www.youtube.com/watch?v=jyLKRN36-Dc",
+          "timecodes": [
+            117.286,
+            234.571,
+            351.857
+          ],
+          "observation_hash": "a884c9138302446071b69d1af2775f530583f209f5b3557569a7a675ae45ef81",
+          "analysis_only": true
+        },
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            124.429,
+            248.857,
+            373.286
+          ],
+          "observation_hash": "ec03209d656512a487bf94531eee5914efa92dbaba7cddbf743e3de34b81f62e",
+          "analysis_only": true
+        },
+        {
+          "video_id": "H7t3uUp3HVw",
+          "url": "https://www.youtube.com/watch?v=H7t3uUp3HVw",
+          "timecodes": [
+            121.0,
+            242.0,
+            363.0
+          ],
+          "observation_hash": "39c7e9af4589c65506c8f0e073b9339c7ef9f439e810a28b102c36cbc83a3d60",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "kinetic-key-phrase",
+      "family": "kinetic_typography",
+      "variants": [
+        "word replace",
+        "phrase wipe",
+        "numeric emphasis"
+      ],
+      "narrative_purpose": "Land one short phrase at the spoken emphasis",
+      "narrative_triggers": [
+        "definition",
+        "verdict",
+        "contrast"
+      ],
+      "contraindications": [
+        "long quotation",
+        "unverified claim"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "WJgxX0Eib6k",
+          "url": "https://www.youtube.com/watch?v=WJgxX0Eib6k",
+          "timecodes": [
+            102.0,
+            204.0,
+            306.0
+          ],
+          "observation_hash": "b4fefd8f9d91fc8c0a1d1affb82c6633d19a0beed9f0ed98465d2847812d231c",
+          "analysis_only": true
+        },
+        {
+          "video_id": "b9k-AE4v5yI",
+          "url": "https://www.youtube.com/watch?v=b9k-AE4v5yI",
+          "timecodes": [
+            102.857,
+            205.714,
+            308.571
+          ],
+          "observation_hash": "6f55e22df191674697ec73fe6c885703339711a34ca2e65fd70474bbcce409ce",
+          "analysis_only": true
+        },
+        {
+          "video_id": "EwTOiqWWqEc",
+          "url": "https://www.youtube.com/watch?v=EwTOiqWWqEc",
+          "timecodes": [
+            130.571,
+            261.143,
+            391.714
+          ],
+          "observation_hash": "e28d6c9bc929385d34c4971748bb1edb4e3bbd04e6e8ce9ff1c4ea75a08f36ce",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "source-locked-lower-third",
+      "family": "lower_third",
+      "variants": [
+        "source",
+        "speaker",
+        "product"
+      ],
+      "narrative_purpose": "Identify a source or speaker without covering proof",
+      "narrative_triggers": [
+        "source attribution",
+        "speaker",
+        "product name"
+      ],
+      "contraindications": [
+        "unknown provenance",
+        "already labeled UI"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "jwje1JK8Nqs",
+          "url": "https://www.youtube.com/watch?v=jwje1JK8Nqs",
+          "timecodes": [
+            163.0,
+            326.0,
+            489.0
+          ],
+          "observation_hash": "905397980be3633ac733af30805cf4539f97bfa54069a72d9c0851b17471122c",
+          "analysis_only": true
+        },
+        {
+          "video_id": "AD-EmZ3v6-g",
+          "url": "https://www.youtube.com/watch?v=AD-EmZ3v6-g",
+          "timecodes": [
+            129.0,
+            258.0,
+            387.0
+          ],
+          "observation_hash": "95f35dca0f18f5eb4af65199a82da29d0a6843715f1847ed01ae7c563111da4a",
+          "analysis_only": true
+        },
+        {
+          "video_id": "m6IXL_YGqBQ",
+          "url": "https://www.youtube.com/watch?v=m6IXL_YGqBQ",
+          "timecodes": [
+            114.714,
+            229.429,
+            344.143
+          ],
+          "observation_hash": "a977940922a6ebd1bf3cdf52f80998725deaca7ff7cc3c8788384c30b1295cbf",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "mechanism-flow",
+      "family": "animated_diagram",
+      "variants": [
+        "chain",
+        "branch",
+        "feedback loop"
+      ],
+      "narrative_purpose": "Reveal a causal or workflow relationship in reading order",
+      "narrative_triggers": [
+        "mechanism",
+        "workflow",
+        "dependency"
+      ],
+      "contraindications": [
+        "simple fact",
+        "strong real demonstration"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "Ysr7oNDajJI",
+          "url": "https://www.youtube.com/watch?v=Ysr7oNDajJI",
+          "timecodes": [
+            110.714,
+            221.429,
+            332.143
+          ],
+          "observation_hash": "3b072b07b34d5425437895678b391a7f8940d55219baf71d6c3f6f33d5b9ae57",
+          "analysis_only": true
+        },
+        {
+          "video_id": "a8tLTd4q-fU",
+          "url": "https://www.youtube.com/watch?v=a8tLTd4q-fU",
+          "timecodes": [
+            115.0,
+            230.0,
+            345.0
+          ],
+          "observation_hash": "e9f20c2ac9da6b5f5797d44ec5cbc9a635783cb032163118344c306366673b61",
+          "analysis_only": true
+        },
+        {
+          "video_id": "qxjII6x2yPY",
+          "url": "https://www.youtube.com/watch?v=qxjII6x2yPY",
+          "timecodes": [
+            110.571,
+            221.143,
+            331.714
+          ],
+          "observation_hash": "21f71d0b15e428c92037c7420c6b71fa4002ebae0b44c123c5310cb0e7ae95c2",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "criterion-comparison",
+      "family": "comparison_table",
+      "variants": [
+        "two lane",
+        "scorecard",
+        "old new"
+      ],
+      "narrative_purpose": "Resolve a real comparison one criterion at a time",
+      "narrative_triggers": [
+        "comparison",
+        "tradeoff",
+        "before and after"
+      ],
+      "contraindications": [
+        "different tasks",
+        "unsupported winner"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "c47uqR7XB_c",
+          "url": "https://www.youtube.com/watch?v=c47uqR7XB_c",
+          "timecodes": [
+            110.571,
+            221.143,
+            331.714
+          ],
+          "observation_hash": "0a51012bd00c15a19206f5bb774c91616be21e5bacea87d8d62a74f7e626a53a",
+          "analysis_only": true
+        },
+        {
+          "video_id": "pGro_uKt-_M",
+          "url": "https://www.youtube.com/watch?v=pGro_uKt-_M",
+          "timecodes": [
+            123.143,
+            246.286,
+            369.429
+          ],
+          "observation_hash": "f4a9b6820950221009bd165c8e707d51995abf85652a15535265207c14eb4b42",
+          "analysis_only": true
+        },
+        {
+          "video_id": "pHstb0JGGhE",
+          "url": "https://www.youtube.com/watch?v=pHstb0JGGhE",
+          "timecodes": [
+            217.286,
+            434.571,
+            651.857
+          ],
+          "observation_hash": "0064d705c43b7a23d09bf9da75f1ae45432986b57d74d7f4412e8b5d77e77e4f",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "evidence-focus",
+      "family": "source_annotation",
+      "variants": [
+        "underline",
+        "outline",
+        "reading corridor"
+      ],
+      "narrative_purpose": "Direct attention to the exact cited line or UI control",
+      "narrative_triggers": [
+        "quote",
+        "number",
+        "source claim",
+        "interface control"
+      ],
+      "contraindications": [
+        "missing DOM range",
+        "unrelated narration"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "D_uojDHkbw4",
+          "url": "https://www.youtube.com/watch?v=D_uojDHkbw4",
+          "timecodes": [
+            124.429,
+            248.857,
+            373.286
+          ],
+          "observation_hash": "ec03209d656512a487bf94531eee5914efa92dbaba7cddbf743e3de34b81f62e",
+          "analysis_only": true
+        },
+        {
+          "video_id": "H7t3uUp3HVw",
+          "url": "https://www.youtube.com/watch?v=H7t3uUp3HVw",
+          "timecodes": [
+            121.0,
+            242.0,
+            363.0
+          ],
+          "observation_hash": "39c7e9af4589c65506c8f0e073b9339c7ef9f439e810a28b102c36cbc83a3d60",
+          "analysis_only": true
+        },
+        {
+          "video_id": "STczJBYJf7w",
+          "url": "https://www.youtube.com/watch?v=STczJBYJf7w",
+          "timecodes": [
+            102.857,
+            205.714,
+            308.571
+          ],
+          "observation_hash": "fc5c3b28ea8973a5583f6204c4faf6bce5314905c58d13a01ec00a06df05b373",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "code-proof",
+      "family": "code_terminal",
+      "variants": [
+        "command result",
+        "diff",
+        "test suite"
+      ],
+      "narrative_purpose": "Show a real command, code change, or verified output",
+      "narrative_triggers": [
+        "code",
+        "command",
+        "test",
+        "repository"
+      ],
+      "contraindications": [
+        "fabricated output",
+        "generic technology mention"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "b9k-AE4v5yI",
+          "url": "https://www.youtube.com/watch?v=b9k-AE4v5yI",
+          "timecodes": [
+            102.857,
+            205.714,
+            308.571
+          ],
+          "observation_hash": "6f55e22df191674697ec73fe6c885703339711a34ca2e65fd70474bbcce409ce",
+          "analysis_only": true
+        },
+        {
+          "video_id": "EwTOiqWWqEc",
+          "url": "https://www.youtube.com/watch?v=EwTOiqWWqEc",
+          "timecodes": [
+            130.571,
+            261.143,
+            391.714
+          ],
+          "observation_hash": "e28d6c9bc929385d34c4971748bb1edb4e3bbd04e6e8ce9ff1c4ea75a08f36ce",
+          "analysis_only": true
+        },
+        {
+          "video_id": "GM7-ei-4Xc8",
+          "url": "https://www.youtube.com/watch?v=GM7-ei-4Xc8",
+          "timecodes": [
+            113.571,
+            227.143,
+            340.714
+          ],
+          "observation_hash": "c0b24640e684ea624a173cc1de7dd01ca2a6001e80f9bc41c4912fa82365c5e4",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "ordered-progress",
+      "family": "progress",
+      "variants": [
+        "stepper",
+        "checklist",
+        "status ladder"
+      ],
+      "narrative_purpose": "Track finite steps or measured completion",
+      "narrative_triggers": [
+        "steps",
+        "progress",
+        "status",
+        "checklist"
+      ],
+      "contraindications": [
+        "decorative loading",
+        "unknown metric"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "AD-EmZ3v6-g",
+          "url": "https://www.youtube.com/watch?v=AD-EmZ3v6-g",
+          "timecodes": [
+            129.0,
+            258.0,
+            387.0
+          ],
+          "observation_hash": "95f35dca0f18f5eb4af65199a82da29d0a6843715f1847ed01ae7c563111da4a",
+          "analysis_only": true
+        },
+        {
+          "video_id": "m6IXL_YGqBQ",
+          "url": "https://www.youtube.com/watch?v=m6IXL_YGqBQ",
+          "timecodes": [
+            114.714,
+            229.429,
+            344.143
+          ],
+          "observation_hash": "a977940922a6ebd1bf3cdf52f80998725deaca7ff7cc3c8788384c30b1295cbf",
+          "analysis_only": true
+        },
+        {
+          "video_id": "-HEdqzzYKco",
+          "url": "https://www.youtube.com/watch?v=-HEdqzzYKco",
+          "timecodes": [
+            101.857,
+            203.714,
+            305.571
+          ],
+          "observation_hash": "a23a6c6f41af38b7c6ce592591797c787f8a1160ad6cec89816d3b91d8681e23",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "timeline-cause",
+      "family": "timeline",
+      "variants": [
+        "launch",
+        "causality",
+        "iteration"
+      ],
+      "narrative_purpose": "Explain chronology or cause and effect",
+      "narrative_triggers": [
+        "timeline",
+        "history",
+        "sequence",
+        "then"
+      ],
+      "contraindications": [
+        "unordered list",
+        "single event"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "a8tLTd4q-fU",
+          "url": "https://www.youtube.com/watch?v=a8tLTd4q-fU",
+          "timecodes": [
+            115.0,
+            230.0,
+            345.0
+          ],
+          "observation_hash": "e9f20c2ac9da6b5f5797d44ec5cbc9a635783cb032163118344c306366673b61",
+          "analysis_only": true
+        },
+        {
+          "video_id": "qxjII6x2yPY",
+          "url": "https://www.youtube.com/watch?v=qxjII6x2yPY",
+          "timecodes": [
+            110.571,
+            221.143,
+            331.714
+          ],
+          "observation_hash": "21f71d0b15e428c92037c7420c6b71fa4002ebae0b44c123c5310cb0e7ae95c2",
+          "analysis_only": true
+        },
+        {
+          "video_id": "5d02TYoOzfE",
+          "url": "https://www.youtube.com/watch?v=5d02TYoOzfE",
+          "timecodes": [
+            112.571,
+            225.143,
+            337.714
+          ],
+          "observation_hash": "d94f3e8ceb039cae21aec75515e1311c69509d1f0c6775648a84fd422a4569d8",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "direct-data-story",
+      "family": "chart",
+      "variants": [
+        "bar",
+        "line",
+        "rank",
+        "unit economics"
+      ],
+      "narrative_purpose": "Reveal a measured relationship with direct labels",
+      "narrative_triggers": [
+        "benchmark",
+        "trend",
+        "percentage",
+        "cost"
+      ],
+      "contraindications": [
+        "invented metric",
+        "single unsupported number"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "pGro_uKt-_M",
+          "url": "https://www.youtube.com/watch?v=pGro_uKt-_M",
+          "timecodes": [
+            123.143,
+            246.286,
+            369.429
+          ],
+          "observation_hash": "f4a9b6820950221009bd165c8e707d51995abf85652a15535265207c14eb4b42",
+          "analysis_only": true
+        },
+        {
+          "video_id": "pHstb0JGGhE",
+          "url": "https://www.youtube.com/watch?v=pHstb0JGGhE",
+          "timecodes": [
+            217.286,
+            434.571,
+            651.857
+          ],
+          "observation_hash": "0064d705c43b7a23d09bf9da75f1ae45432986b57d74d7f4412e8b5d77e77e4f",
+          "analysis_only": true
+        },
+        {
+          "video_id": "ECQA6oOyfIk",
+          "url": "https://www.youtube.com/watch?v=ECQA6oOyfIk",
+          "timecodes": [
+            109.571,
+            219.143,
+            328.714
+          ],
+          "observation_hash": "1b3721bef8a6c5296a3aa15cdc12d1bb6ac44084f3d84244c5e6ce2647ca436c",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "icon-capability-montage",
+      "family": "icon_montage",
+      "variants": [
+        "capability row",
+        "integration ring",
+        "tool stack"
+      ],
+      "narrative_purpose": "Summarize a verified compact set of capabilities",
+      "narrative_triggers": [
+        "capabilities",
+        "integrations",
+        "tool set"
+      ],
+      "contraindications": [
+        "more than six items",
+        "generic logo cloud"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "H7t3uUp3HVw",
+          "url": "https://www.youtube.com/watch?v=H7t3uUp3HVw",
+          "timecodes": [
+            121.0,
+            242.0,
+            363.0
+          ],
+          "observation_hash": "39c7e9af4589c65506c8f0e073b9339c7ef9f439e810a28b102c36cbc83a3d60",
+          "analysis_only": true
+        },
+        {
+          "video_id": "STczJBYJf7w",
+          "url": "https://www.youtube.com/watch?v=STczJBYJf7w",
+          "timecodes": [
+            102.857,
+            205.714,
+            308.571
+          ],
+          "observation_hash": "fc5c3b28ea8973a5583f6204c4faf6bce5314905c58d13a01ec00a06df05b373",
+          "analysis_only": true
+        },
+        {
+          "video_id": "Ot582-E61ac",
+          "url": "https://www.youtube.com/watch?v=Ot582-E61ac",
+          "timecodes": [
+            122.0,
+            244.0,
+            366.0
+          ],
+          "observation_hash": "66149d05f04de5d5519c04cb05827ba124fb207795ea8ed7b1c71125cbfb0f54",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "interface-state-change",
+      "family": "ui_overlay",
+      "variants": [
+        "cursor focus",
+        "before after",
+        "result reveal"
+      ],
+      "narrative_purpose": "Show a real product action and resulting state",
+      "narrative_triggers": [
+        "click",
+        "generate",
+        "edit",
+        "result"
+      ],
+      "contraindications": [
+        "fake UI",
+        "login or popup obstruction"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "EwTOiqWWqEc",
+          "url": "https://www.youtube.com/watch?v=EwTOiqWWqEc",
+          "timecodes": [
+            130.571,
+            261.143,
+            391.714
+          ],
+          "observation_hash": "e28d6c9bc929385d34c4971748bb1edb4e3bbd04e6e8ce9ff1c4ea75a08f36ce",
+          "analysis_only": true
+        },
+        {
+          "video_id": "GM7-ei-4Xc8",
+          "url": "https://www.youtube.com/watch?v=GM7-ei-4Xc8",
+          "timecodes": [
+            113.571,
+            227.143,
+            340.714
+          ],
+          "observation_hash": "c0b24640e684ea624a173cc1de7dd01ca2a6001e80f9bc41c4912fa82365c5e4",
+          "analysis_only": true
+        },
+        {
+          "video_id": "nN6DZi_fiSo",
+          "url": "https://www.youtube.com/watch?v=nN6DZi_fiSo",
+          "timecodes": [
+            98.143,
+            196.286,
+            294.429
+          ],
+          "observation_hash": "ed1edbca804529bf2353c4bebbf6db4f7393d8a1249da7cb3c481d42b891125d",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "sequential-ledger",
+      "family": "list",
+      "variants": [
+        "ranked list",
+        "checklist",
+        "decision log"
+      ],
+      "narrative_purpose": "Reveal a short ordered list without card soup",
+      "narrative_triggers": [
+        "three reasons",
+        "steps",
+        "requirements",
+        "limitations"
+      ],
+      "contraindications": [
+        "unordered filler",
+        "more than six items"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "m6IXL_YGqBQ",
+          "url": "https://www.youtube.com/watch?v=m6IXL_YGqBQ",
+          "timecodes": [
+            114.714,
+            229.429,
+            344.143
+          ],
+          "observation_hash": "a977940922a6ebd1bf3cdf52f80998725deaca7ff7cc3c8788384c30b1295cbf",
+          "analysis_only": true
+        },
+        {
+          "video_id": "-HEdqzzYKco",
+          "url": "https://www.youtube.com/watch?v=-HEdqzzYKco",
+          "timecodes": [
+            101.857,
+            203.714,
+            305.571
+          ],
+          "observation_hash": "a23a6c6f41af38b7c6ce592591797c787f8a1160ad6cec89816d3b91d8681e23",
+          "analysis_only": true
+        },
+        {
+          "video_id": "KiTmBtyaeXg",
+          "url": "https://www.youtube.com/watch?v=KiTmBtyaeXg",
+          "timecodes": [
+            79.571,
+            159.143,
+            238.714
+          ],
+          "observation_hash": "c17b6ca865c580054400b049fe5e3105074766a1ee8d62be50ef7acaa7d795bd",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "claim-proof-verdict",
+      "family": "claim_evidence",
+      "variants": [
+        "claim proof",
+        "promise reality",
+        "source result take"
+      ],
+      "narrative_purpose": "Separate a claim, its evidence, and the editorial conclusion",
+      "narrative_triggers": [
+        "claim",
+        "evidence",
+        "test result",
+        "caveat"
+      ],
+      "contraindications": [
+        "missing source",
+        "opinion presented as proof"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "qxjII6x2yPY",
+          "url": "https://www.youtube.com/watch?v=qxjII6x2yPY",
+          "timecodes": [
+            110.571,
+            221.143,
+            331.714
+          ],
+          "observation_hash": "21f71d0b15e428c92037c7420c6b71fa4002ebae0b44c123c5310cb0e7ae95c2",
+          "analysis_only": true
+        },
+        {
+          "video_id": "5d02TYoOzfE",
+          "url": "https://www.youtube.com/watch?v=5d02TYoOzfE",
+          "timecodes": [
+            112.571,
+            225.143,
+            337.714
+          ],
+          "observation_hash": "d94f3e8ceb039cae21aec75515e1311c69509d1f0c6775648a84fd422a4569d8",
+          "analysis_only": true
+        },
+        {
+          "video_id": "AQRDjI5owZI",
+          "url": "https://www.youtube.com/watch?v=AQRDjI5owZI",
+          "timecodes": [
+            114.429,
+            228.857,
+            343.286
+          ],
+          "observation_hash": "2bb3713aa2c49cedb513e048696cd8fe4c34764fe630be14cb5cad202b89dc90",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    },
+    {
+      "id": "quiet-cut-fade",
+      "family": "transition",
+      "variants": [
+        "hard cut",
+        "short fade",
+        "matched geometry"
+      ],
+      "narrative_purpose": "Change chapters without competing with the information",
+      "narrative_triggers": [
+        "topic change",
+        "time jump",
+        "chapter"
+      ],
+      "contraindications": [
+        "within one continuous demonstration",
+        "spectacle"
+      ],
+      "visual_spec": {
+        "typography": {
+          "roles": [
+            "dominant statement",
+            "direct label",
+            "source"
+          ],
+          "body_min_px_1080p": 28,
+          "max_lines": 3
+        },
+        "palette": {
+          "measured_dominant": [
+            "#121315",
+            "#010101",
+            "#0C0E0B",
+            "#0C0E0C",
+            "#040603",
+            "#0B0D0B",
+            "#010201",
+            "#030303"
+          ],
+          "base": [
+            "#090A0A",
+            "#F2F1ED"
+          ],
+          "product_color_scope": "localized"
+        },
+        "layout": {
+          "camera": "locked",
+          "focal_groups_max": 3,
+          "dominant_object_share": [
+            0.72,
+            0.94
+          ],
+          "intentional_asymmetry": true
+        },
+        "motion": {
+          "entrance_px": [
+            8,
+            18
+          ],
+          "entrance_frames_30fps": [
+            8,
+            22
+          ],
+          "stagger_frames": [
+            7,
+            15
+          ],
+          "easing": [
+            "power3.out",
+            "power2.inOut",
+            "power2.in"
+          ],
+          "measured_delta_band": [
+            9.5e-05,
+            0.01105
+          ],
+          "measured_distance_proxy_band": [
+            0.0,
+            0.169594
+          ],
+          "ambient_motion": false
+        },
+        "timing": {
+          "meaningful_state_change_seconds": [
+            2.0,
+            6.0
+          ],
+          "exit": [
+            "cut",
+            "fade<=0.2s"
+          ],
+          "reading_hold_required": true
+        },
+        "information_density": {
+          "claim_per_frame": 1,
+          "supporting_items_max": 3,
+          "source_label_only_when_needed": true
+        }
+      },
+      "supporting_evidence": [
+        {
+          "video_id": "pHstb0JGGhE",
+          "url": "https://www.youtube.com/watch?v=pHstb0JGGhE",
+          "timecodes": [
+            217.286,
+            434.571,
+            651.857
+          ],
+          "observation_hash": "0064d705c43b7a23d09bf9da75f1ae45432986b57d74d7f4412e8b5d77e77e4f",
+          "analysis_only": true
+        },
+        {
+          "video_id": "ECQA6oOyfIk",
+          "url": "https://www.youtube.com/watch?v=ECQA6oOyfIk",
+          "timecodes": [
+            109.571,
+            219.143,
+            328.714
+          ],
+          "observation_hash": "1b3721bef8a6c5296a3aa15cdc12d1bb6ac44084f3d84244c5e6ce2647ca436c",
+          "analysis_only": true
+        },
+        {
+          "video_id": "8ImlAQOyVTs",
+          "url": "https://www.youtube.com/watch?v=8ImlAQOyVTs",
+          "timecodes": [
+            136.0,
+            272.0,
+            408.0
+          ],
+          "observation_hash": "5118b0d9967c5a6059a90366e0018cd9db19cfcc6636763198150e6fd372e985",
+          "analysis_only": true
+        }
+      ],
+      "implementation_primitives": [
+        "hyperframes",
+        "gsap-seekable",
+        "svg",
+        "css-grid"
+      ],
+      "originality_warning": "Reproduce only transferable information and motion grammar; do not trace a reference frame, reuse creator artwork, or copy distinctive compositions.",
+      "confidence": 0.89
+    }
+  ],
+  "originality_policy": "Transfer grammar only; never trace reference layouts or reuse creator assets."
+}

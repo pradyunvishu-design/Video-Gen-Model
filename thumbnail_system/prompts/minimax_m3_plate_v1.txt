@@ -1,0 +1,7 @@
+Create a 16:9 background and subject plate for a professionally art-directed technology-news YouTube thumbnail about an AI model with an extremely long context window.
+
+Photograph a real, tactile editorial still life on a matte charcoal worktable: an unusually long ribbon of printed programming notes and diagrams looping through the right half of the frame, a cropped edge of a real aluminum laptop, two restrained coral-red paper tabs, and subtle signs that a human editor arranged the scene by hand. The paper and desk must have believable fibers, slight bends, fingerprints, edge wear, and practical shadows. Shoot it like a premium magazine photograph with a 35mm lens, controlled softbox key light, gentle warm practical light, natural depth of field, realistic exposure, and restrained contrast.
+
+Composition: keep the left 45 percent dark, uncluttered, and low-detail for a later headline. Put the paper-loop focal cluster in the right 55 percent. Maintain clear separation between foreground, middle ground, and background. The frame should feel intentional, cinematic, and physically achievable in a small studio.
+
+Do not generate any logo, mascot, brand name, words, readable code, letters, numbers, chart, UI, screen interface, icon, watermark, border, or headline. Do not use glossy CGI, plastic 3D objects, neon fog, blue-purple cyberpunk lighting, lens flare, surreal physics, perfect symmetry, repeated objects, or an AI-art texture. This plate will receive exact official branding, English typography, and verified source evidence afterward.

@@ -1,0 +1,133 @@
+{
+  "name": "AI Media v2 - Final Review and Revision",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Review finished AI-media episode",
+        "formDescription": "Approve the preview or request a targeted revision. No YouTube upload occurs.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Episode ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Request revision"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Revision stage",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "render"
+                  },
+                  {
+                    "option": "captions"
+                  },
+                  {
+                    "option": "media"
+                  },
+                  {
+                    "option": "script"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Review notes",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "form",
+      "name": "Final Review Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const approved = $json.Decision === 'Approve';\nreturn [{json:{episode_id:$json['Episode ID'], approved, notes:$json['Review notes'] || '', stages:approved ? [] : [$json['Revision stage'] || 'render']}}];"
+      },
+      "id": "normalize",
+      "name": "Normalize Review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'review_final', payload:$json, idempotency_key:'final-review-' + $json.episode_id + '-' + Date.now()}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "submit",
+      "name": "Submit Final Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Final Review Form": {
+      "main": [
+        [
+          {
+            "node": "Normalize Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Review": {
+      "main": [
+        [
+          {
+            "node": "Submit Final Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago"
+  },
+  "active": false
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "name": "Diffusion Daily",
+  "handle": "@diffusiondailytv",
+  "channel_id": "UC8WX8oyL-Hn-2T_Ik-I4xuw",
+  "channel_url": "https://www.youtube.com/@diffusiondailytv",
+  "tagline": "Generative media. Clearly explained.",
+  "focus": ["image generation", "video generation", "audio generation", "diffusion models", "diffusion transformers", "creative tools", "open-source discoveries"],
+  "identity": {
+    "profile": "output/channel_branding/diffusion-daily/profile.png",
+    "banner": "output/channel_branding/diffusion-daily/banner.png",
+    "motif": "White circular particles forming a D on pure black",
+    "colors": {"background": "#000000", "foreground": "#FFFFFF"},
+    "banner_dimensions": [2560, 1440]
+  },
+  "external_links": [],
+  "affiliation_disclosure": "Produced in affiliation with Magic Hour; relevant connections are disclosed.",
+  "upload_defaults": {
+    "visibility": "private",
+    "category": "Science & Technology",
+    "language": "en",
+    "description_footer": "DIFFUSION DAILY\nGenerative media. Clearly explained.\n\nSubscribe for clear coverage of image, video and audio generation: new models, useful demos and open-source discoveries.\n\nAI-assisted production with human editorial review. Produced in affiliation with Magic Hour; relevant connections are disclosed.\n\nQuestions or corrections? Leave a comment. Episode-specific sources and chapters appear above."
+  },
+  "publishing_enabled": false,
+  "notes": "Brand profile for packaging. Browser upload defaults do not automatically apply to API uploads. Use the footer only after episode-specific sources and chapters are supplied. Historical episode masters and old branding assets remain unchanged."
+}

@@ -1,0 +1,14 @@
+{
+  "template": "news_intro",
+  "kicker": "THE WEEK IN TECH + AI",
+  "title": "NEWS WEEKLY",
+  "body": "The ten-minute recap of the news actually worth knowing.",
+  "metric": "10 MIN",
+  "sourceImage": "",
+  "sourceLabel": "NEWS WEEKLY",
+  "labels": ["THE BIG MODEL", "OPEN SOURCE", "BIG TECH"],
+  "durationSeconds": 6,
+  "accent": "#83938C",
+  "accentSecondary": "#FF3D9A",
+  "annotation": null
+}

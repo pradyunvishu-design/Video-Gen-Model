@@ -1,0 +1,5 @@
+Edit only the supplied photograph. Preserve the exact camera angle, desk, paper-loop shapes, coral tape, laptop crop, practical studio lighting, realistic shadows, paper fibers, depth of field, and empty negative space on the left.
+
+Remove every handwritten mark, printed mark, diagram, formula, code fragment, letter, number, arrow, box, and text-like artifact from every piece of paper. Replace all marked areas with completely blank warm-white paper that has only natural fibers, folds, subtle handling wear, and physically realistic shadows. The paper must contain zero ink and zero pseudo-writing. Clean the laptop shell without changing its shape.
+
+Do not add any logo, mascot, brand name, words, readable or unreadable writing, code, chart, interface, icon, watermark, extra object, new tape, glow, or synthetic texture. The final result must look like a real magazine studio photograph before a human graphic designer adds typography and verified evidence.

@@ -1,0 +1,101 @@
+{
+  "episodeId": "editorial-motion-training-v3",
+  "seriesName": "MOTION SYSTEM / STUDY 03",
+  "footer": "MOTION MUST EXPLAIN SOMETHING",
+  "audioSrc": "",
+  "captions": [],
+  "scenes": [
+    {
+      "id": "sequence",
+      "kind": "timeline",
+      "durationSeconds": 5,
+      "chapter": "01 / CHOREOGRAPHY",
+      "title": "FROM CLAIM TO PROOF",
+      "subtitle": "Good motion guides attention in the same order the idea is understood.",
+      "anchor": "left",
+      "accent": "#83938C",
+      "logos": [], "messages": [], "nodes": [], "edges": [],
+      "items": ["Launch", "Primary source", "Controlled test", "Independent check", "Verdict"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "", "evidence": ""
+    },
+    {
+      "id": "terminal-test",
+      "kind": "terminal",
+      "durationSeconds": 5,
+      "chapter": "02 / THE TEST",
+      "title": "SHOW THE PROCESS",
+      "subtitle": "A verified sequence is more convincing than a decorative loading animation.",
+      "anchor": "right",
+      "accent": "#72B889",
+      "logos": [], "messages": [], "nodes": [], "edges": [],
+      "items": ["capture official announcement", "open repository and model card", "record the public product demo", "compare claims with observed limits", "save source ledger"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "", "evidence": ""
+    },
+    {
+      "id": "evidence-stack",
+      "kind": "stack",
+      "durationSeconds": 5,
+      "chapter": "03 / EVIDENCE ORDER",
+      "title": "NOT ALL SOURCES ARE EQUAL",
+      "subtitle": "The visual hierarchy should match the strength of the evidence.",
+      "anchor": "left",
+      "accent": "#D97757",
+      "logos": [], "messages": [], "nodes": [], "edges": [],
+      "items": ["Official announcement", "Paper or repository", "Independent reporting", "Hands-on test", "Community signal"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "", "evidence": ""
+    },
+    {
+      "id": "editorial-chat",
+      "kind": "chat",
+      "durationSeconds": 5,
+      "chapter": "04 / EDITORIAL PASS",
+      "title": "#final-check",
+      "subtitle": "",
+      "anchor": "center",
+      "accent": "#83938C",
+      "logos": [], "nodes": [], "edges": [], "items": [],
+      "messages": [
+        {"speaker": "Research", "logo": "brands/claude.svg", "color": "#D97757", "time": "10:08", "text": "The launch page makes four major claims."},
+        {"speaker": "Editor", "logo": "brands/openai.svg", "color": "#F2F1ED", "time": "10:09", "text": "Which one changes what viewers can actually do?"},
+        {"speaker": "Research", "logo": "brands/claude.svg", "color": "#D97757", "time": "10:10", "text": "The workflow is faster, but the output limit still matters."},
+        {"speaker": "Editor", "logo": "brands/openai.svg", "color": "#F2F1ED", "time": "10:11", "text": "Lead with that. Keep the rest as evidence."}
+      ],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "", "evidence": ""
+    },
+    {
+      "id": "source-receipt",
+      "kind": "source",
+      "durationSeconds": 5,
+      "chapter": "05 / SOURCE RECEIPT",
+      "title": "READ THE ACTUAL PAGE",
+      "subtitle": "Real evidence gets the largest visual footprint.",
+      "anchor": "right",
+      "accent": "#FF6673",
+      "logos": [], "messages": [], "nodes": [], "edges": [], "items": [],
+      "sourceAsset": "episode/h3-news/minimax_launch-minimax-h3-official-launch-viewport.png",
+      "sourceLabel": "MINIMAX · OFFICIAL LAUNCH",
+      "sourceUrl": "minimax.io/news/minimax-h3",
+      "sourceStartSeconds": 0,
+      "sourceFocus": {"x": 0.32, "y": 0.16, "width": 0.48, "height": 0.08, "label": "THE VERIFIED LIMIT"},
+      "claim": "", "evidence": ""
+    },
+    {
+      "id": "motion-verdict",
+      "kind": "compare",
+      "durationSeconds": 6,
+      "chapter": "06 / THE RULE",
+      "title": "MOTION SERVES MEANING.",
+      "subtitle": "If an animation does not clarify hierarchy, state, sequence, or causality, remove it.",
+      "anchor": "center",
+      "accent": "#83938C",
+      "logos": [], "messages": [], "nodes": [], "edges": [], "items": [],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "More animation automatically makes a video feel premium.",
+      "evidence": "Premium motion is brief, readable, physically consistent, and tied to the exact idea being explained."
+    }
+  ]
+}

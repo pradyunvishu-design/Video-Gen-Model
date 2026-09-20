@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "policy_id": "news_broll_55_20_15_10_v1",
+  "categories": {
+    "youtube_broll": {"target_share": 0.55, "tolerance": 0.02, "max_shot_seconds": 12},
+    "article_evidence": {"target_share": 0.20, "tolerance": 0.02, "max_shot_seconds": 12},
+    "motion_graphics": {"target_share": 0.15, "tolerance": 0.02, "max_shot_seconds": 8},
+    "miscellaneous": {"target_share": 0.10, "tolerance": 0.02, "max_shot_seconds": 12}
+  },
+  "minimum_youtube_alignment_score": 45,
+  "maximum_youtube_asset_uses": 1,
+  "source_audio_must_be_muted": true,
+  "motion_allowed_reasons": [
+    "no_relevant_rights_cleared_footage",
+    "chapter_transition",
+    "explanatory_data_visualization"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "name": "AI Media v2 - Credit Ceiling Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Approve additional episode credits",
+        "formDescription": "Use only after a production job pauses at its credit ceiling. The new limit must exceed both the current spend and previous limit.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Episode ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "New credit limit",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Approval note",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "credit-form",
+      "name": "Credit Approval Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const limit = Number($json['New credit limit']);\nif (!Number.isInteger(limit) || limit <= 15000) throw new Error('New credit limit must be an integer above 15000');\nreturn [{json:{episode_id:$json['Episode ID'], new_limit:limit, note:$json['Approval note']}}];"
+      },
+      "id": "validate-credit",
+      "name": "Validate Credit Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'approve_credits', payload:$json, idempotency_key:'credit-approval-' + $json.episode_id + '-' + $json.new_limit}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "submit-credit",
+      "name": "Submit Credit Approval",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Credit Approval Form": {
+      "main": [
+        [
+          {
+            "node": "Validate Credit Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Credit Approval": {
+      "main": [
+        [
+          {
+            "node": "Submit Credit Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago"
+  },
+  "active": false
+}

@@ -1,0 +1,201 @@
+{
+  "version": "ai-news-editorial-v6",
+  "status": "active-default",
+  "referenceBasis": "Original source-first editorial system adapted from MIT Third Brain ideation/verification methods and Apache-2.0 Open Design anti-slop/craft methods; no reference frames or proprietary artwork copied.",
+  "canvas": {
+    "background": "#121513",
+    "white": "#FFFFFF",
+    "paper": "#F0F2F0",
+    "muted": "#C8CEC9",
+    "line": "#4A4F4B",
+    "accent": "#FFFFFF",
+    "editorialAccent": "#83938C",
+    "safeInsetPx": 96,
+    "logicalWidth": 3840,
+    "logicalHeight": 2160,
+    "outputWidth": 1920,
+    "outputHeight": 1080,
+    "renderScale": 0.5,
+    "allowRepeatedFrameFurniture": false
+  },
+  "tokens": {
+    "spacingPx": [8, 12, 20, 32, 52, 84, 136],
+    "radiusPx": {"small": 8, "medium": 14, "large": 22},
+    "borderPx": {"quiet": 1, "active": 2},
+    "shadow": "0 20px 60px rgba(0,0,0,0.24)"
+  },
+  "brandColorPolicy": {
+    "canvasRemainsNeutral": true,
+    "officialMarksRemainUnmodified": true,
+    "brandColorIsLocalized": true,
+    "accentTargets": ["official-mark", "active-state", "single-evidence-cue"]
+  },
+  "colorSystem": {
+    "method": "primitive-to-semantic-token-routing",
+    "semanticRoles": ["canvas-neutral", "surface-raised", "line-subtle", "text-primary", "text-muted", "evidence-accent"],
+    "maximumNonBrandAccentHues": 1,
+    "editorialAccentRamp": {
+      "slate": "#83938C",
+      "moss": "#667C6D",
+      "clay": "#B56F55"
+    },
+    "forbiddenEditorialHex": ["#E8E32D", "#EAF21D", "#FFD21E", "#FFD24A", "#F5D547", "#A855F7", "#8B5CF6", "#7C3AED", "#9333EA", "#FF3B9D"],
+    "officialLogoColorException": "native color may remain inside an unmodified verified logo asset only",
+    "largeGradientFillsAllowed": false,
+    "ambientGlowAllowed": false
+  },
+  "typography": {
+    "displayFamily": "IBM Plex Serif",
+    "bodyFamily": "IBM Plex Sans",
+    "monoFamily": "IBM Plex Mono",
+    "headlinePx": [64, 104],
+    "bodyPx": [28, 42],
+    "labelPx": [18, 24],
+    "minimumBodyPx": 28,
+    "minimumLabelPx": 18,
+    "maximumHeadlineLines": 2,
+    "maximumBodyLineLength": 54,
+    "allCapsPolicy": "labels-only"
+  },
+  "timing": {
+    "meaningfulStateChangeMinSeconds": 2.0,
+    "meaningfulStateChangeMaxSeconds": 3.0,
+    "fadeFramesMin": 4,
+    "fadeFramesMax": 8,
+    "fadeFrames": 6,
+    "handoffFrames": 8,
+    "elementEntranceFrames": [8, 16],
+    "elementTravelPx": [8, 18]
+  },
+  "motion": {
+    "allowedIntents": ["micro", "enter", "connect", "emphasize"],
+    "defaultCamera": "locked",
+    "maximumEvidencePushIn": 1.01,
+    "continuousZoomAllowed": false,
+    "ambientDriftAllowed": false,
+    "parallaxAllowed": false,
+    "syntheticHandheldAllowed": false,
+    "allowedTransitions": ["hard-cut", "fade"],
+    "forbiddenTransitions": ["spin", "card-rotate", "camera-whip", "zoom-transition", "bounce", "glitch-loop"]
+  },
+  "annotationPolicy": {
+    "underlineRequiresExactDomText": true,
+    "underlineRequiresSingleLineDomRange": true,
+    "maximumUnderlineHeightRatio": 0.18,
+    "maximumUnderlineWidthRatio": 0.74,
+    "underlineStrokePx": 3,
+    "fallbackWhenUnverified": "none-or-element-outline",
+    "decorativeUnderlinesAllowed": false
+  },
+  "sourceCredit": {
+    "layout": "square newsroom lower-third with a three-pixel slate rule",
+    "prefix": "SOURCE",
+    "publisherColor": "#F0F2F0",
+    "metadataColor": "#A8AFAB",
+    "background": "rgba(14,17,15,0.88)",
+    "forbidden": ["status dot", "pill shape", "glow", "brand-colored chrome", "decorative icon"]
+  },
+  "artDirection": {
+    "directorPasses": ["semantic-brief", "three-concepts", "selection", "frame-contract", "motion-contract", "five-dimension-critique"],
+    "maximumFocalGroups": 3,
+    "maximumFocalIdeaWords": 12,
+    "maximumConceptTimelineShare": 0.4,
+    "minimumQualityScore": 85,
+    "minimumCritiqueDimension": 3,
+    "minimumPhilosophyScore": 4,
+    "maximumAutomaticRepairPasses": 1,
+    "requiredCompositionStrategy": "intentional-asymmetry",
+    "requiredProofPolicy": "real-source-or-official-brand-assets",
+    "forbiddenAestheticDefaults": [
+      "invented mascot",
+      "stacked all-caps headline",
+      "centered logo object",
+      "perfect symmetry",
+      "generic bento grid",
+      "plastic 3d icon",
+      "gradient text",
+      "cyan neon",
+      "purple blue gradient",
+      "ambient card grid",
+      "floating glass card",
+      "decorative underline",
+      "random glow",
+      "3d card rotation"
+    ]
+  },
+  "qualityGate": {
+    "representativeFrames": [0.0, 0.35, 0.7, 1.0],
+    "fiveDimensions": ["philosophy", "hierarchy", "detailExecution", "functionSpecificity", "innovationRestraint"],
+    "rejectBlockedPages": true,
+    "rejectPopupObstruction": true,
+    "rejectUnmotivatedZoom": true,
+    "rejectCameraShake": true,
+    "rejectRepeatedAssetOverLimit": true,
+    "rejectAnnotationWithoutExactTarget": true,
+    "rejectInventedMascot": true,
+    "rejectTemplateSymmetry": true,
+    "visualRegressionEnvironmentMustMatch": true
+  },
+  "dominance": {
+    "source": 0.9,
+    "terminal": 0.88,
+    "graph": 0.84,
+    "timeline": 0.84,
+    "compare": 0.82,
+    "activity": 0.82,
+    "stack": 0.82,
+    "chat": 0.8,
+    "title": 0.78
+  },
+  "repetition": {
+    "maxAdjacentSamePattern": 1,
+    "maxAdjacentSameComposition": 2,
+    "maxPatternTimelineShare": 0.3,
+    "maxAnchorRun": 2,
+    "maxTransitionRun": 4
+  },
+  "routing": {
+    "consequence": ["source-browser-proof", "compare-claim-proof", "title-number-hook"],
+    "proof": ["source-browser-proof", "source-repo-metrics", "source-ui-focus-corridor", "compare-claim-proof"],
+    "mechanism": ["graph-dependency-chain", "timeline-causality-chain", "stack-workflow-stages", "terminal-tool-call"],
+    "practical-consequence": ["compare-old-new", "compare-claim-proof", "activity-benchmark-run", "stack-workflow-stages"],
+    "caveat": ["source-ui-focus-corridor", "compare-promise-reality", "activity-error-recovery", "stack-workflow-stages"],
+    "decision": ["activity-verification-pass", "compare-claim-proof", "title-final-takeaway"],
+    "orientation": ["title-chapter-reset"]
+  },
+  "referenceAdaptations": {
+    "insiderForceHorizontalEditorial": {
+      "source": "https://www.youtube.com/@InsiderForce",
+      "use": "transferable grammar only; never reuse source assets, traced layouts, or recognizable compositions",
+      "horizontalTranslation": {
+        "aspectRatio": "16:9",
+        "dominantObjectFrameShare": [0.48, 0.72],
+        "maximumFocalGroups": 3,
+        "composition": "asymmetric editorial grid with generous negative space",
+        "typeTreatment": "oversized plain-language hierarchy with emphasis by weight and scale, never colored boxes",
+        "depthTreatment": "one raised proof object with a coherent soft physical shadow",
+        "motionTreatment": "one semantic entrance, connection, or transformation per narration clause"
+      },
+      "doNotImport": [
+        "vertical social framing",
+        "bright yellow or purple fields",
+        "subject cutouts from reference videos",
+        "exact icon arrangements",
+        "signature layouts"
+      ]
+    },
+    "seedanceEditorialInsert": {
+      "referenceSegment": "https://www.youtube.com/watch?v=XeMtZeXxHqw&t=781s",
+      "shareOfMotionGraphics": 0.5,
+      "overallTimelineShareUnchanged": 0.15,
+      "modelOrder": ["seedance:1080p", "kling-3.0:1080p", "veo3.1:1080p"],
+      "contract": "silent text-free horizontal motion plate; deterministic editor owns type, logos, data, and citations",
+      "preferredNarrativeJobs": ["mechanism", "process", "transformation", "comparison metaphor", "timeline bridge"],
+      "contraindications": ["exact benchmark", "quote", "article evidence", "table", "code", "source screenshot"],
+      "requiredHoldSeconds": 1.0,
+      "camera": "locked"
+    }
+  },
+  "delivery": {"width": 1920, "height": 1080, "fps": 30, "videoCodec": "h264", "audioCodec": "aac"},
+  "forbiddenFurniture": ["global-header-rule", "global-progress-bar", "decorative-underline", "ambient-card-grid", "repeated-full-frame-board", "ai-label", "b-roll-label"]
+}

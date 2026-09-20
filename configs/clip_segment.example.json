@@ -1,0 +1,23 @@
+{
+  "episode_id": "episode_replace_me",
+  "render": true,
+  "format": {
+    "segment_id": "release_explainer_01",
+    "media_asset_id": "licensed_clip_creator_demo_cc_01",
+    "clip_type": "release_video",
+    "headline": "The AI release everyone is suddenly talking about",
+    "hook": "This demo looks impressive, but one detail matters more than the flashy part.",
+    "context": "The company published the release this week, and the official demo focuses on speed and usability.",
+    "key_points": [
+      "What the company actually released",
+      "What the demonstration proves",
+      "What still has not been independently verified"
+    ],
+    "claim": "The new release changes how quickly creators can test an idea.",
+    "evidence": "The official demonstration supports the workflow claim, while quality and reliability still need independent testing.",
+    "why_it_matters": "The real story is not one impressive clip. It is whether normal users can reproduce the result.",
+    "source_label": "OFFICIAL RELEASE · CREATOR / COMPANY",
+    "target_seconds": 45,
+    "second_excerpt_offset_seconds": 7
+  }
+}

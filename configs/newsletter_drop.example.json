@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "title": "A concise newsletter subject or story headline",
+      "url": "https://the-original-source.example/story",
+      "publisher": "Newsletter name",
+      "published_at": "2026-08-08T12:00:00Z",
+      "author": "Author name",
+      "category": "models",
+      "body": "The newsletter excerpt or context. This is treated as a lead until primary evidence or independent reporting confirms it."
+    }
+  ]
+}

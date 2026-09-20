@@ -1,0 +1,106 @@
+{
+  "version": "ai-news-editorial-v3",
+  "status": "private-canary",
+  "canvas": {
+    "background": "#121513",
+    "white": "#FFFFFF",
+    "paper": "#F0F2F0",
+    "muted": "#C8CEC9",
+    "line": "#4A4F4B",
+    "accent": "#FFFFFF",
+    "safeInsetPx": 70,
+    "logicalWidth": 3840,
+    "logicalHeight": 2160,
+    "outputWidth": 1920,
+    "outputHeight": 1080,
+    "renderScale": 0.5,
+    "allowRepeatedFrameFurniture": false
+  },
+  "brandColorPolicy": {
+    "canvasRemainsNeutral": true,
+    "officialMarksRemainUnmodified": true,
+    "accentTargets": ["avatar-container", "single-connector", "evidence-emphasis"],
+    "editorialAvatarStatus": "channel-owned-not-official-mascot"
+  },
+  "colorSystem": {
+    "method": "primitive-to-semantic-token-routing",
+    "neutralRamp": {
+      "neutral-0": "#FFFFFF",
+      "neutral-50": "#F0F2F0",
+      "neutral-200": "#C8CEC9",
+      "neutral-600": "#4A4F4B",
+      "neutral-950": "#121513"
+    },
+    "brandAccents": {
+      "claude": "#D97757",
+      "openai-codex": "official-monochrome-asset"
+    }
+  },
+  "dataSeriesPalette": {
+    "source": "MetBrewer/Egypt",
+    "license": "CC0-1.0",
+    "colorblindFriendly": true,
+    "colors": ["#DD5129", "#0F7BA2", "#43B284", "#FAB255"],
+    "usage": "Only multi-series charts; never replace company accents or the neutral structural palette."
+  },
+  "timing": {
+    "meaningfulStateChangeMinSeconds": 2.0,
+    "meaningfulStateChangeMaxSeconds": 3.0,
+    "fadeFramesMin": 4,
+    "fadeFramesMax": 8,
+    "fadeFrames": 6,
+    "handoffFrames": 8
+  },
+  "typography": {
+    "minimumBodyPx": 26,
+    "minimumLabelPx": 18
+  },
+  "delivery": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioChannels": 2,
+    "audioSampleRate": 48000
+  },
+  "captions": {
+    "maximumGapMs": 1600,
+    "maximumFirstStartMs": 1600,
+    "maximumTrailingSilenceMs": 3000
+  },
+  "dominance": {
+    "source": 0.88,
+    "terminal": 0.88,
+    "graph": 0.82,
+    "timeline": 0.82,
+    "compare": 0.80,
+    "activity": 0.80,
+    "stack": 0.80,
+    "chat": 0.80,
+    "title": 0.76
+  },
+  "repetition": {
+    "maxAdjacentSamePattern": 1,
+    "maxAdjacentSameComposition": 2,
+    "maxPatternTimelineShare": 0.34,
+    "maxAnchorRun": 2,
+    "maxTransitionRun": 3
+  },
+  "routing": {
+    "consequence": ["source-browser-proof", "compare-claim-proof", "title-number-hook"],
+    "proof": ["source-browser-proof", "source-repo-metrics", "source-ui-focus-corridor", "compare-claim-proof"],
+    "mechanism": ["graph-dependency-chain", "timeline-causality-chain", "stack-workflow-stages", "terminal-tool-call"],
+    "practical-consequence": ["compare-old-new", "compare-claim-proof", "activity-benchmark-run", "stack-workflow-stages"],
+    "caveat": ["source-ui-focus-corridor", "compare-promise-reality", "activity-error-recovery", "stack-workflow-stages"],
+    "decision": ["activity-verification-pass", "compare-claim-proof", "title-final-takeaway"],
+    "orientation": ["title-chapter-reset"]
+  },
+  "forbiddenFurniture": [
+    "global-header-rule",
+    "global-progress-bar",
+    "decorative-underline",
+    "ambient-card-grid",
+    "repeated-full-frame-board"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "version": "buzz-presentation-canary-v1",
+  "status": "private-canary",
+  "canvas": {
+    "background": "#070808",
+    "paper": "#F2F1ED",
+    "accent": "#83938C",
+    "safeInsetPx": 70,
+    "logicalWidth": 3840,
+    "logicalHeight": 2160,
+    "outputWidth": 1920,
+    "outputHeight": 1080,
+    "renderScale": 0.5,
+    "allowRepeatedFrameFurniture": false
+  },
+  "timing": {
+    "meaningfulStateChangeMinSeconds": 2.0,
+    "meaningfulStateChangeMaxSeconds": 3.0,
+    "fadeFramesMin": 4,
+    "fadeFramesMax": 8,
+    "fadeFrames": 6,
+    "handoffFrames": 8
+  },
+  "typography": {"minimumBodyPx": 26, "minimumLabelPx": 18},
+  "delivery": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioChannels": 2,
+    "audioSampleRate": 48000
+  },
+  "captions": {
+    "maximumGapMs": 1600,
+    "maximumFirstStartMs": 1600,
+    "maximumTrailingSilenceMs": 3000
+  },
+  "dominance": {
+    "source": 0.88,
+    "terminal": 0.88,
+    "graph": 0.82,
+    "timeline": 0.82,
+    "compare": 0.8,
+    "activity": 0.8,
+    "stack": 0.8,
+    "chat": 0.8,
+    "title": 0.76
+  },
+  "repetition": {
+    "maxAdjacentSamePattern": 1,
+    "maxAdjacentSameComposition": 2,
+    "maxPatternTimelineShare": 0.34,
+    "maxAnchorRun": 2,
+    "maxTransitionRun": 3
+  },
+  "routing": {
+    "consequence": ["chat-studio-podcast", "title-keynote-stage", "source-browser-proof", "compare-claim-proof"],
+    "proof": ["source-browser-proof", "source-repo-metrics", "source-ui-focus-corridor", "compare-claim-proof"],
+    "mechanism": ["graph-agent-network", "timeline-ui-agent-handoff", "stack-workflow-stages", "chat-agent-handoff"],
+    "practical-consequence": ["chat-studio-podcast", "compare-old-new", "activity-verification-pass", "stack-workflow-stages"],
+    "caveat": ["source-ui-focus-corridor", "compare-promise-reality", "activity-error-recovery", "stack-workflow-stages"],
+    "decision": ["activity-task-queue", "activity-verification-pass", "compare-claim-proof", "title-final-takeaway"],
+    "orientation": ["title-keynote-stage", "title-chapter-reset"]
+  },
+  "forbiddenFurniture": [
+    "global-header-rule",
+    "global-progress-bar",
+    "decorative-underline",
+    "ambient-card-grid",
+    "repeated-full-frame-board"
+  ],
+  "integrity": {
+    "failClosed": true,
+    "evidenceLedgerRequired": true,
+    "rendererBindingRequired": true
+  }
+}

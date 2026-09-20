@@ -1,0 +1,12 @@
+{
+  "website": "https://aistudio.google.com/",
+  "goal": "Show the selected model, enter one harmless comparison prompt, generate one result, and hold on the output.",
+  "narration": "I gave the model one ordinary prompt so we could see the actual interface, the settings, and the result instead of reading another launch post.",
+  "duration_seconds": 24,
+  "profile": "google_manual",
+  "allowed_hosts": ["aistudio.google.com", "google.com", "googleusercontent.com"],
+  "inputs": {
+    "test_prompt": "Explain the difference between diffusion and autoregressive image generation in three plain-English bullets."
+  },
+  "allow_generation": true
+}

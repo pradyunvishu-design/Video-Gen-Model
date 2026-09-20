@@ -1,0 +1,352 @@
+{
+  "name": "AI Media v2 - Research and Weekly Slate",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Quality-first research and slate\n\n- Refreshes the 30-day source pool every 6 hours\n- Creates seven distinct briefs Sunday at 6 PM Central\n- Heavy media work stays in the authenticated video-worker\n\nUses the existing Header Auth credential named `Header Auth account` with header `Authorization` and value `Bearer <WORKER_API_TOKEN>`.",
+        "height": 360,
+        "width": 460,
+        "color": 4
+      },
+      "id": "note",
+      "name": "Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "refresh-trigger",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                0
+              ],
+              "triggerAtHour": 18,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "slate-trigger",
+      "name": "Sunday 6 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'refresh_sources', payload:{}, idempotency_key:'refresh-' + $now.toFormat('yyyy-LL-dd-HH')}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "refresh-job",
+      "name": "Refresh Source Pool",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://video-worker.example.com/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({stage:'research_slate', payload:{start_date:$now.toFormat('yyyy-LL-dd')}, idempotency_key:'slate-' + $now.toFormat('kkkk-WW')}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "slate-job",
+      "name": "Create Seven-Episode Slate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "id": "wait-slate",
+      "name": "Wait for Slate",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://video-worker.example.com/jobs/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "get-slate",
+      "name": "Check Slate Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "slate-complete",
+      "name": "Slate Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        980,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "slate-id",
+              "name": "slate_id",
+              "value": "={{ $json.result.slate_id }}",
+              "type": "string"
+            },
+            {
+              "id": "approval-url",
+              "name": "approval_form",
+              "value": "Open the published Weekly Slate Approval workflow form and submit this slate_id.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "slate-ready",
+      "name": "Slate Ready for Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "error",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "canceled",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "slate-failed",
+      "name": "Slate Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'Slate worker stopped with status ' + $json.status + ': ' + ($json.error || 'unknown error') }}"
+      },
+      "id": "stop-slate",
+      "name": "Stop on Slate Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Refresh Source Pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sunday 6 PM": {
+      "main": [
+        [
+          {
+            "node": "Create Seven-Episode Slate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Seven-Episode Slate": {
+      "main": [
+        [
+          {
+            "node": "Wait for Slate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Slate": {
+      "main": [
+        [
+          {
+            "node": "Check Slate Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Slate Job": {
+      "main": [
+        [
+          {
+            "node": "Slate Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slate Complete?": {
+      "main": [
+        [
+          {
+            "node": "Slate Ready for Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slate Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slate Failed?": {
+      "main": [
+        [
+          {
+            "node": "Stop on Slate Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Slate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  },
+  "active": false
+}

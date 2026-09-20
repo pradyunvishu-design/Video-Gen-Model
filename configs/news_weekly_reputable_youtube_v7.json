@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "episode_id": "episode_20260822_news_weekly",
+  "policy": {
+    "maximum_uses_per_source": 1,
+    "source_audio_muted": true,
+    "clip_seconds": 8
+  },
+  "selections": [
+    {"slot": 9, "candidate_id": "broll_73c59b85edba8a", "start_seconds": 75.0},
+    {"slot": 10, "candidate_id": "broll_d246b9b7321632", "start_seconds": 90.0},
+    {"slot": 11, "candidate_id": "broll_4ce6863296aada", "start_seconds": 90.0},
+    {"slot": 16, "candidate_id": "broll_3695393f62bf27", "start_seconds": 60.0},
+    {"slot": 20, "candidate_id": "broll_158ada72d74b2b", "start_seconds": 0.0},
+    {"slot": 19, "candidate_id": "broll_2ad780b32a0bce", "start_seconds": 20.0},
+    {"slot": 21, "candidate_id": "broll_21008d5721b83b", "start_seconds": 45.0},
+    {"slot": 28, "candidate_id": "broll_0bcffbf893ab6c", "start_seconds": 30.0},
+    {"slot": 34, "candidate_id": "broll_38d1d400e2b858", "start_seconds": 60.0},
+    {"slot": 38, "candidate_id": "broll_9294573c90b350", "start_seconds": 90.0},
+    {"slot": 39, "candidate_id": "broll_aacaac729c053d", "start_seconds": 90.0},
+    {"slot": 69, "candidate_id": "broll_fc3884e7b1181b", "start_seconds": 30.0},
+    {"slot": 93, "candidate_id": "broll_2ee3d419364d5c", "start_seconds": 90.0}
+  ]
+}

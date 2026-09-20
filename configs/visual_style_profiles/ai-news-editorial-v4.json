@@ -1,0 +1,59 @@
+{
+  "version": "ai-news-editorial-v4",
+  "status": "private-canary",
+  "referenceBasis": "AI LABS genre-level motion study refreshed 2026-08-18; original implementation only",
+  "delivery": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  },
+  "cameraPolicy": {
+    "default": "locked",
+    "stillScaleStart": 1.0,
+    "stillScaleEnd": 1.0,
+    "maximumEvidencePushIn": 1.01,
+    "allowContinuousZoom": false,
+    "allowAmbientDrift": false,
+    "allowParallax": false,
+    "allowSyntheticHandheld": false
+  },
+  "editMix": {
+    "officialFootageShare": 0.56,
+    "sourcePageShare": 0.22,
+    "motionGraphicShare": 0.22,
+    "minimumInformationStateSeconds": 3,
+    "maximumInformationStateSeconds": 6,
+    "maximumAssetUses": 2
+  },
+  "motion": {
+    "elementEntranceFrames": [8, 16],
+    "elementTravelPx": [8, 18],
+    "connectorDrawFrames": [22, 42],
+    "annotationDrawFrames": [12, 24],
+    "settleAfterEntrance": true,
+    "animateCameraInsteadOfElements": false
+  },
+  "overlays": {
+    "minimumGapShots": 1,
+    "maximumLines": 2,
+    "sourceBadgeRequired": true,
+    "semanticAnnotationsOnly": true,
+    "permanentLowerThird": false,
+    "decorativeUnderline": false
+  },
+  "transitions": {
+    "default": "hard-cut",
+    "allowed": ["hard-cut", "opacity-4-frames", "directional-blur-6-frames"],
+    "forbidden": ["camera-whip", "zoom-transition", "spin", "bounce", "glitch-loop"]
+  },
+  "qualityGate": {
+    "rejectBlockedPages": true,
+    "rejectPopupObstruction": true,
+    "rejectUnmotivatedZoom": true,
+    "rejectCameraShake": true,
+    "rejectRepeatedAssetOverLimit": true,
+    "rejectAnnotationWithoutTarget": true
+  }
+}

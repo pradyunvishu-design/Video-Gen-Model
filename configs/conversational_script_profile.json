@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "profile_id": "conversational_ai_news_v2",
+  "research_basis": {
+    "sample_size": 18,
+    "source_kind": "public transcript-backed AI Search videos spanning product tests, explainers, and news roundups",
+    "stored_material": "transformed structural observations only; no transcript passages, catchphrases, jokes, or creator persona"
+  },
+  "opening_modes": {
+    "verdict_first": "Lead with a bounded judgment, immediately identify the evidence behind it, then name the limitation the episode will test.",
+    "demonstration_first": "Let a real output, failure, interface action, or source clip create the first question; explain it only after the viewer can see it.",
+    "relatable_friction": "Begin with a specific creator or user problem documented by the evidence, then reveal the change that might solve it.",
+    "context_reversal": "Establish the familiar incumbent or prior assumption in one sentence, then show the new evidence that changes the comparison.",
+    "roundup_burst": "Frame the week with one consequence, preview only the strongest developments, and enter the top story before the opening becomes a list."
+  },
+  "selection_rubric": [
+    "specificity: a viewer can name the product, result, friction, or decision",
+    "proof: the edit can show supporting evidence in the first 45 seconds",
+    "freshness: the wording and mechanism do not resemble the last episode or a stock hook",
+    "clarity: the opening contains one answerable promise",
+    "speakability: the thought survives a natural read aloud without trailer voice",
+    "honesty: every factual assertion maps to supplied claim IDs"
+  ],
+  "conversation_loop": [
+    "name the concrete thing that changed",
+    "translate it in one ordinary sentence",
+    "show the strongest available proof or example",
+    "say what the proof changes for a normal viewer",
+    "state the important boundary without legalistic language",
+    "land a useful judgment or hand off through genuine cause and effect"
+  ],
+  "rhythm": {
+    "sentence_pattern": "often pair one concise observation with one fuller explanation; vary this rather than repeating it mechanically",
+    "direct_address": "use occasionally for a real viewer decision, never as constant engagement filler",
+    "reactions": "short and calibrated; proof comes before excitement",
+    "asides": "keep only when they clarify confusing naming, an awkward workflow, or a real contradiction",
+    "questions": "ask only when the answer organizes the next section; never stack rhetorical questions",
+    "pauses": "pause after proof, contrast, uncertainty, or a verdict; do not punctuate every line for drama"
+  },
+  "retention": {
+    "opening_deadline_seconds": 12,
+    "first_proof_deadline_seconds": 45,
+    "new_value_interval_seconds": "45-75",
+    "midpoint_rehook": "between 40 and 60 percent, introduce new evidence, a failed assumption, or a harder test—not a verbal tease",
+    "chapter_exit": "end on a consequence, decision, limitation, or unresolved causal question; a clean cut is valid"
+  },
+  "episode_contract": {
+    "intro": "identify the exact product or event immediately, preview the specific capabilities, limitations, and decision the episode will cover, and reach the first visible proof without a long greeting",
+    "conclusion": "answer the opening promise in plain language, state who should care, repeat the most useful operating rule, preserve the main caveat, and end on one concrete next test instead of a generic recap or subscribe pitch"
+  },
+  "anti_imitation": {
+    "rule": "adapt explanatory mechanics, never distinctive wording, repeated creator phrases, jokes, cadence signatures, persona, or branding",
+    "blocked_patterns": [
+      "AI never sleeps",
+      "this week was insane",
+      "let's jump right in",
+      "here's where it gets interesting",
+      "this changes everything",
+      "you won't believe what happened next"
+    ],
+    "anti_template": "do not use the same opening mode, sentence shell, five-word phrase, or handoff repeatedly within one script"
+  },
+  "narration_performance": {
+    "continuity": "one approved narrator and longer semantic performance blocks reduce audible identity and cadence resets",
+    "punctuation": "write ordinary spoken punctuation; use delivery metadata for silence rather than bracketed stage directions",
+    "pronunciation": "supply explicit pronunciations only for product names or technical terms the engine is likely to misread",
+    "emotion": "default to calm technical conversation; curiosity can lift a question, uncertainty stays restrained, and emphasis appears only after proof—not on every headline or list item"
+  }
+}

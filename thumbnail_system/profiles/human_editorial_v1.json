@@ -1,0 +1,51 @@
+{
+  "profile_id": "human-editorial-v1",
+  "source_language": "English only",
+  "generator": {
+    "provider": "Magic Hour",
+    "model": "nano-banana-2",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "role": "background or subject plate only"
+  },
+  "positive_signals": [
+    "real editorial photography or tactile paper construction",
+    "one obvious focal cluster",
+    "natural lens behavior and practical lighting",
+    "small physical imperfections and believable material texture",
+    "large low-detail negative space reserved for deterministic headline composition",
+    "story objects that directly support the verified video hook"
+  ],
+  "negative_signals": [
+    "AI-generated logos, mascots, UI, charts, words, letters, or numbers",
+    "pseudo-writing, fake handwriting, illegible diagrams, or text-like marks anywhere in the generated plate",
+    "glossy plastic surfaces",
+    "neon fog or excessive bloom",
+    "perfectly symmetric synthetic staging",
+    "random cables, glyphs, buttons, screens, or decorative technology",
+    "fake shocked faces, malformed hands, and repeated objects",
+    "generic blue-purple cyberpunk color grading"
+  ],
+  "composition_contract": {
+    "generated_plate_share": "40-65% of final pixels",
+    "official_identity": "always composited afterward from a transparent official asset",
+    "headline": "always typeset afterward; 2-5 words; maximum two lines",
+    "source_proof": "always inserted afterward from an English evidence asset",
+    "mobile_gate": "must remain understandable at 320x180"
+  },
+  "learning_loop": {
+    "accepted_directory": "thumbnail_system/feedback/accepted",
+    "rejected_directory": "thumbnail_system/feedback/rejected",
+    "record_fields": [
+      "prompt_version",
+      "project_id",
+      "source_topic",
+      "approval",
+      "rejection_reasons",
+      "mobile_legibility_score",
+      "human_made_score",
+      "identity_accuracy_score"
+    ],
+    "update_rule": "Promote repeated accepted visual traits into positive_signals and repeated rejection reasons into negative_signals; never alter factual or brand constraints."
+  }
+}

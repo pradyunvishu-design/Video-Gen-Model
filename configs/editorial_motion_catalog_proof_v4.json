@@ -1,0 +1,98 @@
+{
+  "episodeId": "editorial-motion-catalog-proof-v4",
+  "seriesName": "EDITORIAL MOTION / FIELD STUDY 04",
+  "footer": "ONE DOMINANT IDEA PER FRAME",
+  "audioSrc": "",
+  "captions": [],
+  "scenes": [
+    {
+      "id": "claude-command", "kind": "terminal", "motionPattern": "terminal-command-run", "durationSeconds": 4,
+      "chapter": "01 / CLAUDE TERMINAL", "title": "CLAUDE CODE / VERIFIED RUN", "subtitle": "The terminal owns the frame; finished lines become quiet.", "anchor": "center", "accent": "#D97757",
+      "logos": [{"name": "Claude", "src": "brands/claude.svg", "color": "#D97757"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["claude --model opus", "Read the official release notes", "Inspect the repository state", "Run one controlled task", "Save the observed limitation"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "codex-tool", "kind": "terminal", "motionPattern": "terminal-tool-call", "durationSeconds": 4,
+      "chapter": "02 / CODEX TOOL CALL", "title": "CODEX / TOOL REQUEST", "subtitle": "The result replaces the request instead of adding decorative motion.", "anchor": "center", "accent": "#F2F1ED",
+      "logos": [{"name": "OpenAI", "src": "brands/openai.svg", "color": "#F2F1ED"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["tool: browser.capture", "url: official product page", "focus: pricing limit", "output: evidence_014"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": "The capture is linked to the exact claim it supports."
+    },
+    {
+      "id": "claude-diff", "kind": "terminal", "motionPattern": "terminal-diff-apply", "durationSeconds": 4,
+      "chapter": "03 / PATCH", "title": "CLAUDE CODE / DIFF", "subtitle": "Additions and removals use restrained semantic color.", "anchor": "left", "accent": "#D97757",
+      "logos": [{"name": "Claude", "src": "brands/claude.svg", "color": "#D97757"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["generic_card_animation.tsx", "MotionIntent = enter | connect", "yellowBackground = false", "dominantStageRatio = 0.90", "visualQCPassed = true"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "codex-tests", "kind": "terminal", "motionPattern": "terminal-test-suite", "durationSeconds": 4,
+      "chapter": "04 / CHECKS", "title": "CODEX / VISUAL TESTS", "subtitle": "A compact pass state is more useful than a celebratory animation.", "anchor": "right", "accent": "#F2F1ED",
+      "logos": [{"name": "OpenAI", "src": "brands/openai.svg", "color": "#F2F1ED"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["title-safe bounds", "minimum text size", "logo aspect ratio", "yellow area threshold", "pattern repetition", "source provenance"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "claude-stream", "kind": "terminal", "motionPattern": "terminal-streaming-output", "durationSeconds": 4,
+      "chapter": "05 / LIVE STATE", "title": "CLAUDE / STREAMING OUTPUT", "subtitle": "Only the active line keeps its cursor.", "anchor": "center", "accent": "#D97757",
+      "logos": [{"name": "Claude", "src": "brands/claude.svg", "color": "#D97757"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["researching primary source", "extracting supported claims", "planning visual evidence", "rendering motion sequence", "checking final frames"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "codex-tree", "kind": "terminal", "motionPattern": "terminal-file-tree", "durationSeconds": 4,
+      "chapter": "06 / PROJECT", "title": "CODEX / CHANGE MAP", "subtitle": "The repository structure expands in reading order.", "anchor": "left", "accent": "#F2F1ED",
+      "logos": [{"name": "OpenAI", "src": "brands/openai.svg", "color": "#F2F1ED"}], "messages": [], "nodes": [], "edges": [],
+      "items": ["remotion/", "src/editorial/", "motionCatalog.ts", "scenes/", "TerminalScene.tsx", "pipeline/editorial_motion_system.py"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "agent-network", "kind": "graph", "motionPattern": "graph-agent-network", "durationSeconds": 4,
+      "chapter": "07 / AGENT NETWORK", "title": "ONE TASK. THREE SPECIALISTS.", "subtitle": "Connections draw before results appear.", "anchor": "right", "accent": "#F2F1ED", "logos": [], "messages": [], "items": [],
+      "nodes": [
+        {"id": "brief", "label": "BRIEF", "color": "#F2F1ED", "x": 0.18, "y": 0.50},
+        {"id": "research", "label": "RESEARCH", "logo": "brands/claude.svg", "color": "#D97757", "x": 0.78, "y": 0.22},
+        {"id": "build", "label": "BUILD", "logo": "brands/openai.svg", "color": "#F2F1ED", "x": 0.78, "y": 0.50},
+        {"id": "verify", "label": "VERIFY", "color": "#7FA589", "x": 0.78, "y": 0.76}
+      ],
+      "edges": [["brief", "research"], ["brief", "build"], ["brief", "verify"]],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "agent-handoff", "kind": "chat", "motionPattern": "chat-agent-handoff", "durationSeconds": 4,
+      "chapter": "08 / HANDOFF", "title": "#EDITORIAL-HANDOFF", "subtitle": "", "anchor": "center", "accent": "#F2F1ED", "logos": [], "nodes": [], "edges": [], "items": [],
+      "messages": [
+        {"speaker": "Claude", "logo": "brands/claude.svg", "color": "#D97757", "time": "09:41", "text": "Three claims are supported by primary sources."},
+        {"speaker": "Codex", "logo": "brands/openai.svg", "color": "#F2F1ED", "time": "09:42", "text": "I linked each claim to a full-screen visual."},
+        {"speaker": "Claude", "logo": "brands/claude.svg", "color": "#D97757", "time": "09:43", "text": "The benchmark still needs an independent check."},
+        {"speaker": "Codex", "logo": "brands/openai.svg", "color": "#F2F1ED", "time": "09:44", "text": "Blocked before narration. That is the correct failure."}
+      ],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "verification", "kind": "activity", "motionPattern": "activity-verification-pass", "durationSeconds": 4,
+      "chapter": "09 / QUALITY GATE", "title": "EVERY FRAME EARNS ITS PLACE", "subtitle": "The viewer should understand what changed and why.", "anchor": "left", "accent": "#7FA589", "logos": [], "messages": [], "nodes": [], "edges": [],
+      "items": ["Claim has evidence", "Source fills the frame", "Motion follows reading order", "Accent explains state", "Text survives phone playback"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "causal-timeline", "kind": "timeline", "motionPattern": "timeline-causality-chain", "durationSeconds": 4,
+      "chapter": "10 / CAUSALITY", "title": "FROM RELEASE TO REAL IMPACT", "subtitle": "The animation follows the logic, not the decoration.", "anchor": "center", "accent": "#83938C", "logos": [], "messages": [], "nodes": [], "edges": [],
+      "items": ["Release", "Primary claim", "Controlled test", "Observed limit", "Practical verdict"],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null, "claim": "", "evidence": ""
+    },
+    {
+      "id": "source-proof", "kind": "source", "motionPattern": "source-browser-proof", "durationSeconds": 4,
+      "chapter": "11 / SOURCE", "title": "THE PAGE IS THE VISUAL", "subtitle": "Evidence receives the largest footprint.", "anchor": "right", "accent": "#FF6673", "logos": [], "messages": [], "nodes": [], "edges": [], "items": [],
+      "sourceAsset": "episode/h3-news/minimax_launch-minimax-h3-official-launch-viewport.png", "sourceLabel": "MINIMAX / OFFICIAL LAUNCH", "sourceUrl": "minimax.io/news/minimax-h3", "sourceStartSeconds": 0,
+      "sourceFocus": {"x": 0.32, "y": 0.16, "width": 0.48, "height": 0.08, "label": "VERIFIED RELEASE DETAIL"}, "claim": "", "evidence": ""
+    },
+    {
+      "id": "final-rule", "kind": "compare", "motionPattern": "compare-claim-proof", "durationSeconds": 5,
+      "chapter": "12 / VERDICT", "title": "DESIGN THE EXPLANATION.", "subtitle": "The reusable system now chooses from 54 semantic patterns before it animates anything.", "anchor": "center", "accent": "#83938C", "logos": [], "messages": [], "nodes": [], "edges": [], "items": [],
+      "sourceAsset": "", "sourceLabel": "", "sourceUrl": "", "sourceStartSeconds": 0, "sourceFocus": null,
+      "claim": "More motion presets automatically create better videos.", "evidence": "Better videos come from matching one information relationship to one dominant visual and one clear reveal order."
+    }
+  ]
+}

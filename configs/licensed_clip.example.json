@@ -1,0 +1,17 @@
+{
+  "episode_id": "episode_replace_me",
+  "shot_ids": ["shot_012"],
+  "request": {
+    "clip_id": "creator_demo_cc_01",
+    "source_id": "source_replace_me",
+    "url": "https://www.youtube.com/watch?v=replace_me",
+    "start_seconds": 42.5,
+    "end_seconds": 55.0,
+    "rights_basis": "creative_commons",
+    "rights_proof_file": "",
+    "rights_proof_url": "",
+    "approved_by": "Editor name",
+    "attribution": "Creator — Video title — source URL",
+    "keep_audio": false
+  }
+}

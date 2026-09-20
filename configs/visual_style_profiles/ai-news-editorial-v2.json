@@ -1,0 +1,57 @@
+{
+  "version": "ai-news-editorial-v2",
+  "status": "private-canary",
+  "canvas": {
+    "background": "#070808",
+    "paper": "#F2F1ED",
+    "accent": "#83938C",
+    "safeInsetPx": 70,
+    "allowRepeatedFrameFurniture": false
+  },
+  "timing": {
+    "meaningfulStateChangeMinSeconds": 2.0,
+    "meaningfulStateChangeMaxSeconds": 3.0,
+    "fadeFramesMin": 4,
+    "fadeFramesMax": 8,
+    "fadeFrames": 6,
+    "handoffFrames": 8
+  },
+  "typography": {
+    "minimumBodyPx": 26,
+    "minimumLabelPx": 18
+  },
+  "dominance": {
+    "source": 0.88,
+    "terminal": 0.88,
+    "graph": 0.82,
+    "timeline": 0.82,
+    "compare": 0.80,
+    "activity": 0.80,
+    "stack": 0.80,
+    "chat": 0.80,
+    "title": 0.76
+  },
+  "repetition": {
+    "maxAdjacentSamePattern": 1,
+    "maxAdjacentSameComposition": 2,
+    "maxPatternTimelineShare": 0.34,
+    "maxAnchorRun": 2,
+    "maxTransitionRun": 3
+  },
+  "routing": {
+    "consequence": ["source-browser-proof", "compare-claim-proof", "title-number-hook"],
+    "proof": ["source-browser-proof", "source-repo-metrics", "source-ui-focus-corridor", "compare-claim-proof"],
+    "mechanism": ["graph-dependency-chain", "timeline-causality-chain", "stack-workflow-stages", "terminal-tool-call"],
+    "practical-consequence": ["compare-old-new", "compare-claim-proof", "activity-benchmark-run", "stack-workflow-stages"],
+    "caveat": ["source-ui-focus-corridor", "compare-promise-reality", "activity-error-recovery", "stack-workflow-stages"],
+    "decision": ["activity-verification-pass", "compare-claim-proof", "title-final-takeaway"],
+    "orientation": ["title-chapter-reset"]
+  },
+  "forbiddenFurniture": [
+    "global-header-rule",
+    "global-progress-bar",
+    "decorative-underline",
+    "ambient-card-grid",
+    "repeated-full-frame-board"
+  ]
+}

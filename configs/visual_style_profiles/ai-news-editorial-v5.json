@@ -1,0 +1,163 @@
+{
+  "version": "ai-news-editorial-v5",
+  "status": "active-default",
+  "referenceBasis": "Original source-first editorial system informed by open motion, token, typography, icon, chart, and visual-regression methods; no reference frames copied.",
+  "canvas": {
+    "background": "#121513",
+    "white": "#FFFFFF",
+    "paper": "#F0F2F0",
+    "muted": "#C8CEC9",
+    "line": "#4A4F4B",
+    "accent": "#FFFFFF",
+    "safeInsetPx": 96,
+    "logicalWidth": 3840,
+    "logicalHeight": 2160,
+    "outputWidth": 1920,
+    "outputHeight": 1080,
+    "renderScale": 0.5,
+    "allowRepeatedFrameFurniture": false
+  },
+  "tokens": {
+    "spacingPx": [8, 12, 20, 32, 52, 84, 136],
+    "radiusPx": {"small": 10, "medium": 18, "large": 28},
+    "borderPx": {"quiet": 2, "active": 3},
+    "shadow": "0 24px 80px rgba(0,0,0,0.28)",
+    "neutralRamp": {
+      "neutral-0": "#FFFFFF",
+      "neutral-50": "#F0F2F0",
+      "neutral-200": "#C8CEC9",
+      "neutral-600": "#4A4F4B",
+      "neutral-950": "#121513"
+    }
+  },
+  "brandColorPolicy": {
+    "canvasRemainsNeutral": true,
+    "officialMarksRemainUnmodified": true,
+    "brandColorIsLocalized": true,
+    "accentTargets": ["official-mark", "active-state", "single-evidence-cue"]
+  },
+  "colorSystem": {
+    "method": "primitive-to-semantic-token-routing",
+    "semanticRoles": ["canvas-neutral", "surface-raised", "line-subtle", "text-primary", "text-muted", "evidence-accent"],
+    "maximumNonBrandAccentHues": 1,
+    "largeGradientFillsAllowed": false,
+    "dataSeriesPalette": {
+      "source": "MetBrewer/Egypt",
+      "license": "CC0-1.0",
+      "colors": ["#DD5129", "#0F7BA2", "#43B284", "#FAB255"],
+      "usage": "multi-series charts only"
+    }
+  },
+  "typography": {
+    "displayFamily": "IBM Plex Sans",
+    "bodyFamily": "IBM Plex Sans",
+    "monoFamily": "IBM Plex Mono",
+    "headlinePx": [72, 110],
+    "bodyPx": [28, 42],
+    "labelPx": [18, 24],
+    "minimumBodyPx": 28,
+    "minimumLabelPx": 18,
+    "maximumHeadlineLines": 2,
+    "maximumBodyLineLength": 54
+  },
+  "timing": {
+    "meaningfulStateChangeMinSeconds": 2.0,
+    "meaningfulStateChangeMaxSeconds": 3.0,
+    "fadeFramesMin": 4,
+    "fadeFramesMax": 8,
+    "fadeFrames": 6,
+    "handoffFrames": 8,
+    "elementEntranceFrames": [8, 16],
+    "elementTravelPx": [8, 18]
+  },
+  "motion": {
+    "allowedIntents": ["micro", "enter", "connect", "emphasize"],
+    "defaultCamera": "locked",
+    "maximumEvidencePushIn": 1.01,
+    "continuousZoomAllowed": false,
+    "ambientDriftAllowed": false,
+    "parallaxAllowed": false,
+    "syntheticHandheldAllowed": false,
+    "allowedTransitions": ["hard-cut", "fade"],
+    "forbiddenTransitions": ["spin", "card-rotate", "camera-whip", "zoom-transition", "bounce", "glitch-loop"]
+  },
+  "artDirection": {
+    "directorPasses": ["semantic-brief", "three-concepts", "selection", "frame-contract", "motion-contract", "critique"],
+    "maximumFocalGroups": 3,
+    "maximumFocalIdeaWords": 12,
+    "maximumConceptTimelineShare": 0.4,
+    "minimumQualityScore": 85,
+    "maximumAutomaticRepairPasses": 1,
+    "forbiddenAestheticDefaults": [
+      "gradient text",
+      "cyan neon",
+      "purple blue gradient",
+      "ambient card grid",
+      "floating glass card",
+      "decorative underline",
+      "random glow",
+      "3d card rotation"
+    ]
+  },
+  "delivery": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioChannels": 2,
+    "audioSampleRate": 48000
+  },
+  "captions": {
+    "maximumGapMs": 1600,
+    "maximumFirstStartMs": 1600,
+    "maximumTrailingSilenceMs": 3000
+  },
+  "dominance": {
+    "source": 0.88,
+    "terminal": 0.88,
+    "graph": 0.84,
+    "timeline": 0.84,
+    "compare": 0.82,
+    "activity": 0.82,
+    "stack": 0.82,
+    "chat": 0.80,
+    "title": 0.78
+  },
+  "repetition": {
+    "maxAdjacentSamePattern": 1,
+    "maxAdjacentSameComposition": 2,
+    "maxPatternTimelineShare": 0.3,
+    "maxAnchorRun": 2,
+    "maxTransitionRun": 4
+  },
+  "routing": {
+    "consequence": ["source-browser-proof", "compare-claim-proof", "title-number-hook"],
+    "proof": ["source-browser-proof", "source-repo-metrics", "source-ui-focus-corridor", "compare-claim-proof"],
+    "mechanism": ["graph-dependency-chain", "timeline-causality-chain", "stack-workflow-stages", "terminal-tool-call"],
+    "practical-consequence": ["compare-old-new", "compare-claim-proof", "activity-benchmark-run", "stack-workflow-stages"],
+    "caveat": ["source-ui-focus-corridor", "compare-promise-reality", "activity-error-recovery", "stack-workflow-stages"],
+    "decision": ["activity-verification-pass", "compare-claim-proof", "title-final-takeaway"],
+    "orientation": ["title-chapter-reset"]
+  },
+  "qualityGate": {
+    "representativeFrames": [0.0, 0.35, 0.7, 1.0],
+    "rejectBlockedPages": true,
+    "rejectPopupObstruction": true,
+    "rejectUnmotivatedZoom": true,
+    "rejectCameraShake": true,
+    "rejectRepeatedAssetOverLimit": true,
+    "rejectAnnotationWithoutTarget": true,
+    "visualRegressionEnvironmentMustMatch": true
+  },
+  "forbiddenFurniture": [
+    "global-header-rule",
+    "global-progress-bar",
+    "decorative-underline",
+    "ambient-card-grid",
+    "repeated-full-frame-board",
+    "ai-label",
+    "b-roll-label"
+  ]
+}
+

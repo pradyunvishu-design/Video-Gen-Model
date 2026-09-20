@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "reference": {
+    "title": "How to Build an AI Agent that Scrapes Viral News! (n8n tutorial)",
+    "channel": "Duncan Rogoff | Learn Claude Code",
+    "url": "https://www.youtube.com/watch?v=tZW8RHuUoYw",
+    "video_id": "tZW8RHuUoYw",
+    "license": "creativeCommon",
+    "analyzed_from": ["public YouTube metadata", "public English captions"],
+    "method_only": true
+  },
+  "adapted_method": {
+    "schedule": "refresh every six hours",
+    "hot_window_hours": 72,
+    "research_window_days": 30,
+    "steps": [
+      "Read curated primary, reporting, newsletter, repository, Reddit, and Hacker News feeds.",
+      "Normalize URLs and discard stale feed entries before full-text enrichment.",
+      "Extract the article body into compact plain text instead of passing raw HTML to the model.",
+      "Create a structured record containing headline, publisher, publication date, source URL, source role, summary, entities, and category.",
+      "Cluster duplicate coverage and compute recency, engagement, breadth, evidence, consequence, and visual-demonstrability scores.",
+      "Treat newsletters and community attention as momentum signals, never as sole factual evidence.",
+      "Require primary evidence or independent reporting before a story can enter a script.",
+      "Store the ranked records for weekly and daily editorial review."
+    ],
+    "viral_signal_policy": {
+      "preferred": [
+        "multiple independent publishers covering the same event",
+        "rapid engagement growth",
+        "official launch with a demonstrable product change",
+        "strong community discussion confirmed by primary evidence"
+      ],
+      "reject": [
+        "rumor-only stories",
+        "old articles resurfacing without a material update",
+        "single-source hype without evidence",
+        "high engagement with no usable visual proof"
+      ]
+    },
+    "publishing_enabled": false
+  }
+}

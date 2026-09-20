@@ -1,0 +1,47 @@
+{
+  "profile_id": "original_tech_host_measured_delivery_v4",
+  "scope": "Broad non-identifying narration delivery only; never use or describe this profile as a clone or impersonation.",
+  "reference_method": {
+    "source_count": 2,
+    "sample_windows_per_source": 6,
+    "window_seconds": 45,
+    "distribution": "opening-adjacent, early, middle, late, ending-adjacent",
+    "full_mix_loudness": true
+  },
+  "delivery_targets": {
+    "gross_wpm_center": 146.885,
+    "gross_wpm_working_band": [142, 152],
+    "pause_median_seconds": 0.285,
+    "pause_p75_seconds": 0.37,
+    "pause_p90_seconds": 0.473,
+    "sentence_end_pause_median_seconds": 0.3,
+    "pauses_per_minute": 14.555,
+    "sentence_words_median": 14.5,
+    "sentence_words_p75": 18.375,
+    "register": "grounded middle-low male register",
+    "sentence_endings": "neutral or slightly downward",
+    "emphasis": "one meaning-bearing word per thought at most",
+    "energy": "technically curious, understated, lightly dry, matter-of-fact"
+  },
+  "mastering_targets": {
+    "integrated_lufs": -17.0,
+    "true_peak_dbfs": -1.5,
+    "maximum_lra_lu": 5.0,
+    "note": "Reference full mixes ranged from -16.0 to -18.5 LUFS and had unsafe positive true peaks. Do not copy that clipping."
+  },
+  "script_constraints": {
+    "preferred_sentence_words": [12, 18],
+    "long_sentence_soft_limit_words": 30,
+    "connect_lists": true,
+    "avoid_paragraph_performance_resets": true,
+    "avoid_forced_jokes": true,
+    "avoid_announcer_language": true
+  },
+  "current_original_voice": {
+    "provider": "Google Gemini TTS",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Zubenelgenubi",
+    "status": "best measured delivery of tested original presets, pending human listening approval",
+    "canary": "C:\\Youtube Automation for Magic hour\\output\\voice_canary\\measured_original_tech_host_v4_round2\\zubenelgenubi_connected_master.wav"
+  }
+}
