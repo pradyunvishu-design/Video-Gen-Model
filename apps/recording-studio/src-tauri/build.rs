@@ -25,6 +25,31 @@ fn main() {
     if std::fs::read("icons/icon.ico").ok().as_deref() != Some(icon.as_slice()) {
         std::fs::write("icons/icon.ico", icon).expect("write generated studio icon");
     }
+    // Tauri's macOS context requires an RGBA PNG as well as the Windows ICO.
+    let mut rgba = Vec::with_capacity(32 * 32 * 4);
+    for y in 0i32..32 {
+        for x in 0i32..32 {
+            let inside = (x - 16).pow(2) + (y - 16).pow(2) < 100;
+            rgba.extend_from_slice(if inside {
+                &[34, 211, 238, 255]
+            } else {
+                &[17, 24, 39, 255]
+            });
+        }
+    }
+    let mut png_bytes = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut png_bytes, 32, 32);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_depth(png::BitDepth::Eight);
+        let mut writer = encoder.write_header().expect("encode generated PNG header");
+        writer
+            .write_image_data(&rgba)
+            .expect("encode generated PNG pixels");
+    }
+    if std::fs::read("icons/icon.png").ok().as_deref() != Some(png_bytes.as_slice()) {
+        std::fs::write("icons/icon.png", png_bytes).expect("write generated PNG icon");
+    }
     #[cfg(target_os = "macos")]
     {
         use std::{path::PathBuf, process::Command};

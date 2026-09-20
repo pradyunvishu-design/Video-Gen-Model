@@ -49,7 +49,15 @@ try {
   await main.getByRole('textbox', { name: 'Recording title' }).fill('SYNTHETIC native acceptance');
   await main.getByRole('button', { name: 'Start recording', exact: true }).click();
   started = true;
-  await delay(2400);
+  let recording;
+  for (let i = 0; i < 30; i++) {
+    recording = await main.evaluate(() => window.__TAURI_INTERNALS__.invoke('recording_status'));
+    if (recording.status === 'recording' && recording.elapsedSeconds >= 3) break;
+    const alerts = await main.getByRole('alert').allTextContents();
+    if (recording.error || alerts.length) throw new Error(`Capture startup failed: ${recording.error || alerts.join(' ')}`);
+    await delay(400);
+  }
+  if (recording?.status !== 'recording') throw new Error(`Capture never became active: ${JSON.stringify(recording)}`);
   const hud = browser.contexts().flatMap(context => context.pages()).find(page => page.url().includes('hud=1'));
   if (!hud) throw new Error('Recording HUD missing.');
   const timer = await hud.getByLabel('Recording timer').textContent();
@@ -85,6 +93,10 @@ try {
   const report = { passed: true, fixtureOnly: true, microphone: false, timer, sourcePlayback, exportPlayback, sample, checked: ['actual Win32 window capture', 'synthetic pixels present (not black)', 'Tauri IPC', 'HUD stop', 'SQLite save', 'source WebView2 playback', 'FFmpeg H264 export', 'export WebView2 playback'] };
   writeFileSync(join(results, 'native-smoke.json'), JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report));
+} catch (error) {
+  if (main) await main.screenshot({ path: join(root, 'test-results/native-failure.png'), fullPage: true }).catch(() => {});
+  writeFileSync(join(root, 'test-results/native-smoke.json'), JSON.stringify({ passed: false, error: error.message, fixtureOnly: true }, null, 2));
+  throw error;
 } finally {
   if (started && main) {
     await main.evaluate(() => window.__TAURI_INTERNALS__.invoke('stop_recording')).catch(() => {});

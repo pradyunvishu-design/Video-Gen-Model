@@ -171,7 +171,7 @@ pub fn prepare_window(source: &mut CaptureSource, hud: Option<isize>) -> Result<
 pub fn window_capture_safe(source: &CaptureSource, hud: Option<isize>) -> Result<(), String> {
     use windows::Win32::{
         Foundation::POINT,
-        UI::WindowsAndMessaging::{GetAncestor, GetForegroundWindow, WindowFromPoint, GA_ROOT},
+        UI::WindowsAndMessaging::{GetAncestor, WindowFromPoint, GA_ROOT},
     };
     let _dpi = DpiGuard::new();
     let h = window_handle(source)?;
@@ -179,12 +179,10 @@ pub fn window_capture_safe(source: &CaptureSource, hud: Option<isize>) -> Result
     if rect != (source.x, source.y, source.width, source.height) {
         return Err("Selected window moved or resized. Capture stopped to preserve its original bounds; click Stop to save, then start again.".into());
     }
-    // SAFETY: Only query native foreground/hit-test handles. These calls do not read window contents.
+    // Focus can belong to a non-overlapping window. Actual occlusion, not focus,
+    // determines whether this fixed client rectangle remains safe to capture.
+    // SAFETY: Only query native hit-test handles. These calls do not read window contents.
     unsafe {
-        let foreground = GetForegroundWindow();
-        if foreground != h && !protected_hud(foreground, hud) {
-            return Err("Selected window lost foreground. Keep it visible and unobstructed; click Stop to save the captured portion.".into());
-        }
         for fx in [0.05, 0.5, 0.95] {
             for fy in [0.05, 0.5, 0.95] {
                 let point = POINT {

@@ -20,6 +20,7 @@ ROOT_FILES = ('README.md', 'SOURCE_PACKAGE.md', 'requirements.txt', 'requirement
               '.env.example', '.env.worker.example', '.gitignore',
               'remotion/package.json', 'remotion/package-lock.json', 'remotion/tsconfig.json',
               'apps/recording-studio/.env.example', 'apps/recording-studio/.gitignore',
+              'apps/recording-studio/src-tauri/.gitignore',
               '.github/workflows/recording-studio.yml')
 SKIP_PARTS = {'node_modules', '__pycache__', 'vendor', 'runtime_vendor', 'feedback',
               '.git', '.cache', '.venv', 'venv', 'target', 'dist', 'gen', 'bin',

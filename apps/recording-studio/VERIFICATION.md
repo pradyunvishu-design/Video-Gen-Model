@@ -8,12 +8,14 @@ This is a first local desktop implementation, not a claim of Screen Studio featu
 - React interface/validation tests: 31 passed.
 - Bootstrap/prerequisite tests: 3 passed.
 - Chrome browser workflow: 2 passed. The capture boundary is mocked in these two tests; they are not evidence of native recording.
-- Native Rust tests including the opt-in FFmpeg integration: 20 passed. Synthetic H.264 and WebM exports exercise zoom, callouts, audio, duration, exact 1920×1080 output, cancellation and original source preservation.
+- Native Rust tests including the opt-in FFmpeg integration: 22 passed. Synthetic H.264 and WebM exports exercise zoom, callouts, audio, duration, exact 1920×1080 output, cancellation and original source preservation.
 - Source-export safety tests: 4 passed. Desktop source/lock files are included; runtime builds, dependencies, media and secrets are excluded.
 - Windows MSVC compile check: passed.
 - Strict Clippy (`--all-targets -- -D warnings`) and debug executable build: passed.
 
 Actual native UI/capture smoke-test results and final build checks are recorded below when complete. Native microphone and macOS permission flows are not verified by the synthetic tests.
+
+Native visual testing caught an important distinction: hardware-accelerated Chrome windows produced black pixels through direct `gdigrab hwnd` capture even though the files decoded. The Windows window backend was changed to capture the desktop-composited pixels within the selected client rectangle, with visibility/occlusion/geometry guards. The smoke test now inspects actual fixture pixels before reporting success. Initial macOS CI compiled the Swift helper but exposed a missing generated PNG app icon; this is tracked as a build defect, not a passing Mac result.
 
 ## Exact local commands
 

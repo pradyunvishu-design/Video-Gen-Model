@@ -1,7 +1,7 @@
 {
   "status": "exported",
-  "file_count": 413,
-  "total_bytes": 3944398,
+  "file_count": 414,
+  "total_bytes": 3946869,
   "credential_value_scan": "passed",
   "secret_pattern_scan": "passed",
   "excluded": [
@@ -200,8 +200,8 @@
     },
     {
       "path": "apps/recording-studio/scripts/native-smoke.mjs",
-      "bytes": 7192,
-      "sha256": "2c52e459a6eb5a7aad60a36b1ad29a8e5b77aa6de0f64379f4ab14dd7615bb2f"
+      "bytes": 8044,
+      "sha256": "45ee65ec95a65260a360eb830df8b40b400f59e49b2693929a9718ef5eff340b"
     },
     {
       "path": "apps/recording-studio/src/App.test.tsx",
@@ -239,14 +239,19 @@
       "sha256": "e4fb758e082448933e5ae68480f92dff63d0d91788be35988deb9f75603ae1fc"
     },
     {
+      "path": "apps/recording-studio/src-tauri/.gitignore",
+      "bytes": 16,
+      "sha256": "b73b4a3aec496e5d6afe986f1ac7ebad63c82950e5fc1f33bf44dfd78dd33376"
+    },
+    {
       "path": "apps/recording-studio/src-tauri/BACKEND.md",
-      "bytes": 5152,
-      "sha256": "dda09a697d2609b815296872624324c137e610fbb76451743b657208a186436e"
+      "bytes": 5227,
+      "sha256": "286273be7b15e7dfd0b7f2dd083564776c6887fa7cb3dbffd708101e7eedee45"
     },
     {
       "path": "apps/recording-studio/src-tauri/build.rs",
-      "bytes": 2597,
-      "sha256": "f092be52fabe39acb843c163b17c0a40f0dbdd758f1da7683e6b6e672e9cec94"
+      "bytes": 3604,
+      "sha256": "b3d26be55ebb9efeaf335ca56e085bd58bb4c81913b3371ebe58e1543cee7997"
     },
     {
       "path": "apps/recording-studio/src-tauri/capabilities/default.json",
@@ -255,13 +260,13 @@
     },
     {
       "path": "apps/recording-studio/src-tauri/Cargo.lock",
-      "bytes": 115536,
-      "sha256": "356747bad40c46f0ac3fb42a112b66a9d07ca688a01e2a1dc66719d6a3f7c0b0"
+      "bytes": 115552,
+      "sha256": "b2ea004b89dcee28cd0b19a1e982d574ffea261e110750426aa69981ce5a524d"
     },
     {
       "path": "apps/recording-studio/src-tauri/Cargo.toml",
-      "bytes": 704,
-      "sha256": "57b601ad8c98a773502f50789d64660e6a7932cc43073531a5bd5e30bb8aa53a"
+      "bytes": 717,
+      "sha256": "4e257ee8d98bae2f711a701a580090a8d5d749c97f0567036ce2c127da242837"
     },
     {
       "path": "apps/recording-studio/src-tauri/Info.plist",
@@ -290,8 +295,8 @@
     },
     {
       "path": "apps/recording-studio/src-tauri/src/lib.rs",
-      "bytes": 15145,
-      "sha256": "4ea3a6954fd6c3808794b66de28bb84ef90b196d0a77d326acc1da44701f90d8"
+      "bytes": 15142,
+      "sha256": "87e36d07b3336d2c0b098473d6f5c080bbf79a689cd462449e25982ea6afd2cf"
     },
     {
       "path": "apps/recording-studio/src-tauri/src/main.rs",
@@ -305,8 +310,8 @@
     },
     {
       "path": "apps/recording-studio/src-tauri/src/platform.rs",
-      "bytes": 11216,
-      "sha256": "9a08266cec441a322c29074bb30253e8c20abca791b0adacf0b6632e0a1964b5"
+      "bytes": 11081,
+      "sha256": "762a15df134b84ff3d1d41fb2d62adbeeb95ce0b0419d6f26be3fe22c9099ecf"
     },
     {
       "path": "apps/recording-studio/src-tauri/src/process.rs",
@@ -340,8 +345,8 @@
     },
     {
       "path": "apps/recording-studio/VERIFICATION.md",
-      "bytes": 4234,
-      "sha256": "5f721d9cfd51259bfe56771c271310cc7066e8bb880701426451358c99d03c90"
+      "bytes": 4804,
+      "sha256": "1c2a9e8930fe175056c95ebda13624fbfd22d237af3dcd68fdb244524975b6b1"
     },
     {
       "path": "apps/recording-studio/vite.config.ts",
@@ -1385,8 +1390,8 @@
     },
     {
       "path": "scripts/export_github_source.py",
-      "bytes": 9194,
-      "sha256": "f1b6ef884e5c0c64898deba2c9d3d771c8f0cc26f917be817c8319918f7cd589"
+      "bytes": 9254,
+      "sha256": "b625fbc5aca00f544a2d53532ace2df4ff72ace04847829feea421162b390c73"
     },
     {
       "path": "scripts/extend_astra_episode.py",
