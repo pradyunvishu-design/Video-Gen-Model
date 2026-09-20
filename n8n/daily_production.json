@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## Daily production\n\nRuns at 2 AM Central and produces the oldest approved episode due today. Local private drafts are auto-approved after QC. It never uploads to YouTube.",
+        "content": "## Daily production\n\nRuns at 2 AM Central and produces the oldest approved episode due today. The worker automatically records required public pages and approved product demos at 1080p, verifies the clips, and inserts them into matching storyboard beats. No separate recorder is required. Local private drafts are auto-approved after QC. It never uploads to YouTube.",
         "height": 260,
         "width": 420,
         "color": 4

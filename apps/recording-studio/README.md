@@ -1,6 +1,13 @@
-# Local Recording Studio
+# Optional Local Recording Studio
 
-A local-first recording and editing workspace alongside the existing video pipeline. Built with **Tauri 2, React, TypeScript, Rust, FFmpeg and SQLite**. No accounts, uploads, telemetry or hosted control plane.
+This is a manual fallback for unusual screen, window or region recordings that the
+automated episode workflow cannot acquire. The main pipeline captures public source
+pages and explicitly approved product demonstrations through
+`acquire_screen_recordings`; it does not require this desktop editor.
+
+The app is deliberately bounded rather than a hosted Screen Studio replacement. It
+provides local capture and non-destructive export using **Tauri 2, React, TypeScript,
+Rust, FFmpeg and SQLite**, with no accounts, uploads, telemetry or hosted control plane.
 
 ## Start locally
 
@@ -124,7 +131,7 @@ The synthetic export test generates its own video/audio, exercises edits and bot
 
 - No public sharing, cloud workers, billing, analytics, accounts, SSO or workspaces.
 - No AI voice cloning or paid provider requests in the recorder.
-- No automatic integration into episode production yet: export a clip and use its path in the existing pipeline.
+- No automatic control by episode jobs: the Python browser-capture workflow handles normal production clips. Export from this app only when a reviewer chooses a manual fallback.
 - No system audio capture, timeline drag editor, live rendered effects preview or signed installers in this first version.
 
 See `VERIFICATION.md` for measured results and remaining platform checks. General platform requirements: [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), [FFmpeg capture devices](https://ffmpeg.org/ffmpeg-devices.html), [Apple ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit).
