@@ -15,10 +15,21 @@ export function checkTools(platform, env, run = spawnSync) {
     ['FFprobe', env.FFPROBE_PATH || 'ffprobe', ['-version'], 'Install FFprobe with FFmpeg, or set FFPROBE_PATH in .env.'],
   ];
   if (platform === 'darwin') checks.push(['Xcode tools', 'xcrun', ['--find', 'swiftc'], 'Install Xcode Command Line Tools.']);
-  return checks.map(([name, executable, args, help]) => {
+  const results = checks.map(([name, executable, args, help]) => {
     const result = run(executable, args, { env, encoding: 'utf8', windowsHide: true, timeout: 120000 });
     return { name, ok: result.status === 0, help };
   });
+  if (results.find(check => check.name === 'FFmpeg')?.ok) {
+    const filters = run(env.FFMPEG_PATH || 'ffmpeg', ['-hide_banner', '-filters'], { env, encoding: 'utf8', windowsHide: true, timeout: 120000 });
+    results.push({
+      name: 'FFmpeg text overlays',
+      ok: filters.status === 0 && /\bdrawtext\s+V->V\b/.test(`${filters.stdout || ''}\n${filters.stderr || ''}`),
+      help: platform === 'darwin'
+        ? 'Run brew install ffmpeg-full, then add its bin directory to PATH or set FFMPEG_PATH/FFPROBE_PATH in .env. The minimal Homebrew ffmpeg omits drawtext.'
+        : 'Install a full FFmpeg build with drawtext support and set FFMPEG_PATH in .env if needed.',
+    });
+  }
+  return results;
 }
 
 export async function main(args = process.argv.slice(2)) {

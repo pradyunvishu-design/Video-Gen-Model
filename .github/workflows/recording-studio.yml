@@ -31,7 +31,9 @@ jobs:
         run: choco install ffmpeg -y --no-progress
       - name: Install FFmpeg (macOS)
         if: runner.os == 'macOS'
-        run: brew install ffmpeg
+        run: |
+          brew install ffmpeg-full
+          echo "$(brew --prefix ffmpeg-full)/bin" >> "$GITHUB_PATH"
       - name: Select stable Rust
         run: rustup default stable
       - uses: actions/cache@v4
@@ -42,6 +44,7 @@ jobs:
             apps/recording-studio/src-tauri/target
           key: ${{ runner.os }}-studio-rust-${{ hashFiles('apps/recording-studio/src-tauri/Cargo.lock') }}
       - run: npm ci
+      - run: npm run doctor
       - run: npm run test:bootstrap
       - run: npm test
       - run: npm run build

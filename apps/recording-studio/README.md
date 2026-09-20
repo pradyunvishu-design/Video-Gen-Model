@@ -26,7 +26,7 @@ The bootstrap chooses MSVC only for its child processes; it does not change your
 
 - **macOS 15 or newer**, Apple Silicon or Intel.
 - Node.js 22.16+, Rust, and Xcode 16+ command-line tools with the macOS 15 SDK.
-- FFmpeg/FFprobe with H.264, VP9 and drawtext support (`brew install ffmpeg` if you use Homebrew).
+- FFmpeg/FFprobe with H.264, VP9 and drawtext support. With Homebrew, use `brew install ffmpeg-full`; the minimal `ffmpeg` package does not include text overlays. Add the directory reported by `brew --prefix ffmpeg-full`, followed by `/bin`, to PATH. Alternatively set absolute `FFMPEG_PATH` and `FFPROBE_PATH` paths in `.env` to that directory's executables.
 - Grant **Screen & System Audio Recording** permission to the recording helper/app when prompted. Microphone permission is needed only if you select a microphone. System audio remains disabled.
 
 Cargo compiles the native Swift ScreenCaptureKit helper and embeds it in the app. The helper is installed in the app-owned local data directory at startup. This is a personal development build, not a signed/notarized distribution. Do not bypass organizational application-control rules.
@@ -42,7 +42,7 @@ Apple's permission dialogs and physical microphone/screen capture must be valida
 5. Save edits, then export H.264 MP4 or VP9 WebM. Exports are exactly 1920×1080 at 30 fps. Source aspect ratio is preserved within the padded frame.
 6. Use **Copy file path** or **Open folder**. The export folder also contains a poster, transcript, Markdown summary, frozen edit plan and local render log.
 
-The editor shows the original capture until an export is available; it is not a live WYSIWYG effects preview. Window capture on Windows requires the target to remain visible/unminimized; protected content can be black. Source recordings are immutable. Repeated exports create separate folders.
+The editor shows the original capture until an export is available; it is not a live WYSIWYG effects preview. Window capture on Windows uses desktop-composited pixels inside the selected window's client area: keep it visible, unobstructed, unminimized and at a fixed size/position. Geometry and sampled occlusion checks stop recording when they detect a problem. They are not a privacy guarantee against every small overlay or notification between samples; enable Do Not Disturb and close sensitive windows first. Protected content can be black. Source recordings are immutable. Repeated exports create separate folders.
 
 ## Optional local transcription
 
@@ -102,6 +102,19 @@ cargo test --manifest-path src-tauri/Cargo.toml --locked synthetic_export_end_to
 cargo clippy --manifest-path src-tauri/Cargo.toml --locked -- -D warnings
 npm run desktop:build
 ```
+
+The opt-in Windows native smoke test requires the debug build and a running
+`npm run web:dev` in another terminal. It opens a temporary, isolated Chrome
+fixture, records only that selected test window with microphone off, stops via
+the actual HUD, checks for real non-black fixture pixels and verifies playback:
+
+```powershell
+$env:STUDIO_NATIVE_TEST='1'
+node scripts/native-smoke.mjs
+```
+
+It leaves clearly labeled synthetic projects in the local test library and writes
+its report under `test-results/`; these are not included in GitHub source.
 
 For direct Cargo commands on Windows, set `RUSTUP_TOOLCHAIN=stable-x86_64-pc-windows-msvc` in the current terminal first. `npm run dev` and `desktop:build` handle this automatically. Browser tests default to installed Chrome; use `STUDIO_TEST_BROWSER=chromium` after installing Playwright Chromium to use that engine.
 

@@ -16,9 +16,21 @@ test('doctor reports missing tools without claiming capture works', () => {
 test('mac doctor includes the native helper compiler', () => {
   const called = [];
   const result = checkTools('darwin', {FFMPEG_PATH:'/tools/ffmpeg'}, (exe,args) => {
-    called.push([exe,args]); return {status: 0};
+    called.push([exe,args]); return {status: 0, stdout: ' T.C drawtext V->V Draw text on video.'};
   });
   assert.ok(result.every(item => item.ok));
   assert.ok(called.some(([exe]) => exe === 'xcrun'));
   assert.ok(called.some(([exe]) => exe === '/tools/ffmpeg'));
+});
+
+test('minimal FFmpeg is rejected before a recording can start', () => {
+  const result = checkTools('darwin', {}, () => ({status: 0, stdout: ' ... scale V->V Scale video.'}));
+  const text = result.find(item => item.name === 'FFmpeg text overlays');
+  assert.equal(text.ok, false);
+  assert.match(text.help, /ffmpeg-full/);
+});
+
+test('an unsuccessful filter probe cannot pass from partial output', () => {
+  const result = checkTools('win32', {}, (_exe, args) => ({status: args.includes('-filters') ? 1 : 0, stdout: ' T.C drawtext V->V Draw text.'}));
+  assert.equal(result.find(item => item.name === 'FFmpeg text overlays').ok, false);
 });

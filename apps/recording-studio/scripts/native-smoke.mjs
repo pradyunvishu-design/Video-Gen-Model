@@ -11,6 +11,7 @@ if (process.platform !== 'win32' || process.env.STUDIO_NATIVE_TEST !== '1') {
   throw new Error('Set STUDIO_NATIVE_TEST=1 on Windows to test a dedicated synthetic window.');
 }
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const projectTitle = `SYNTHETIC native acceptance ${Date.now()}`;
 mkdirSync(join(root, 'test-results'), { recursive: true });
 writeFileSync(join(root, 'test-results/native-smoke.json'), JSON.stringify({ passed: false, status: 'running', fixtureOnly: true }));
 const exe = join(root, 'src-tauri/target/debug/recording-studio.exe');
@@ -46,7 +47,7 @@ try {
   const value = await source.locator('option').filter({ hasText: /^Recording Studio Synthetic Fixture/ }).getAttribute('value');
   if (!value) throw new Error('Synthetic fixture unavailable; refusing any fallback capture.');
   await source.selectOption(value);
-  await main.getByRole('textbox', { name: 'Recording title' }).fill('SYNTHETIC native acceptance');
+  await main.getByRole('textbox', { name: 'Recording title' }).fill(projectTitle);
   await main.getByRole('button', { name: 'Start recording', exact: true }).click();
   started = true;
   let recording;
@@ -63,15 +64,15 @@ try {
   const timer = await hud.getByLabel('Recording timer').textContent();
   if (timer === '00:00') throw new Error('Recording timer did not advance.');
   await hud.getByRole('button', { name: 'Stop', exact: true }).click();
-  await main.getByRole('button', { name: /SYNTHETIC native acceptance/ }).first().click();
+  await main.getByRole('button', { name: new RegExp(projectTitle) }).click();
   started = false;
-  await main.getByRole('heading', { name: 'SYNTHETIC native acceptance' }).waitFor();
+  await main.getByRole('heading', { name: projectTitle, exact: true }).waitFor();
   const sourceVideo = main.getByLabel('Recording preview');
   await sourceVideo.evaluate(async video => { await video.play(); });
   await delay(300);
   const sourcePlayback = await sourceVideo.evaluate(video => ({ ready: video.readyState, width: video.videoWidth, height: video.videoHeight, duration: video.duration }));
   if (sourcePlayback.ready < 2 || sourcePlayback.width < 16) throw new Error('Native source preview did not decode.');
-  const sourcePath = await main.evaluate(async () => (await window.__TAURI_INTERNALS__.invoke('list_projects')).find(project => project.title === 'SYNTHETIC native acceptance').sourcePath);
+  const sourcePath = await main.evaluate(async title => (await window.__TAURI_INTERNALS__.invoke('list_projects')).find(project => project.title === title).sourcePath, projectTitle);
   const pixels = spawnSync(process.env.FFMPEG_PATH || 'ffmpeg', ['-v', 'error', '-ss', '0.5', '-i', sourcePath, '-vf', 'scale=160:90', '-frames:v', '1', '-pix_fmt', 'rgb24', '-f', 'rawvideo', 'pipe:1'], { windowsHide: true, timeout: 20000 });
   if (pixels.status !== 0 || pixels.stdout.length !== 160 * 90 * 3) throw new Error('Pixel verification could not decode the recorded fixture.');
   const rgb = pixels.stdout;

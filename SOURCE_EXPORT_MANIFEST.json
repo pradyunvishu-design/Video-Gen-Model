@@ -1,7 +1,7 @@
 {
   "status": "exported",
   "file_count": 414,
-  "total_bytes": 3946869,
+  "total_bytes": 3950413,
   "credential_value_scan": "passed",
   "secret_pattern_scan": "passed",
   "excluded": [
@@ -135,8 +135,8 @@
     },
     {
       "path": ".github/workflows/recording-studio.yml",
-      "bytes": 2144,
-      "sha256": "71fa1955cd1ea76902d618992d5b6db8089cbdee3af1ac1cd670a3d0106115fe"
+      "bytes": 2257,
+      "sha256": "c190bda3af574d29529a6cea3f1aaa989eefed2f50f05610031179e89e055960"
     },
     {
       "path": ".gitignore",
@@ -185,23 +185,23 @@
     },
     {
       "path": "apps/recording-studio/README.md",
-      "bytes": 8001,
-      "sha256": "ebce01ae9aa0c41ce0ebcd3d3938834969d2569d97280f9170a54454243f8b90"
+      "bytes": 9137,
+      "sha256": "805e00d52dc0742e7e00bb0d2034dda95dc14b953a11cc0b4fed46cc59d098e5"
     },
     {
       "path": "apps/recording-studio/scripts/dev.mjs",
-      "bytes": 3252,
-      "sha256": "7b3e8ffd13e77c1ef08ce92fa3d8de4ba176966faf84429fbf5276900ffe0997"
+      "bytes": 3965,
+      "sha256": "320ac6c0fe3a976232ca406c35516d0796058096da19cc5e7cc116f188cd8313"
     },
     {
       "path": "apps/recording-studio/scripts/dev.test.mjs",
-      "bytes": 1137,
-      "sha256": "480652460cf401f9008dcb9dd69f4242d7536daca957748914449720a38bbe29"
+      "bytes": 1829,
+      "sha256": "1a22efe571edc2de46b04d6f67dd298ca7484515ef9d71cc8571fd4bdb7747df"
     },
     {
       "path": "apps/recording-studio/scripts/native-smoke.mjs",
-      "bytes": 8044,
-      "sha256": "45ee65ec95a65260a360eb830df8b40b400f59e49b2693929a9718ef5eff340b"
+      "bytes": 8069,
+      "sha256": "9fbbaec49a4b413c863c30b0b980acac06b79bb2c33439032188c50115e954fc"
     },
     {
       "path": "apps/recording-studio/src/App.test.tsx",
@@ -345,8 +345,8 @@
     },
     {
       "path": "apps/recording-studio/VERIFICATION.md",
-      "bytes": 4804,
-      "sha256": "1c2a9e8930fe175056c95ebda13624fbfd22d237af3dcd68fdb244524975b6b1"
+      "bytes": 5669,
+      "sha256": "61953a317e7024a8dc9b64fca35060dec052ba2edf5a5c9ff91acd0dffd99cc0"
     },
     {
       "path": "apps/recording-studio/vite.config.ts",
