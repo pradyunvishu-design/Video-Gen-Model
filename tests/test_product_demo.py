@@ -56,7 +56,8 @@ def test_cinematic_demo_filter_uses_only_explicit_action_targets():
         "x": 0.74, "y": 0.82,
     }])
 
-    assert "0.085" in filter_graph
+    assert "0.12" in filter_graph
     assert "0.7400" in filter_graph
     assert "0.8200" in filter_graph
-    assert "eval=frame" in filter_graph
+    assert "d=1:s=1920x1080:fps=30" in filter_graph
+    assert "eval=frame" not in filter_graph

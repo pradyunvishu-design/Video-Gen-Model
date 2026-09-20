@@ -22,6 +22,7 @@ from .config import CAPTURE_PARALLELISM, FFMPEG_PRESET, FFMPEG_THREADS_PER_JOB
 from .models import CaptureAction, CaptureArtifact, CapturePlan, CaptureRecord, Source
 
 CapturePlanner = Callable[[Source, dict, list[str]], CapturePlan]
+CAPTURE_CACHE_VERSION = 4
 
 
 class BlockedPageError(RuntimeError):
@@ -492,17 +493,19 @@ def _recording_quality(path: Path, *, expected_seconds: float) -> dict:
         "fps": round(fps, 3),
         "duration_seconds": round(duration, 3),
         "bitrate_bps": bitrate,
-        "checks": ["1080p", "30fps", "sharp_encode"],
+        "checks": ["1080p", "30fps", "duration"],
+        "readability_review_required": True,
     }
     failures: list[str] = []
     if (report["width"], report["height"]) != (1920, 1080):
         failures.append(f"expected 1920x1080, got {report['width']}x{report['height']}")
     if not 29.5 <= fps <= 30.5:
         failures.append(f"expected 30fps, got {fps:.2f}")
-    if duration < min(1.5, expected_seconds * 0.65):
+    if duration < max(0.1, expected_seconds * 0.95 - 1 / 30):
         failures.append(f"recording too short ({duration:.2f}s)")
-    if bitrate < 650_000:
-        failures.append(f"recording bitrate too low ({bitrate} bps)")
+    # A mostly static text page can encode sharply at a very low bitrate.
+    # Conversely, noisy unreadable frames can have a high bitrate. Keep this
+    # metric informational; do not label an encode sharp without visual review.
     if failures:
         report["status"] = "rejected"
         report["failures"] = failures
@@ -562,6 +565,8 @@ def _render_cinematic_scroll(
 
 
 def _trim_recording(raw_path: Path, destination: Path, target_seconds: float) -> None:
+    if not 0 < target_seconds < float("inf"):
+        raise ValueError("target recording duration must be finite and positive")
     total = _video_duration(raw_path)
     length = min(target_seconds, total)
     start = max(0.0, total - length - 0.15)
@@ -576,15 +581,14 @@ def _trim_recording(raw_path: Path, destination: Path, target_seconds: float) ->
 def _recording_filter() -> str:
     """Normalize browser captures without adding synthetic camera movement.
 
-    Playwright/WebM capture cadence can vary slightly under page load. Motion
-    interpolation converts that irregular cadence to a stable 30 fps timeline;
-    the renderer then keeps recordings locked instead of adding Ken Burns zooms.
+    Preserve real captured frames: optical flow can warp text and cursors and
+    cannot recover frames dropped by the recorder. Normalize timestamps only.
     """
     return (
         "setpts=PTS-STARTPTS,"
         "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,"
         "crop=1920:1080,"
-        "minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,"
+        "fps=30,"
         "unsharp=5:5:0.18:5:5:0,format=yuv420p"
     )
 
@@ -616,11 +620,35 @@ def _capture_recording(
     raw_path.unlink(missing_ok=True)
     quality = _recording_quality(destination, expected_seconds=action.duration_seconds)
     quality["checks"].extend(["clean_dom_before", "clean_dom_after"])
-    quality["stabilization"] = "deterministic browser motion + optical cadence normalization"
+    quality["stabilization"] = "deterministic browser motion + real-frame cadence normalization"
     return _artifact(
         "screen_recording", destination, action.label, source_url=final_url, capture_mode=action.kind,
         quality=quality,
     )
+
+
+def _recording_cache_valid(entries: list[dict], output_dir: Path) -> bool:
+    """Cache hits must retain current QC and refer to unchanged local files."""
+    if not isinstance(entries, list):
+        return False
+    for entry in entries:
+        if not isinstance(entry, dict):
+            return False
+        name = entry.get("name", "")
+        if not isinstance(name, str) or not name or Path(name).name != name:
+            return False
+        target = output_dir / name
+        quality = entry.get("quality", {})
+        if (not isinstance(quality, dict) or quality.get("status") != "accepted"
+                or quality.get("readability_review_required") is not True
+                or not target.is_file() or target.is_symlink()):
+            return False
+        try:
+            if _sha256(target) != entry.get("sha256"):
+                return False
+        except OSError:
+            return False
+    return True
 
 
 def capture_source(
@@ -637,14 +665,23 @@ def capture_source(
     # complete baseline on restart instead of reopening and rerecording a page.
     cached_viewport = output_dir / f"{slug}-viewport.png"
     cached_full = output_dir / f"{slug}-full.png"
-    cache_manifest = output_dir / f"{slug}-capture-qc-v3.json"
+    cache_manifest = output_dir / f"{slug}-capture-qc-v{CAPTURE_CACHE_VERSION}.json"
     cache_data: dict = {}
     if cache_manifest.is_file():
         try:
             cache_data = json.loads(cache_manifest.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             cache_data = {}
-    if cache_data.get("schema_version") == 3 and cached_viewport.is_file() and cached_full.is_file():
+    cache_key = hashlib.sha256(json.dumps({
+        "url": url, "record": record, "directions": visual_directions or [],
+        "planner": getattr(planner, "__qualname__", "fallback"),
+    }, sort_keys=True).encode()).hexdigest()
+    if (isinstance(cache_data, dict)
+            and cache_data.get("schema_version") == CAPTURE_CACHE_VERSION
+            and cache_data.get("request_hash") == cache_key
+            and cached_viewport.is_file() and cached_full.is_file()
+            and (not record or bool(cache_data.get("recordings")))
+            and _recording_cache_valid(cache_data.get("recordings", []), output_dir)):
         cached_artifacts = [
             _artifact("viewport", cached_viewport, "Opening viewport", source_url=url, capture_mode="viewport"),
             _artifact("full_page", cached_full, "Full-page source record", source_url=url, capture_mode="full_page"),
@@ -668,7 +705,7 @@ def capture_source(
             cached_artifacts.append(_artifact(
                 "screen_recording", target, "Cached controlled page motion",
                 source_url=url, capture_mode=entry.get("capture_mode", "cinematic_scroll"),
-                quality={"status": "cached", "checks": ["previous_capture_qc_v3"]},
+                quality={**entry["quality"], "cache_hit": True},
             ))
         cached_plan = fallback_plan(source)
         cached_record = CaptureRecord(
@@ -779,11 +816,13 @@ def capture_source(
             for item in artifacts if item.kind == "element"
         ]
         recordings_manifest = [
-            {"name": Path(item.path).name, "capture_mode": item.capture_mode}
+            {"name": Path(item.path).name, "capture_mode": item.capture_mode,
+             "sha256": _sha256(Path(item.path)), "quality": item.quality}
             for item in artifacts if item.kind == "screen_recording"
         ]
         cache_manifest.write_text(json.dumps({
-            "schema_version": 3,
+            "schema_version": CAPTURE_CACHE_VERSION,
+            "request_hash": cache_key,
             "captured_at": datetime.now(timezone.utc).isoformat(),
             "elements": element_manifest,
             "recordings": recordings_manifest,

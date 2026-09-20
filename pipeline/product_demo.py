@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import time
+from typing import Literal
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -14,9 +15,10 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 from playwright.sync_api import sync_playwright
 
-from .capture import _assert_capture_is_clean, _recording_quality, _safe_url, _sha256, _trim_recording
+from .capture import _assert_capture_is_clean, _recording_quality, _safe_url, _sha256, _video_duration
 from .config import FFMPEG_PRESET, FFMPEG_THREADS_PER_JOB, OPENROUTER_BROWSER_MODEL, PROJECT_ROOT
 from .editorial import call_openrouter
+from .screen_framing import framing_filter
 
 
 PROFILE_ROOT = PROJECT_ROOT / "data" / "browser_profiles"
@@ -24,7 +26,7 @@ DEMO_OUTPUT_ROOT = PROJECT_ROOT / "output" / "browser_demos"
 
 
 class DemoAction(BaseModel):
-    kind: str
+    kind: Literal["hover", "click", "fill", "scroll", "wait", "capture"]
     candidate_id: str = ""
     input_key: str = ""
     label: str = ""
@@ -224,14 +226,15 @@ def _install_overlays(page) -> None:
         if (document.getElementById('__demo_cursor')) return;
         const cursor = document.createElement('div');
         cursor.id = '__demo_cursor';
-        cursor.style.cssText = 'position:fixed;left:80px;top:80px;width:22px;height:22px;border-radius:50%;background:white;border:3px solid #ff3b57;box-shadow:0 4px 18px #0009;z-index:2147483647;pointer-events:none;transform:translate(-50%,-50%)';
+        cursor.style.cssText = 'position:fixed;left:80px;top:80px;width:20px;height:28px;z-index:2147483647;pointer-events:none;transform:translate(-3px,-3px)';
+        cursor.innerHTML = '<svg viewBox="0 0 20 28" width="20" height="28"><path d="M2 2L2 23L7 18L11 26L15 24L11 16L18 16Z" fill="white" stroke="#202724" stroke-width="1.5" stroke-linejoin="round"/></svg>';
         document.documentElement.appendChild(cursor);
         const focus = document.createElement('div');
         focus.id = '__demo_focus';
-        focus.style.cssText = 'position:fixed;display:none;border:3px solid #ff3b57;border-radius:12px;box-shadow:0 0 0 7px #ff3b5722,0 7px 24px #0008;z-index:2147483646;pointer-events:none;';
+        focus.style.cssText = 'position:fixed;display:none;border:2px solid #B84D45;border-radius:7px;z-index:2147483646;pointer-events:none;';
         document.documentElement.appendChild(focus);
         const style = document.createElement('style');
-        style.textContent = '@keyframes demoFocusPulse{0%,100%{opacity:.92}50%{opacity:.35}} #__demo_focus{animation:demoFocusPulse 1.15s ease-in-out infinite} html{scroll-behavior:auto!important}';
+        style.textContent = '#__demo_focus{opacity:.8} html{scroll-behavior:auto!important}';
         document.documentElement.appendChild(style);
       }
     """)
@@ -262,12 +265,13 @@ def _move_cursor(page, locator, duration_ms: int = 650) -> None:
         const c=document.getElementById('__demo_cursor'); if(!c) return;
         const a=c.getBoundingClientRect(); const sx=a.left+a.width/2, sy=a.top+a.height/2;
         const cx=sx+(x-sx)*.35, cy=sy-Math.min(100,Math.abs(x-sx)*.12);
-        await new Promise(resolve=>{const start=performance.now(); const tick=now=>{const t=Math.min(1,(now-start)/duration); const u=1-t; const px=u*u*sx+2*u*t*cx+t*t*x; const py=u*u*sy+2*u*t*cy+t*t*y; c.style.left=px+'px'; c.style.top=py+'px'; if(t<1)requestAnimationFrame(tick);else resolve();};requestAnimationFrame(tick);});
+        await new Promise(resolve=>{const start=performance.now(); const tick=now=>{const p=Math.min(1,(now-start)/duration); const t=p*p*(3-2*p); const u=1-t; const px=u*u*sx+2*u*t*cx+t*t*x; const py=u*u*sy+2*u*t*cy+t*t*y; c.style.left=px+'px'; c.style.top=py+'px'; if(p<1)requestAnimationFrame(tick);else resolve();};requestAnimationFrame(tick);});
       }
     """, target)
 
 
 def _perform(page, action: DemoAction, spec: DemoSpec, elapsed_seconds: float) -> dict | None:
+    action_started = time.perf_counter()
     if action.kind == "wait":
         page.wait_for_timeout(round(action.duration_seconds * 1000))
         return None
@@ -277,7 +281,7 @@ def _perform(page, action: DemoAction, spec: DemoSpec, elapsed_seconds: float) -
     if action.kind == "scroll":
         page.evaluate("""async ({a,b,d})=>{
           const m=Math.max(0,document.documentElement.scrollHeight-innerHeight);
-          const requestedStart=m*a, requestedEnd=m*b, start=Math.max(0,Math.min(m,requestedStart));
+          const requestedEnd=m*b, start=Math.max(0,Math.min(m,window.scrollY));
           const end=Math.max(0,Math.min(m,start+Math.max(-innerHeight*1.15,Math.min(innerHeight*1.15,requestedEnd-start))));
           window.scrollTo(0,Math.round(start));
           await new Promise(r=>setTimeout(r,260));
@@ -289,6 +293,7 @@ def _perform(page, action: DemoAction, spec: DemoSpec, elapsed_seconds: float) -
     if locator.count() != 1:
         raise RuntimeError(f"demo candidate disappeared: {action.candidate_id}")
     locator.scroll_into_view_if_needed(timeout=5000)
+    focus_started = elapsed_seconds + time.perf_counter() - action_started
     _move_cursor(page, locator)
     box = _set_focus_ring(page, locator, True)
     page.wait_for_timeout(180)
@@ -298,50 +303,59 @@ def _perform(page, action: DemoAction, spec: DemoSpec, elapsed_seconds: float) -
         locator.click(timeout=10000)
     else:
         locator.hover(timeout=5000)
+    interaction_completed = elapsed_seconds + time.perf_counter() - action_started
+    # The clicked UI can resize or navigate. Do not leave a stale rectangle
+    # floating over the result for the entire reading hold.
+    page.evaluate("document.getElementById('__demo_focus')?.style.setProperty('display','none')")
     page.wait_for_timeout(round(action.duration_seconds * 1000))
-    _set_focus_ring(page, locator, False)
     if not box:
         return None
     return {
         "label": action.label[:120], "kind": action.kind,
-        "start_seconds": round(elapsed_seconds + 0.35, 3),
-        "end_seconds": round(elapsed_seconds + max(0.75, action.duration_seconds), 3),
+        "start_seconds": round(focus_started, 3),
+        # Return to the overview after the action. Its newly revealed result
+        # may be elsewhere; only an observed result target can justify a hold.
+        "end_seconds": round(min(
+            interaction_completed + 0.5,
+            elapsed_seconds + time.perf_counter() - action_started,
+        ), 3),
         "x": round((box["x"] + box["width"] / 2) / 1920, 4),
         "y": round((box["y"] + box["height"] / 2) / 1080, 4),
     }
 
 
 def _cinematic_demo_filter(events: list[dict]) -> str:
-    """Apply small, target-led push-ins; never a constant fake camera zoom."""
-    if not events:
-        return "setpts=PTS-STARTPTS,format=yuv420p"
-    def expression(key: str, default: str) -> str:
-        value = default
-        for event in reversed(events):
-            start, end = float(event["start_seconds"]), float(event["end_seconds"])
-            candidate = (
-                f"1+0.085*min(1,max(0,(t-{start:.3f})/0.30))*min(1,max(0,({end:.3f}-t)/0.30))"
-                if key == "zoom" else f"{float(event[key]):.4f}"
-            )
-            value = f"if(between(t,{start:.3f},{end:.3f}),{candidate},{value})"
-        return value
-    zoom = expression("zoom", "1")
-    focus_x, focus_y = expression("x", "0.5"), expression("y", "0.5")
-    return (
-        "setpts=PTS-STARTPTS,"
-        f"scale=w='trunc(1920*({zoom})/2)*2':h='trunc(1080*({zoom})/2)*2':eval=frame,"
-        f"crop=1920:1080:x='(in_w-out_w)*({focus_x})':y='(in_h-out_h)*({focus_y})',"
-        "fps=30,unsharp=5:5:0.16:5:5:0,format=yuv420p"
-    )
+    return framing_filter(events)
 
 
-def _render_cinematic_demo(source: Path, destination: Path, events: list[dict]) -> Path:
+def recording_window(total_seconds: float, action_seconds: float) -> tuple[float, float]:
+    """Retain the complete action block instead of a requested-length tail.
+
+    Playwright records navigation too. Infer the settled action block from its
+    measured wall time and the encoded duration. This is not frame-accurate OS
+    cursor telemetry; a native recorder should timestamp against capture PTS.
+    """
+    import math
+
+    if not all(math.isfinite(value) and value > 0 for value in (total_seconds, action_seconds)):
+        raise ValueError("recording durations must be finite and positive")
+    if action_seconds > total_seconds + 0.25:
+        raise ValueError("recording is missing part of the action block; recapture it")
+    return max(0.0, total_seconds - action_seconds), min(total_seconds, action_seconds)
+
+
+def _render_cinematic_demo(
+    source: Path, destination: Path, events: list[dict], *, recorded_seconds: float | None = None,
+) -> Path:
+    total = _video_duration(source)
+    start, duration = recording_window(total, recorded_seconds if recorded_seconds is not None else total)
     subprocess.run([
-        "ffmpeg", "-y", "-i", str(source), "-an", "-vf", _cinematic_demo_filter(events),
+        "ffmpeg", "-y", "-ss", f"{start:.6f}", "-i", str(source), "-t", f"{duration:.6f}",
+        "-an", "-vf", _cinematic_demo_filter(events),
         "-c:v", "libx264", "-preset", FFMPEG_PRESET, "-crf", "14",
-        "-threads", str(FFMPEG_THREADS_PER_JOB), "-pix_fmt", "yuv420p", str(destination),
+        "-threads", str(FFMPEG_THREADS_PER_JOB), "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(destination),
     ], check=True, capture_output=True, text=True)
-    _recording_quality(destination, expected_seconds=2)
+    _recording_quality(destination, expected_seconds=duration)
     return destination
 
 
@@ -414,11 +428,14 @@ def generate_demo(spec: DemoSpec, output_dir: Path | None = None) -> dict:
             "actions": [action.model_dump() for action in plan["actions"]],
         }, spec, replay_observation)
         _install_overlays(page)
+        _assert_capture_is_clean(page, moment="before product-demo recording")
         video = page.video
         screenshots = []
         focus_events = []
         recording_started = time.perf_counter()
         for index, action in enumerate(plan["actions"], start=1):
+            if index > 1 and time.perf_counter() - recording_started >= spec.duration_seconds:
+                break  # Finish the current action; never cut its result mid-click.
             event = _perform(page, action, spec, time.perf_counter() - recording_started)
             _assert_capture_is_clean(page, moment=f"product-demo action {index}")
             if event:
@@ -426,26 +443,24 @@ def generate_demo(spec: DemoSpec, output_dir: Path | None = None) -> dict:
             screenshot = target / f"step_{index:02d}.png"
             page.screenshot(path=str(screenshot), animations="disabled")
             screenshots.append(str(screenshot))
+        page.wait_for_timeout(600)  # Let the final result land before the cut.
+        recorded_seconds = time.perf_counter() - recording_started
         context.close()
         raw = Path(video.path())
-        normalized = target / "browser_demo_normalized_1080p.mp4"
-        _trim_recording(raw, normalized, spec.duration_seconds)
         final = target / "browser_demo_editorial_1080p.mp4"
-        if spec.cinematic_zoom:
-            _render_cinematic_demo(normalized, final, focus_events)
-        else:
-            normalized.replace(final)
-            normalized = final
+        _render_cinematic_demo(
+            raw, final, focus_events if spec.cinematic_zoom else [], recorded_seconds=recorded_seconds,
+        )
         raw.unlink(missing_ok=True)
-    quality = _recording_quality(final, expected_seconds=spec.duration_seconds)
+    quality = _recording_quality(final, expected_seconds=recorded_seconds)
     quality["focus_events"] = len(focus_events)
     quality["editorial_treatment"] = (
-        "target-led 8.5% push-ins with clean cursor and focus ring"
+        "target-led 12% eased focus moves with settled holds and no optical flow"
         if spec.cinematic_zoom else "normalized full-screen capture"
     )
 
     public_plan = {
-        "rationale": plan["rationale"], "actions": [action.model_dump() for action in plan["actions"]],
+        "rationale": plan["rationale"], "actions": [action.model_dump() for action in plan["actions"][:len(screenshots)]],
         "focus_events": focus_events,
     }
     (target / "actions.json").write_text(json.dumps(public_plan, indent=2), encoding="utf-8")
@@ -453,7 +468,9 @@ def generate_demo(spec: DemoSpec, output_dir: Path | None = None) -> dict:
         "website": str(spec.website), "goal": spec.goal, "profile": spec.profile,
         "allow_generation": spec.allow_generation, "input_keys": sorted(spec.inputs), "cinematic_zoom": spec.cinematic_zoom,
         "created_at": datetime.now(timezone.utc).isoformat(), "video": str(final),
-        "normalized_video": str(normalized), "focus_events": focus_events,
+        "normalized_video": str(final), "focus_events": focus_events,
+        "requested_duration_seconds": spec.duration_seconds, "recorded_action_seconds": round(recorded_seconds, 3),
+        "encode_passes": 1,
         "video_sha256": _sha256(final), "quality": quality, "screenshots": screenshots,
         "credentials_stored_by_job": False,
     }

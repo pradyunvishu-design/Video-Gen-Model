@@ -8,6 +8,24 @@ evidence-linked scripts through OpenRouter, creates a single consistent narrator
 Magic Hour voice cloning, and renders with FFmpeg/Remotion. The local configuration auto-approves
 private drafts; it does **not** upload to YouTube.
 
+## Recording quality and local studio roadmap
+
+Browser demos now use a single 1080p encode with restrained, action-led focus
+moves; narration caching validates the script, voice, and returned audio.
+The [local recording studio plan](research/screen_studio_local_first_plan.md)
+describes the proposed Tauri 2 / React / TypeScript / FFmpeg / SQLite app. That Mac
+desktop app is not implemented yet; cloud hosting is deliberately deferred.
+
+For a no-key, local browser capture preview (requires Chrome and FFmpeg):
+
+```powershell
+python -m scripts.preview_screen_framing --output output/my_screen_preview
+```
+
+Use a fresh output directory. This records a clearly labeled test page, not a
+real product. See [verification and exact test commands](research/recording_quality_verification.md)
+for what was checked and what still requires listening or native-platform review.
+
 ## Current editorial profile
 
 - New drafts use the `hermes-proof-first-v1` creative profile: authentic proof first, one

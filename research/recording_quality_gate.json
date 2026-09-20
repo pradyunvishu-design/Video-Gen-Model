@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "artifact": "Scoped browser framing and Gemini client reliability changes; local recorder design proposal",
+  "hard_blockers": [],
+  "soft_signal_categories": [],
+  "evidence": [
+    "tests/test_screen_framing.py: complete-action trim, bounded focus, current cache QC, 1080p encode/decode",
+    "tests/test_gemini_tts.py: changed-input cache invalidation, multipart audio, format and truncation rejection",
+    "Local Chrome preview poster at 3 seconds: readable result, full overview, no stale highlight",
+    "Independent review findings repaired: legacy capture cache and stale post-click focus"
+  ],
+  "repair_stage": null,
+  "verification": [
+    "60 focused tests passed",
+    "Changed Python modules compiled",
+    "Local 5.67-second Chrome canary exported at 1920x1080, 30 fps",
+    "Final canary decoded; no black interval of 0.1 seconds or longer detected"
+  ],
+  "limitations": [
+    "Not an episode, voice audition, complete real-site quality review, or Mac application acceptance",
+    "No subjective naturalness or guaranteed production speedup claimed",
+    "Source media, private data, generated previews and credentials excluded from public GitHub export"
+  ]
+}

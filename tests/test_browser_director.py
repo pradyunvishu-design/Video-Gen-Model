@@ -127,10 +127,10 @@ def test_reddit_capture_has_old_reddit_fallback():
     assert urls[1].startswith("https://old.reddit.com/")
 
 
-def test_browser_recordings_use_stable_interpolated_cadence():
+def test_browser_recordings_preserve_real_frames_and_text():
     video_filter = capture._recording_filter()
-    assert "minterpolate=fps=30" in video_filter
-    assert "mi_mode=mci" in video_filter
+    assert "fps=30" in video_filter
+    assert "minterpolate" not in video_filter
     assert "deshake" not in video_filter
 
 

@@ -1,7 +1,7 @@
 {
   "status": "exported",
-  "file_count": 365,
-  "total_bytes": 3494265,
+  "file_count": 371,
+  "total_bytes": 3538001,
   "credential_value_scan": "passed",
   "secret_pattern_scan": "passed",
   "excluded": [
@@ -365,8 +365,8 @@
     },
     {
       "path": "pipeline/capture.py",
-      "bytes": 37920,
-      "sha256": "7dab65b84e246360f94b0d19599b7ba137b6ef0505c77690a078efb840f05cf7"
+      "bytes": 39708,
+      "sha256": "6dc4324201960ff2904efae4dc897f4c3ce7cd94f9c94319ed1e414278e200a2"
     },
     {
       "path": "pipeline/cli.py",
@@ -420,8 +420,8 @@
     },
     {
       "path": "pipeline/gemini_tts.py",
-      "bytes": 8366,
-      "sha256": "e954287bf9bd616794a26cc5e25d44496c26971c8b85698d8c5a29a4038204b2"
+      "bytes": 13757,
+      "sha256": "702b8e95d69b76c59cc6440a3bf4a1a7cf58c04773a5d2fd4360e47c84e4dd63"
     },
     {
       "path": "pipeline/identity_arena_thumbnail.py",
@@ -465,8 +465,8 @@
     },
     {
       "path": "pipeline/product_demo.py",
-      "bytes": 21816,
-      "sha256": "a5b6f988ec9348f1f3ea9d20a65060b38f722fd688611bd2490098693d6456b8"
+      "bytes": 23037,
+      "sha256": "88261f3b2db0269fa4e490c9570c51ea35d8c49b2ef2654dfc45e397979a79ed"
     },
     {
       "path": "pipeline/production.py",
@@ -502,6 +502,11 @@
       "path": "pipeline/research.py",
       "bytes": 6808,
       "sha256": "df7fc575aa243cc1f3a4f3bf99e293072bcb0558769600e889ada1086afc8ea0"
+    },
+    {
+      "path": "pipeline/screen_framing.py",
+      "bytes": 3200,
+      "sha256": "990f85f2a10c4ebce215bbfac61a91ccefe8e8d7aae7da1804e29994914442c3"
     },
     {
       "path": "pipeline/screenshot_treatment.py",
@@ -610,8 +615,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 30378,
-      "sha256": "6a848f0fdc49d95d5f394d2061ed9693ad9820d3477239d3fe53058942645fbc"
+      "bytes": 31247,
+      "sha256": "f383bc5ba61a39cc98d5c9fa78d40caa98fb47cb598f1098b6824db41be389dd"
     },
     {
       "path": "remotion/package-lock.json",
@@ -944,6 +949,21 @@
       "sha256": "4d97ea009fbd5f6bfa59563a0c574f997e8c4a2c80d3e3285f06e081ed0d84fe"
     },
     {
+      "path": "research/recording_quality_gate.json",
+      "bytes": 1203,
+      "sha256": "d32070513aa60cf25d657389853f5d2f3f83d92ca8f826a271516abcb7ab6709"
+    },
+    {
+      "path": "research/recording_quality_verification.md",
+      "bytes": 4035,
+      "sha256": "fcaf6161f14de35a9838148c7926a15d5a4db3755a501dd8c68f73b16d4e84ce"
+    },
+    {
+      "path": "research/screen_studio_local_first_plan.md",
+      "bytes": 9527,
+      "sha256": "cd22022427e648c96b93774ed7f3eb78b1f2d6ebbdd73b0495979ad6c6fb766a"
+    },
+    {
       "path": "scripts/acquire_astra_jobs_sources.py",
       "bytes": 16892,
       "sha256": "4a0a536cc2596cc0a7bab36b59cfc88bf3600e68582c041f2e69ed72e7ec5a0e"
@@ -1264,6 +1284,11 @@
       "sha256": "ba00c7ddb502ca45839037f68fd1f1c29adc383849458afa929b314f7821f726"
     },
     {
+      "path": "scripts/preview_screen_framing.py",
+      "bytes": 4081,
+      "sha256": "fe04c5f4f8e7002b877400d7d16ffb95591ffcee788987e1c6e2df664a58ca72"
+    },
+    {
       "path": "scripts/produce_astra_episode.py",
       "bytes": 12013,
       "sha256": "20389d3736e0c4c58a0aa869adce0d80f39f1d9606ea65b9b097e49ac126e844"
@@ -1565,8 +1590,8 @@
     },
     {
       "path": "tests/test_browser_director.py",
-      "bytes": 5363,
-      "sha256": "3c3e575aca2e550ed971423b8d198aef8c96a620340b95a8acad16d0c6ed8750"
+      "bytes": 5353,
+      "sha256": "7446384c9696def7ab2fcd5f254e444808e38350a2b3a3b4681b84729cee443c"
     },
     {
       "path": "tests/test_browser_director_exact_text.py",
@@ -1640,8 +1665,8 @@
     },
     {
       "path": "tests/test_gemini_tts.py",
-      "bytes": 1322,
-      "sha256": "3d80501f9f40758fba30f2ef8bf1f2972fbf5d2b62e4645b736ee122e1ea7615"
+      "bytes": 8412,
+      "sha256": "c3ae631968867c7479bb16a234581c3f0d48cc0309d794982f12d848b07981a3"
     },
     {
       "path": "tests/test_identity_arena_thumbnail.py",
@@ -1690,8 +1715,8 @@
     },
     {
       "path": "tests/test_product_demo.py",
-      "bytes": 2888,
-      "sha256": "439c46101d00ebe66a6294bc98ee8562ac59c02149c1f0f1b49e831502f8004e"
+      "bytes": 2943,
+      "sha256": "8415840f56d9107627cf73e4bd6015a126d25fa01ce1440f44d5f308b852dbf1"
     },
     {
       "path": "tests/test_provenance.py",
@@ -1717,6 +1742,11 @@
       "path": "tests/test_research.py",
       "bytes": 2246,
       "sha256": "dfaba5d9f3aecfe6cc3ae7263756d0fda5b6bff51aa3fed04b731542204a3201"
+    },
+    {
+      "path": "tests/test_screen_framing.py",
+      "bytes": 5286,
+      "sha256": "5295842c096aad33235618c3a23aab6f87acee5193f7f491ed4fab3043d719e5"
     },
     {
       "path": "tests/test_screenshot_treatment.py",
