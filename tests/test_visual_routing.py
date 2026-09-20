@@ -58,6 +58,31 @@ def test_capture_assignment_does_not_overwrite_generated_video(monkeypatch, tmp_
     assert project.shots[2].asset_path == ""
 
 
+def test_capture_prioritizes_sources_needed_as_recordings(monkeypatch, tmp_path):
+    project = _project()
+    screenshot_source = Source(id="src_still", title="Article", url="https://example.com/article")
+    demo_source = Source(id="src_demo", title="Official demo", url="https://example.com/demo")
+    project.sources = [screenshot_source, demo_source]
+    project.shots = [
+        Shot(id="still", beat_id="beat_1", asset_type="screenshot", source_id="src_still"),
+        Shot(id="demo", beat_id="beat_1", asset_type="screen_recording", source_id="src_demo"),
+    ]
+    captured_order = []
+
+    def fake_capture_sources(sources, *args, **kwargs):
+        captured_order.extend(source.id for source in sources)
+        return [{
+            "source_id": source.id, "screenshots": [], "editorial_stills": [],
+            "provenance_stills": [], "recording": None, "recordings": [], "errors": [],
+            "record": CaptureRecord(source_id=source.id, requested_url=str(source.url)),
+        } for source in sources]
+
+    monkeypatch.setattr(production, "capture_sources", fake_capture_sources)
+    production._capture_and_assign(project, tmp_path)
+
+    assert captured_order == ["src_demo", "src_still"]
+
+
 def test_local_motion_graphic_is_full_hd(tmp_path):
     project = _project()
     shot = Shot(

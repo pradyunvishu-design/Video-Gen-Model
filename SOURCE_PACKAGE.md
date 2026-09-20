@@ -5,11 +5,12 @@ n8n workflow templates, Remotion scenes, thumbnail tooling, scripts, tests,
 configuration profiles, and project-local editorial/art-direction skills.
 It is a source snapshot, not a pretrained model or a bundle of finished episodes.
 
-The standalone local recorder is under `apps/recording-studio/`. It uses Tauri 2,
-React/TypeScript, Rust, FFmpeg and SQLite, with Windows capture and a native macOS
-15+ ScreenCaptureKit helper. It needs no API key or Python pipeline setup. See its
-README for native prerequisites and the one-command `npm run dev` startup. Build
-outputs, recordings and local databases are intentionally excluded from GitHub.
+Automated browser recording is part of the Python production worker and is invoked by the normal
+`produce_episode` / `produce_next` job. The app under `apps/recording-studio/` is an optional manual
+diagnostic and capture test harness; the n8n workflow does not depend on it. It uses Tauri 2,
+React/TypeScript, Rust, FFmpeg and SQLite, with Windows capture and a native macOS 15+
+ScreenCaptureKit helper. Build outputs, recordings and local databases are intentionally excluded
+from GitHub.
 
 ## What is deliberately not published
 

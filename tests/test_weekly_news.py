@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from pipeline.models import Brief, DeliveryDirection, EpisodeProject, Script, ScriptBeat, Source
+from pipeline import production, product_demo
 from pipeline.production import _narration_blocks
 from pipeline.storyboard import build_shot_plan
 from pipeline.weekly_news import _validate_plan, rank_clusters, score_cluster
@@ -121,3 +122,26 @@ def test_weekly_storyboard_contains_the_branded_news_intro():
     )
     shots = build_shot_plan(project, 600)
     assert any(shot.beat_id == "intro" and shot.motion_template == "news_intro" for shot in shots)
+
+
+def test_approved_model_test_runs_inside_episode_production_stage(monkeypatch, tmp_path):
+    project = EpisodeProject(
+        episode_id="weekly_demo", scheduled_date="2026-08-08",
+        episode={"model_test_queue": [{
+            "story_id": "story_demo", "website": "https://example.com/demo",
+            "goal": "Show the public product demo clearly", "profile": "public_isolated",
+            "allowed_hosts": ["example.com"], "inputs": {}, "allow_generation": False,
+            "status": "approved_for_capture", "source_ids": ["src"],
+        }]},
+    )
+    clip = tmp_path / "demo.mp4"
+    clip.write_bytes(b"video")
+    monkeypatch.setattr(product_demo, "generate_demo", lambda spec, output: {
+        "video": str(clip), "quality": {"status": "accepted"},
+    })
+
+    result = production._run_configured_model_tests(project, tmp_path)
+
+    assert result[0]["status"] == "complete"
+    assert project.episode["model_test_queue"][0]["video"] == str(clip)
+    assert project.episode["model_test_queue"][0]["status"] == "complete"

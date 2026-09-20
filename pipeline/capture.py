@@ -22,7 +22,9 @@ from .config import CAPTURE_PARALLELISM, FFMPEG_PRESET, FFMPEG_THREADS_PER_JOB
 from .models import CaptureAction, CaptureArtifact, CapturePlan, CaptureRecord, Source
 
 CapturePlanner = Callable[[Source, dict, list[str]], CapturePlan]
-CAPTURE_CACHE_VERSION = 4
+CAPTURE_CACHE_VERSION = 5
+_QC_SAMPLE_WIDTH = 160
+_QC_SAMPLE_HEIGHT = 90
 
 
 class BlockedPageError(RuntimeError):
@@ -411,17 +413,24 @@ def _motion_actions(plan: CapturePlan) -> list[CaptureAction]:
 
 def _perform_motion(page, action: CaptureAction) -> None:
     duration_ms = int(action.duration_seconds * 1000)
+    _install_editorial_cursor(page)
     if action.kind in {"hover", "focus", "click_reveal", "video_playback"} and action.candidate_id:
         locator = page.locator(f'[data-ai-capture-id="{action.candidate_id}"]')
         if locator.count() == 1:
             locator.scroll_into_view_if_needed(timeout=5000)
+            move_ms = min(650, max(250, duration_ms // 4))
+            _move_editorial_cursor(page, locator, duration_ms=move_ms)
+            pre_hold_ms = min(240, max(100, duration_ms // 12))
+            page.wait_for_timeout(pre_hold_ms)
             if action.kind == "video_playback":
                 locator.evaluate("video => { video.muted = true; video.volume = 0; video.loop = true; video.play(); }")
             elif action.kind == "click_reveal":
                 locator.click(timeout=5000, no_wait_after=True)
             else:
                 locator.hover(timeout=5000)
-            page.wait_for_timeout(round(action.settle_seconds * 1000))
+            settle_ms = round(action.settle_seconds * 1000)
+            page.wait_for_timeout(settle_ms)
+            remaining_ms = max(250, duration_ms - move_ms - pre_hold_ms - settle_ms)
             if action.kind == "focus":
                 page.evaluate("""async ({durationMs}) => {
                   await new Promise(resolve => {
@@ -429,10 +438,11 @@ def _perform_motion(page, action: CaptureAction) -> None:
                     const tick = now => now - start >= durationMs ? resolve() : requestAnimationFrame(tick);
                     requestAnimationFrame(tick);
                   });
-                }""", {"durationMs": max(250, duration_ms - round(action.settle_seconds * 1000))})
+                }""", {"durationMs": remaining_ms})
             else:
-                page.wait_for_timeout(max(250, duration_ms - round(action.settle_seconds * 1000)))
+                page.wait_for_timeout(remaining_ms)
             return
+    page.evaluate("document.getElementById('__ai_capture_cursor')?.style.setProperty('opacity','0.55')")
     page.evaluate("""async ({startRatio, endRatio, durationMs}) => {
       const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
       const requestedStart = maxScroll * startRatio;
@@ -460,6 +470,55 @@ def _perform_motion(page, action: CaptureAction) -> None:
       await new Promise(resolve => setTimeout(resolve, hold));
     }""", {
         "startRatio": action.start_ratio, "endRatio": action.end_ratio, "durationMs": duration_ms,
+    })
+
+
+def _install_editorial_cursor(page) -> None:
+    """Add a clean cursor to the captured DOM; Playwright video omits the OS pointer."""
+    page.evaluate("""
+      () => {
+        if (document.getElementById('__ai_capture_cursor')) return;
+        const cursor = document.createElement('div');
+        cursor.id = '__ai_capture_cursor';
+        cursor.setAttribute('aria-hidden', 'true');
+        cursor.style.cssText = 'position:fixed;left:82%;top:78%;width:22px;height:31px;z-index:2147483647;pointer-events:none;transform:translate(-3px,-3px);filter:drop-shadow(0 1px 2px rgba(0,0,0,.38));opacity:.92';
+        cursor.innerHTML = '<svg viewBox="0 0 20 28" width="22" height="31"><path d="M2 2L2 23L7 18L11 26L15 24L11 16L18 16Z" fill="white" stroke="#171C1A" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+        document.documentElement.appendChild(cursor);
+      }
+    """)
+
+
+def _move_editorial_cursor(page, locator, *, duration_ms: int = 650) -> None:
+    box = locator.bounding_box()
+    if not box:
+        return
+    page.evaluate("""
+      async ({x,y,duration}) => {
+        const cursor = document.getElementById('__ai_capture_cursor');
+        if (!cursor) return;
+        const current = cursor.getBoundingClientRect();
+        const sx = current.left + current.width / 2;
+        const sy = current.top + current.height / 2;
+        const cx = sx + (x - sx) * .42;
+        const cy = sy - Math.min(90, Math.abs(x - sx) * .1);
+        cursor.style.opacity = '.94';
+        await new Promise(resolve => {
+          const started = performance.now();
+          const frame = now => {
+            const progress = Math.min(1, (now - started) / duration);
+            const eased = progress * progress * (3 - 2 * progress);
+            const inverse = 1 - eased;
+            cursor.style.left = (inverse * inverse * sx + 2 * inverse * eased * cx + eased * eased * x) + 'px';
+            cursor.style.top = (inverse * inverse * sy + 2 * inverse * eased * cy + eased * eased * y) + 'px';
+            if (progress < 1) requestAnimationFrame(frame); else resolve();
+          };
+          requestAnimationFrame(frame);
+        });
+      }
+    """, {
+        "x": box["x"] + box["width"] / 2,
+        "y": box["y"] + box["height"] / 2,
+        "duration": duration_ms,
     })
 
 
@@ -503,6 +562,18 @@ def _recording_quality(path: Path, *, expected_seconds: float) -> dict:
         failures.append(f"expected 30fps, got {fps:.2f}")
     if duration < max(0.1, expected_seconds * 0.95 - 1 / 30):
         failures.append(f"recording too short ({duration:.2f}s)")
+    if path.is_file():
+        sampled = subprocess.run([
+            "ffmpeg", "-v", "error", "-i", str(path), "-an", "-vf",
+            f"fps=2,scale={_QC_SAMPLE_WIDTH}:{_QC_SAMPLE_HEIGHT}:flags=area,format=gray",
+            "-f", "rawvideo", "-pix_fmt", "gray", "pipe:1",
+        ], capture_output=True, check=True)
+        visual = _visual_frame_metrics(
+            sampled.stdout, width=_QC_SAMPLE_WIDTH, height=_QC_SAMPLE_HEIGHT,
+        )
+        report["visual"] = {key: value for key, value in visual.items() if key != "failures"}
+        report["checks"].extend(["non_black_pixels", "visible_motion", "edge_detail"])
+        failures.extend(visual["failures"])
     # A mostly static text page can encode sharply at a very low bitrate.
     # Conversely, noisy unreadable frames can have a high bitrate. Keep this
     # metric informational; do not label an encode sharp without visual review.
@@ -511,6 +582,53 @@ def _recording_quality(path: Path, *, expected_seconds: float) -> dict:
         report["failures"] = failures
         raise RuntimeError("recording QC rejected: " + "; ".join(failures))
     return report
+
+
+def _visual_frame_metrics(raw: bytes, *, width: int, height: int) -> dict:
+    """Measure real decoded pixels so a valid container cannot hide black/frozen footage."""
+    frame_size = width * height
+    if width < 2 or height < 2 or frame_size <= 0:
+        raise ValueError("visual QC dimensions must be at least 2x2")
+    frames = [raw[offset:offset + frame_size] for offset in range(0, len(raw), frame_size)]
+    frames = [frame for frame in frames if len(frame) == frame_size]
+    if not frames:
+        return {
+            "sampled_frames": 0, "black_frame_ratio": 1.0, "frozen_pair_ratio": 1.0,
+            "motion_energy": 0.0, "edge_energy": 0.0,
+            "failures": ["capture frame sampling failed"],
+        }
+    black_frames = sum(
+        sum(pixel <= 8 for pixel in frame) / frame_size >= 0.985 for frame in frames
+    )
+    pair_energy = [
+        sum(abs(left - right) for left, right in zip(before, after)) / frame_size
+        for before, after in zip(frames, frames[1:])
+    ]
+    edge_energy = max(
+        sum(
+            abs(frame[row * width + column] - frame[row * width + column - 1])
+            for row in range(height) for column in range(1, width)
+        ) / (height * (width - 1))
+        for frame in frames
+    )
+    frozen_pairs = sum(value < 0.18 for value in pair_energy)
+    frozen_ratio = frozen_pairs / len(pair_energy) if pair_energy else 0.0
+    failures: list[str] = []
+    black_ratio = black_frames / len(frames)
+    if black_ratio >= 0.75:
+        failures.append("capture is black")
+    if edge_energy < 1.0:
+        failures.append("capture is visually empty or unreadable")
+    if len(pair_energy) >= 2 and frozen_ratio >= 0.95:
+        failures.append("capture has no visible movement")
+    return {
+        "sampled_frames": len(frames),
+        "black_frame_ratio": round(black_ratio, 4),
+        "frozen_pair_ratio": round(frozen_ratio, 4),
+        "motion_energy": round(sum(pair_energy) / len(pair_energy), 4) if pair_energy else 0.0,
+        "edge_energy": round(edge_energy, 4),
+        "failures": failures,
+    }
 
 
 def _render_cinematic_scroll(

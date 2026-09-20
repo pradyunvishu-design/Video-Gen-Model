@@ -34,7 +34,8 @@ from .job_store import JobStore
 from .licensed_clips import LicensedClipRequest, ingest_licensed_clip
 from .models import MediaAsset
 from .production import (
-    CreditLimitExceeded, configure_news_weekly_model_test, create_news_weekly, create_weekly_slate,
+    CreditLimitExceeded, acquire_episode_screen_recordings,
+    configure_news_weekly_model_test, create_news_weekly, create_weekly_slate,
     produce_canary, produce_episode, produce_next, refresh_sources, review_slate, run_news_weekly_model_tests,
 )
 from .project_store import load_project, save_project
@@ -48,6 +49,15 @@ from .youtube_broll import (
 app = FastAPI(title="Magic Hour Video Worker", version="2.1.0", docs_url=None, redoc_url=None)
 store = JobStore(JOB_DB_PATH)
 executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="video-worker")
+
+SUPPORTED_STAGES = {
+    "refresh_sources", "research_slate", "research_news_weekly", "review_slate",
+    "produce_episode", "produce_next", "produce_canary", "review_final", "approve_credits",
+    "acquire_screen_recordings", "generate_browser_demo", "configure_model_test", "run_model_tests",
+    "render_editorial", "ingest_licensed_clip", "discover_viral_clips", "discover_broll",
+    "approve_and_ingest_clip", "build_clip_segment", "run_fidelity_loop",
+    "build_fidelity_reference_profile", "build_ailabs_motion_expert",
+}
 
 
 class JobRequest(BaseModel):
@@ -533,6 +543,10 @@ def _execute(
         return produce_canary(
             payload["episode_id"], should_cancel=should_cancel, report_progress=report_progress,
         )
+    if stage == "acquire_screen_recordings":
+        return acquire_episode_screen_recordings(
+            payload["episode_id"], should_cancel=should_cancel, report_progress=report_progress,
+        )
     if stage == "review_final":
         return _review_final(payload)
     if stage == "approve_credits":
@@ -608,7 +622,7 @@ def health() -> dict:
 
 @app.post("/jobs", dependencies=[Depends(authenticate)])
 def create_job(request: JobRequest) -> dict:
-    if request.stage not in {"refresh_sources", "research_slate", "research_news_weekly", "review_slate", "produce_episode", "produce_next", "produce_canary", "review_final", "approve_credits", "generate_browser_demo", "configure_model_test", "run_model_tests", "render_editorial", "ingest_licensed_clip", "discover_viral_clips", "discover_broll", "approve_and_ingest_clip", "build_clip_segment", "run_fidelity_loop", "build_fidelity_reference_profile", "build_ailabs_motion_expert"}:
+    if request.stage not in SUPPORTED_STAGES:
         raise HTTPException(422, "unsupported stage")
     job_id = "job_" + uuid.uuid4().hex
     job, created = store.create(job_id, _job_key(request), request.stage, request.payload)

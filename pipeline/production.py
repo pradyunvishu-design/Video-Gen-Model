@@ -36,6 +36,7 @@ from .config import (
 from .models import Brief, EpisodeProject, MediaAsset
 from .project_store import canonical_hash, load_project, mark_stage, save_project, stage_is_current
 from .render_v2 import concat_audio, duration, make_silence, render_project
+from .screen_recording_workflow import review_screen_recording_readiness, write_screen_recording_manifest
 from .tts import split_text
 from .youtube_broll import build_project_broll_request, discover_project_broll
 from .tooling_catalog import production_stack_receipt
@@ -368,10 +369,17 @@ def configure_news_weekly_model_test(
 
 def run_news_weekly_model_tests(episode_id: str) -> dict:
     """Run only explicitly configured tests and persist their deterministic browser recordings."""
-    from .product_demo import DemoSpec, generate_demo
-
     run_dir = _episode_dir(episode_id)
     project = load_project(run_dir)
+    results = _run_configured_model_tests(project, run_dir)
+    save_project(project, run_dir)
+    return {"episode_id": episode_id, "tests": results}
+
+
+def _run_configured_model_tests(project: EpisodeProject, run_dir: Path) -> list[dict]:
+    """Execute approved browser demos inside production; failures retain a scoped fallback."""
+    from .product_demo import DemoSpec, generate_demo
+
     results = []
     for item in project.episode.get("model_test_queue", []):
         if item.get("status") == "complete" and Path(item.get("video", "")).is_file():
@@ -384,11 +392,21 @@ def run_news_weekly_model_tests(episode_id: str) -> dict:
             profile=item.get("profile", "google_manual"), allowed_hosts=item.get("allowed_hosts", []),
             inputs=item.get("inputs", {}), allow_generation=bool(item.get("allow_generation")),
         )
-        metadata = generate_demo(spec, run_dir / "model_tests" / item["story_id"])
-        item.update({"status": "complete", "video": metadata["video"], "metadata": metadata})
-        results.append({"story_id": item["story_id"], "status": "complete", "video": metadata["video"]})
-        save_project(project, run_dir)
-    return {"episode_id": episode_id, "tests": results}
+        try:
+            metadata = generate_demo(spec, run_dir / "model_tests" / item["story_id"])
+            item.update({"status": "complete", "video": metadata["video"], "metadata": metadata})
+            results.append({"story_id": item["story_id"], "status": "complete", "video": metadata["video"]})
+        except Exception as exc:
+            item.update({
+                "status": "capture_failed",
+                "capture_error": f"{type(exc).__name__}: {exc}",
+                "retry_scope": "model_test_capture",
+            })
+            results.append({
+                "story_id": item["story_id"], "status": "capture_failed",
+                "error": item["capture_error"],
+            })
+    return results
 
 
 def _assign_weekly_model_test_assets(project: EpisodeProject) -> None:
@@ -419,13 +437,26 @@ def _assign_weekly_model_test_assets(project: EpisodeProject) -> None:
             demo_quality = item.get("metadata", {}).get("quality", {})
             project.media.append(MediaAsset(
                 id=f"browser_demo_{item['story_id']}", kind="browser_demo", path=str(video),
-                source_id=next(iter(story_sources), None), qc_status="passed",
+                source_id=next(iter(story_sources), None),
+                sha256=str(item.get("metadata", {}).get("video_sha256", "")),
+                qc_status="passed" if demo_quality.get("status") in {"accepted", "cached"} else "pending",
                 qc_notes=[
                     "Captured from an explicitly configured News Weekly model-test job.",
                     "Screen review: " + json.dumps(demo_quality, sort_keys=True) if demo_quality else
                     "Screen review metadata is unavailable; inspect before publication.",
                 ],
             ))
+        asset_id = f"browser_demo_{item['story_id']}"
+        if not any(entry.get("asset_id") == asset_id for entry in project.rights):
+            project.rights.append({
+                "asset_id": asset_id,
+                "source_id": next(iter(story_sources), None),
+                "source_url": item.get("website", ""),
+                "capture_mode": "approved_authenticated_product_demo",
+                "rights_basis": "original channel-operated product demonstration",
+                "allow_generation": bool(item.get("allow_generation")),
+                "human_review_required": True,
+            })
 
 
 def review_slate(slate_id: str, decisions: list[dict]) -> dict:
@@ -611,6 +642,19 @@ def _capture_and_assign(project: EpisodeProject, run_dir: Path, *, canary: bool 
             for source_id in beat.source_ids:
                 if source_id in directions and beat.visual_direction not in directions[source_id]:
                     directions[source_id].append(beat.visual_direction)
+    recording_demand = {
+        source.id: max(
+            (
+                3 if shot.asset_type == "official_demo" else
+                2 if shot.asset_type == "screen_recording" else
+                1 if shot.asset_type == "screenshot" else 0
+            )
+            for shot in project.shots if shot.source_id == source.id
+        )
+        for source in selected_sources
+    }
+    source_order = {source.id: index for index, source in enumerate(selected_sources)}
+    selected_sources.sort(key=lambda source: (-recording_demand[source.id], source_order[source.id]))
     captures = capture_sources(
         selected_sources,
         run_dir / "captures",
@@ -739,6 +783,65 @@ def _capture_and_assign(project: EpisodeProject, run_dir: Path, *, canary: bool 
             shot.focus_x = 0.5
             shot.focus_y = 0.5
     return by_source
+
+
+def _acquire_screen_recordings_for_project(
+    project: EpisodeProject,
+    run_dir: Path,
+    *,
+    canary: bool = False,
+    should_cancel: CancelCheck = None,
+) -> dict:
+    """Acquire, register and verify the screen clips required by the storyboard."""
+    _checkpoint(should_cancel)
+    model_tests = _run_configured_model_tests(project, run_dir)
+    if model_tests:
+        project.qc["automated_browser_demos"] = {
+            "passed": all(item["status"] in {"complete", "reused"} for item in model_tests),
+            "results": model_tests,
+            "fallback": "public source capture and deterministic motion remain available",
+        }
+    _checkpoint(should_cancel)
+    _capture_and_assign(project, run_dir, canary=canary)
+    _assign_weekly_model_test_assets(project)
+    manifest_path = write_screen_recording_manifest(project, run_dir)
+    readiness = review_screen_recording_readiness(project, run_dir)
+    project.artifacts["screen_recording_manifest"] = str(manifest_path)
+    project.qc["screen_recording_readiness"] = readiness
+    save_project(project, run_dir)
+    if not readiness["passed"]:
+        project.status = "screen_recording_review_required"
+        save_project(project, run_dir)
+        raise RuntimeError(
+            "screen recordings are not ready: " + "; ".join(readiness["failures"][:8])
+        )
+    return {"manifest": str(manifest_path), "qc": readiness, "model_tests": model_tests}
+
+
+def acquire_episode_screen_recordings(
+    episode_id: str,
+    *,
+    should_cancel: CancelCheck = None,
+    report_progress: ProgressCallback = None,
+) -> dict:
+    """Worker-stage entry point for acquiring or retrying only an episode's screen clips."""
+    run_dir = _episode_dir(episode_id)
+    project = load_project(run_dir)
+    if not project.script or not project.shots:
+        raise ValueError("screen recording acquisition requires an approved script and storyboard")
+    _report(report_progress, 10)
+    result = _acquire_screen_recordings_for_project(
+        project, run_dir, should_cancel=should_cancel,
+    )
+    project.status = "screen_recordings_ready"
+    save_project(project, run_dir)
+    _report(report_progress, 100)
+    return {
+        "episode_id": episode_id,
+        "status": project.status,
+        **result,
+        "artifacts": {"screen_recording_manifest": result["manifest"]},
+    }
 
 
 def _video_prompt(prompt: str) -> str:
@@ -1483,6 +1586,47 @@ def produce_episode(
             project.shots, actual_duration, min_shots=shot_min, max_shots=shot_max,
         )
     )
+    # Screen acquisition is a built-in episode stage. Run it as soon as the
+    # storyboard exists so a later, human-gated third-party b-roll review does
+    # not prevent safe public-page and approved product-demo capture.
+    project.status = "capturing_sources"
+    capture_input = {
+        "planner": {
+            "version": 9,
+            "model": OPENROUTER_BROWSER_MODEL,
+            "semantic_annotations": True,
+            "resolution": "1080p",
+            "parallelism": CAPTURE_PARALLELISM,
+        },
+        "sources": [{"id": source.id, "url": str(source.url)} for source in project.sources],
+        "shots": [
+            {"id": shot.id, "type": shot.asset_type, "source_id": shot.source_id, "prompt": shot.prompt}
+            for shot in project.shots
+        ],
+        "model_tests": [
+            {
+                "story_id": item.get("story_id"),
+                "website": item.get("website"),
+                "allowed_hosts": item.get("allowed_hosts", []),
+                "inputs": item.get("inputs", {}),
+                "allow_generation": bool(item.get("allow_generation")),
+                "profile": item.get("profile", "google_manual"),
+                "approval_state": (
+                    "approved"
+                    if item.get("status") in {"approved_for_capture", "complete"}
+                    else item.get("status", "planned")
+                ),
+            }
+            for item in project.episode.get("model_test_queue", [])
+        ],
+    }
+    if not stage_is_current(project, "capture", capture_input):
+        _acquire_screen_recordings_for_project(
+            project, run_dir, canary=canary, should_cancel=should_cancel,
+        )
+        mark_stage(project, "capture", capture_input)
+        save_project(project, run_dir)
+    speed_checkpoint("capture")
     if YOUTUBE_BROLL_ENABLED and not canary:
         try:
             broll_request = build_project_broll_request(project)
@@ -1540,27 +1684,6 @@ def produce_episode(
                 "footage-led visual mix is not ready; approve and ingest matched source excerpts: "
                 + "; ".join(project.qc["youtube_broll_readiness"]["failures"][:8])
             )
-    project.status = "capturing_sources"
-    capture_input = {
-        "planner": {
-            "version": 7,
-            "model": OPENROUTER_BROWSER_MODEL,
-            "semantic_annotations": True,
-            "resolution": "1080p",
-            "parallelism": CAPTURE_PARALLELISM,
-        },
-        "sources": [{"id": source.id, "url": str(source.url)} for source in project.sources],
-        "shots": [
-            {"id": shot.id, "type": shot.asset_type, "source_id": shot.source_id, "prompt": shot.prompt}
-            for shot in project.shots
-        ],
-        "model_tests": project.episode.get("model_test_queue", []),
-    }
-    if not stage_is_current(project, "capture", capture_input):
-        _capture_and_assign(project, run_dir, canary=canary)
-        _assign_weekly_model_test_assets(project)
-        mark_stage(project, "capture", capture_input)
-    speed_checkpoint("capture")
     capture_artifacts = {
         artifact.path: artifact
         for record in project.captures
@@ -1570,6 +1693,7 @@ def produce_episode(
         entry for entry in project.rights
         if entry.get("capture_mode") in {
             "licensed_timestamped_excerpt", "official_source_timestamped_excerpt",
+            "approved_authenticated_product_demo",
         }
         or str(entry.get("asset_id", "")).startswith("licensed_clip_")
     ]

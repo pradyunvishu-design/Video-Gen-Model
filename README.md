@@ -1,6 +1,4 @@
-# Video-Gen-Model
-
-Source snapshot of the Diffusion Daily / News Weekly video pipeline. Start with [SOURCE_PACKAGE.md](SOURCE_PACKAGE.md) for export scope, private configuration, and portability notes.
+# News Weekly Automation
 
 Quality-first automation for one entertaining, evidence-backed 8-12 minute technology and AI news show each week.
 The system researches and verifies claims, captures source pages with Playwright, writes
@@ -8,15 +6,20 @@ evidence-linked scripts through OpenRouter, creates a single consistent narrator
 Magic Hour voice cloning, and renders with FFmpeg/Remotion. The local configuration auto-approves
 private drafts; it does **not** upload to YouTube.
 
-## Recording quality and local studio roadmap
+## Built-in recording quality
 
 Browser demos now use a single 1080p encode with restrained, action-led focus
-moves; narration caching validates the script, voice, and returned audio.
-The [local Recording Studio](apps/recording-studio/README.md) now provides a
-separate Tauri 2 / React / TypeScript / FFmpeg / SQLite app with Windows and macOS
-capture implementations. From `apps/recording-studio`, run `npm run dev` after
-installing its native prerequisites. See the app's verification record for tested
-platform behavior. Cloud hosting is deliberately deferred.
+moves; narration caching validates the script, voice, and returned audio. Automated
+screen recording is part of the worker's normal `produce_episode` and `produce_next`
+jobs, so n8n does not open or operate a separate recorder. The
+[local Recording Studio](apps/recording-studio/README.md) remains available only as
+an optional manual diagnostic and native capture test harness.
+
+Each accepted clip is stored inside its episode, hashed, linked to its source and
+storyboard shot, and written to `screen_recordings/manifest.json`. The same stage
+rejects missing, out-of-episode, black, frozen, or unreadable captures before render.
+An authenticated `acquire_screen_recordings` worker job can retry only this stage;
+normal n8n `produce_next` jobs already run it automatically.
 
 For a no-key, local browser capture preview (requires Chrome and FFmpeg):
 
@@ -177,13 +180,17 @@ model may select only those observed candidate IDs and may request:
 The worker stores the final URL, page title, capture plan, timestamp, hashes, errors,
 and asset paths in `EpisodeProject.captures`. Full-page images never enter the editorial
 shot pool. Editorial screenshots are captured at native 1920x1080 resolution. Recordings use display-rate
-cubic easing, bounded travel, settled fonts and images, hidden cursors, muted media, 30 fps
-normalization, CRF 14 encoding, and stable framing without blur-producing frame blending. Article
+cubic easing, bounded travel, settled fonts and images, a clean DOM-rendered editorial cursor for
+click/hover demonstrations, muted media, 30 fps normalization, CRF 14 encoding, and stable framing
+without blur-producing frame blending. Article
 scrolls are rendered from the clean full-page capture rather than a live compositor recording, so they
 remain sharp and do not jitter. The worker rejects paywall/subscription modals and other large visual
 obstructions instead of suppressing access controls; that source is omitted from the editorial asset
 pool. Each accepted recording is checked for 1920x1080, 30 fps, adequate bitrate, duration, and a
-clean DOM before and after motion. Challenge
+clean DOM before and after motion. Decoded-frame QC also rejects black, visually empty, or frozen
+recordings even when the container technically plays. Recording slots are assigned first to sources
+that the storyboard explicitly needs as product demos or screen recordings, rather than whichever
+sources happened to appear first. Challenge
 pages such as Reddit's "blocked by network security" screen are detected before capture. The worker
 tries a conservative old.reddit.com fallback and omits the source from the editorial pool if every
 candidate is blocked. The planner cannot click
@@ -191,6 +198,12 @@ links, login/signup, forms, purchases, downloads, uploads, installs, publishing,
 consent controls. A deterministic scroll plan remains available if model planning fails. `MAX_CAPTURE_RECORDINGS`
 defaults to six per episode. This uses the existing OpenRouter key through
 `OPENROUTER_BROWSER_MODEL`; no additional browser API key is required.
+
+Configured model tests with status `approved_for_capture` run inside the same episode-production
+job before source capture and are assigned directly to their matching storyboard beats. Public,
+non-authenticated demos may use the isolated `public_isolated` profile; authenticated demos continue
+to require the manually prepared browser profile. A failed model test is recorded as a scoped capture
+failure and falls back to official-page evidence instead of crashing unrelated production stages.
 
 ## 30-minute draft profile
 
@@ -407,7 +420,7 @@ include paid n8n Variables, so the URL is deliberately explicit in the exported 
 
 Open each HTTP Request node and select that credential. In the Google Sheets sync,
 select a Google Sheets OAuth2 credential on all six `Sync ...` nodes. The target is
-[AI Media Channel Operations Ledger](https://docs.google.com/spreadsheets/d/REPLACE_WITH_YOUR_SPREADSHEET_ID/edit).
+[AI Media Channel Operations Ledger](https://docs.google.com/spreadsheets/d/1plRnPVf2B-7gJFirba3uXyzCBXdDvHIigl8YM2Ykl6U).
 Publish the two form workflows, test everything manually, then activate the schedules.
 The exported JSON contains no API keys.
 

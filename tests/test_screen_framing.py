@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-from pipeline.capture import _recording_quality
+from pipeline.capture import _recording_quality, _visual_frame_metrics
 from pipeline import capture, product_demo
 from pipeline.product_demo import DemoAction, _render_cinematic_demo, recording_window
 from pipeline.screen_framing import focus_events, framing_filter
@@ -96,6 +96,57 @@ def test_low_bitrate_does_not_reject_legitimate_still_ui(monkeypatch, tmp_path):
     assert report["status"] == "accepted"
     assert report["readability_review_required"]
     assert "sharp_encode" not in report["checks"]
+
+
+def test_visual_frame_metrics_reject_black_or_frozen_capture():
+    frame_size = 16 * 9
+    frames = bytes([0]) * frame_size * 4
+    report = _visual_frame_metrics(frames, width=16, height=9)
+
+    assert report["black_frame_ratio"] == 1
+    assert report["frozen_pair_ratio"] == 1
+    assert "capture is black" in report["failures"]
+    assert "capture has no visible movement" in report["failures"]
+
+
+def test_visual_frame_metrics_accept_deliberate_moving_content():
+    width, height = 16, 9
+    frames = []
+    for offset in range(4):
+        pixels = bytearray([30] * (width * height))
+        for row in range(2, 6):
+            for column in range(2 + offset, 6 + offset):
+                pixels[row * width + column] = 230
+        frames.append(bytes(pixels))
+    report = _visual_frame_metrics(b"".join(frames), width=width, height=height)
+
+    assert report["failures"] == []
+    assert report["frozen_pair_ratio"] == 0
+    assert report["edge_energy"] > 1
+
+
+def test_public_capture_moves_visible_editorial_cursor_before_interaction():
+    calls = []
+
+    class Locator:
+        def count(self): return 1
+        def scroll_into_view_if_needed(self, **kw): pass
+        def bounding_box(self): return {"x": 400, "y": 240, "width": 200, "height": 80}
+        def hover(self, **kw): pass
+
+    class Page:
+        def locator(self, selector): return Locator()
+        def evaluate(self, script, args=None): calls.append((script, args))
+        def wait_for_timeout(self, milliseconds): pass
+
+    capture._perform_motion(
+        Page(),
+        capture.CaptureAction(kind="hover", candidate_id="c001", duration_seconds=2),
+    )
+
+    scripts = "\n".join(script for script, _ in calls)
+    assert "__ai_capture_cursor" in scripts
+    assert "requestAnimationFrame" in scripts
 
 
 @pytest.mark.skipif(not shutil.which("ffmpeg") or not shutil.which("ffprobe"), reason="FFmpeg required")

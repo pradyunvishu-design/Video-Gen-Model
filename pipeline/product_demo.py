@@ -392,15 +392,18 @@ def setup_google_profile(profile: str = "google_manual", start_url: str = "https
 
 
 def generate_demo(spec: DemoSpec, output_dir: Path | None = None) -> dict:
-    profile = profile_path(spec.profile)
-    if not (profile / "profile_ready.json").is_file():
-        raise PermissionError(f"profile {spec.profile!r} is not ready; run scripts/setup_google_demo_profile.py first")
     target = output_dir or (DEMO_OUTPUT_ROOT / datetime.now().strftime("demo_%Y%m%d_%H%M%S"))
     target.mkdir(parents=True, exist_ok=True)
+    isolated_public = spec.profile == "public_isolated"
+    profile = target / "isolated_browser_profile" if isolated_public else profile_path(spec.profile)
+    if isolated_public:
+        profile.mkdir(parents=True, exist_ok=True)
+    elif not (profile / "profile_ready.json").is_file():
+        raise PermissionError(f"profile {spec.profile!r} is not ready; run scripts/setup_google_demo_profile.py first")
     _safe_url(str(spec.website))
     with sync_playwright() as playwright:
         discovery = playwright.chromium.launch_persistent_context(
-            str(profile), channel="chrome", headless=False, viewport={"width": 1920, "height": 1080},
+            str(profile), channel="chrome", headless=isolated_public, viewport={"width": 1920, "height": 1080},
         )
         page = discovery.pages[0] if discovery.pages else discovery.new_page()
         page.goto(str(spec.website), wait_until="domcontentloaded", timeout=60000)
@@ -415,7 +418,7 @@ def generate_demo(spec: DemoSpec, output_dir: Path | None = None) -> dict:
         raw_dir = target / "raw"
         raw_dir.mkdir(exist_ok=True)
         context = playwright.chromium.launch_persistent_context(
-            str(profile), channel="chrome", headless=False,
+            str(profile), channel="chrome", headless=isolated_public,
             viewport={"width": 1920, "height": 1080}, device_scale_factor=1,
             record_video_dir=str(raw_dir), record_video_size={"width": 1920, "height": 1080},
         )
