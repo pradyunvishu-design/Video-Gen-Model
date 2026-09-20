@@ -1,7 +1,7 @@
 {
   "status": "exported",
   "file_count": 414,
-  "total_bytes": 3950413,
+  "total_bytes": 3952532,
   "credential_value_scan": "passed",
   "secret_pattern_scan": "passed",
   "excluded": [
@@ -160,8 +160,8 @@
     },
     {
       "path": "apps/recording-studio/e2e/studio.spec.ts",
-      "bytes": 3983,
-      "sha256": "490da8b4f370564165db53af872dfa64d7fd0d90fcbd75d5cfadc865d120b984"
+      "bytes": 4406,
+      "sha256": "ea695b65b1d3b3691b443e6520653431e5a1a69aad9e9c71eda024a2c2ce9fa9"
     },
     {
       "path": "apps/recording-studio/index.html",
@@ -180,8 +180,8 @@
     },
     {
       "path": "apps/recording-studio/playwright.config.ts",
-      "bytes": 423,
-      "sha256": "3f408b2171a76e4eaf35ead7495d949bbbd0ef90f9ebc1f02ecddd9cab2c00ae"
+      "bytes": 560,
+      "sha256": "e7223bb2228d5245dc22aeeeae2adfd15ba882a3a085ed2ce39c3232dbbd8aba"
     },
     {
       "path": "apps/recording-studio/README.md",
@@ -225,8 +225,8 @@
     },
     {
       "path": "apps/recording-studio/src/styles.css",
-      "bytes": 11693,
-      "sha256": "e8b80131aaa34e3dede37b09572a4a887900fc2025f52d4d0530503d9a7b7c5d"
+      "bytes": 11934,
+      "sha256": "788e2d5eedff018512664a55190d5c0032510517b0e7e1ac92333ee6be0e6d4f"
     },
     {
       "path": "apps/recording-studio/src/types.test.ts",
@@ -345,8 +345,8 @@
     },
     {
       "path": "apps/recording-studio/VERIFICATION.md",
-      "bytes": 5669,
-      "sha256": "61953a317e7024a8dc9b64fca35060dec052ba2edf5a5c9ff91acd0dffd99cc0"
+      "bytes": 6987,
+      "sha256": "c4d02aef70e32897c8e680a18f1e39203ff24b364ca72ebd474e3a416f23720d"
     },
     {
       "path": "apps/recording-studio/vite.config.ts",

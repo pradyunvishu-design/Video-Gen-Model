@@ -12,7 +12,7 @@ test('record, trim, save and export workflow with a mocked desktop boundary', as
     const win = window as any;
     let active = false;
     let projects: any[] = [];
-    const project = { id: 'test-fixture', title: 'SYNTHETIC browser test', createdAt: '2026-09-20T00:00:00Z', duration: 12,
+    const project = { id: 'test-fixture', title: 'SYNTHETIC browser test ' + 'long recording title '.repeat(4), createdAt: '2026-09-20T00:00:00Z', duration: 12,
       width: 1920, height: 1080, hasAudio: false, sourcePath: '/synthetic-source.mp4', posterPath: null,
       edits: { trimStart: 0, trimEnd: 12, crop: null, padding: 32, background: '#111827', zoomEvents: [], cursorHighlight: true, callouts: [], transcript: '' }, exports: [] as any[] };
     win.isTauri = true;
@@ -44,7 +44,13 @@ test('record, trim, save and export workflow with a mocked desktop boundary', as
   await page.getByRole('button', { name: 'Start recording' }).click();
   await expect(page.getByLabel('Recording timer')).toBeVisible();
   await page.getByRole('button', { name: 'Stop recording', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'SYNTHETIC browser test' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^SYNTHETIC browser test/ })).toBeVisible();
+  const libraryFits = await page.locator('.project-item').evaluate(button => {
+    const bounds = button.getBoundingClientRect();
+    const sidebar = button.closest('.sidebar')!.getBoundingClientRect();
+    return bounds.right <= sidebar.right && button.scrollWidth <= button.clientWidth + 1;
+  });
+  expect(libraryFits, 'Long recording names must not overlap the editor').toBe(true);
   await page.getByLabel('Trim end (seconds)').fill('0');
   await expect(page.getByRole('button', { name: 'Save edits' })).toBeDisabled();
   await page.getByLabel('Trim end (seconds)').fill('10');
