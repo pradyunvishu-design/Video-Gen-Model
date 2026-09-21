@@ -431,7 +431,10 @@ def _validate_slate(data: dict, sources: list[Source]) -> list[Brief]:
     return result
 
 
-def plan_weekly_slate(sources: list[Source], recent_topics: list[str] | None = None) -> list[Brief]:
+def plan_weekly_slate(sources: list[Source], recent_topics: list[str] | None = None,
+                      *, idea_board: dict | None = None) -> list[Brief]:
+    from .idea_radar import planner_context
+    idea_packet = planner_context(idea_board, {s.id for s in sources})
     correction = ""
     last_error: ValueError | None = None
     for _attempt in range(3):
@@ -442,6 +445,10 @@ def plan_weekly_slate(sources: list[Source], recent_topics: list[str] | None = N
             "Create exactly seven 8-12 minute episode briefs for the coming week. Use a curated mix of formats. "
             "Every brief must cite at least two source IDs that exist in SOURCES. Avoid the RECENT TOPICS, never reuse a story cluster "
             "across two briefs, and make all seven titles distinct.\n"
+            "Select primarily from measured YouTube idea opportunities where evidence exists. Use recent news as a secondary lane. "
+            "Develop a specific viewer question, original title/thumbnail promise, and demonstrable payoff for each brief. "
+            "YouTube popularity is an attention signal, never proof that a product claim is true or a guarantee of views.\n"
+            f"IDEA RESEARCH:\n{idea_packet}\n\n"
             f"{correction}\n\nRECENT TOPICS:\n{json.dumps(recent_topics or [])}\n\n"
             f"SOURCES:\n{json.dumps(_source_payload(sources))}",
             SLATE_SCHEMA,

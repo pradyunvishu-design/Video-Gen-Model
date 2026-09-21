@@ -149,15 +149,69 @@ def _claims_stage_input(project: EpisodeProject) -> dict:
 def refresh_sources() -> dict:
     research_dir = EPISODE_DATA_DIR.parent / "research"
     research_dir.mkdir(parents=True, exist_ok=True)
+    from .youtube_radar import collect_youtube_radar
+    from .idea_radar import build_idea_board, write_idea_board, _video_topic
+    youtube = collect_youtube_radar(research_dir / "youtube_ideas")
     stories = ingest.collect()
-    sources = research.enrich_stories(stories)
+    topics = [_video_topic(v) for v in youtube['videos'][:80]] if youtube.get('derived_metrics_allowed') else []
+    sources = research.enrich_stories(stories, youtube_topics=topics)
+    ideas = build_idea_board(sources, youtube, recent_topics=_recent_topic_history())
+    ideas_path = write_idea_board(ideas, research_dir)
     payload = {
         "schema_version": "2.0", "refreshed_at": time.time(),
         "stories": stories, "sources": [source.model_dump(mode="json") for source in sources],
+        "idea_board_path": str(ideas_path), "youtube_research_status": youtube["status"],
     }
     target = research_dir / "latest_sources.json"
     target.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
-    return {"status": "complete", "story_count": len(stories), "source_count": len(sources), "path": str(target)}
+    return {"status": "complete", "story_count": len(stories), "source_count": len(sources), "path": str(target),
+            "idea_board_path": str(ideas_path), "youtube_research_status": youtube["status"],
+            "recommended_idea_id": ideas["recommended_idea_id"]}
+
+
+def research_video_ideas(*, force_youtube: bool = False) -> dict:
+    """Refresh the YouTube-first board without running narration, rendering, or paid LLM calls."""
+    from .models import Source
+    from .youtube_radar import collect_youtube_radar
+    from .idea_radar import build_idea_board, write_idea_board
+    directory = EPISODE_DATA_DIR.parent / "research"
+    cache = directory / "latest_sources.json"
+    cached = json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else {}
+    sources = [Source.model_validate(item) for item in cached.get("sources", [])]
+    refreshed_at = float(cached.get("refreshed_at", 0))
+    source_cache_fresh = 0 <= time.time() - refreshed_at <= 8 * 3600
+    youtube = collect_youtube_radar(directory / "youtube_ideas", force=force_youtube)
+    board = build_idea_board(sources if source_cache_fresh else [], youtube, recent_topics=_recent_topic_history())
+    board['source_cache_status'] = 'fresh' if source_cache_fresh else 'refresh_required'
+    board['source_cache_refreshed_at'] = refreshed_at or None
+    path = write_idea_board(board, directory)
+    return {"status": "complete" if youtube["status"] == "complete" else "partial",
+            "idea_board_path": str(path), "review_path": str(path.with_suffix(".md")),
+            "recommended_idea_id": board["recommended_idea_id"], "idea_count": len(board["ideas"]),
+            "youtube_status": youtube["status"], "youtube_video_count": len(youtube["videos"]),
+            "derived_metrics_status": board["derived_metrics_status"],
+            "source_cache_status": board['source_cache_status'],
+            "quota_units_this_call": youtube["quota_units_this_call"], "errors": youtube["errors"]}
+
+
+def _idea_context() -> dict:
+    path = EPISODE_DATA_DIR.parent / "research" / "latest_ideas.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _brief_idea_research(brief: Brief, board: dict) -> dict:
+    selected = set(brief.source_ids)
+    return {
+        "generated_at": board.get("generated_at"),
+        "youtube_status": board.get("youtube_status", "unavailable"),
+        "idea_ids": [idea["idea_id"] for idea in board.get("ideas", [])
+                     if selected.intersection(idea["source_ids"])],
+        "board_path": str(EPISODE_DATA_DIR.parent / "research" / "latest_ideas.json"),
+        "score_interpretation": "editorial priority, not a prediction of views",
+    }
 
 
 def _add_credits(project: EpisodeProject, amount: int) -> None:
@@ -221,7 +275,10 @@ def create_weekly_slate(start: date | None = None, recent_topics: list[str] | No
         from .models import Source
         sources = [Source.model_validate(item) for item in cached["sources"]]
     (slate_dir / "stories.json").write_text(json.dumps(stories, indent=2), encoding="utf-8")
-    briefs = editorial.plan_weekly_slate(sources, recent_topics=recent_topics or _recent_topic_history())
+    idea_board = _idea_context()
+    briefs = editorial.plan_weekly_slate(
+        sources, recent_topics=recent_topics or _recent_topic_history(), idea_board=idea_board,
+    )
     episodes = []
     for index, brief in enumerate(briefs):
         scheduled = first + timedelta(days=index)
@@ -236,6 +293,7 @@ def create_weekly_slate(start: date | None = None, recent_topics: list[str] | No
                 "format": brief.episode_format,
                 "creative_profile": "hermes-proof-first-v1",
                 "slate_id": slate_id,
+                "idea_research": _brief_idea_research(brief, idea_board),
                 "publishing_enabled": False,
                 "approval_mode": "automatic_private_drafts" if auto_approved else "human_review",
             },
@@ -272,6 +330,7 @@ def create_news_weekly(start: date | None = None, recent_topics: list[str] | Non
     sources = [Source.model_validate(item) for item in cached["sources"]]
     brief, digest_plan = weekly_news.plan_weekly_digest(
         sources, recent_topics=recent_topics or _recent_topic_history(days=21),
+        idea_board=_idea_context(),
     )
     selected = [source for source in sources if source.id in brief.source_ids]
     auto_approved = AUTO_APPROVE_PRIVATE_DRAFTS
@@ -303,6 +362,7 @@ def create_news_weekly(start: date | None = None, recent_topics: list[str] | Non
             "target_minutes": 10,
             "intro_seconds": 8,
             "digest_plan": digest_plan,
+            "idea_research": _brief_idea_research(brief, _idea_context()),
             "model_test_queue": model_test_queue,
             "slate_id": slate_id,
             "publishing_enabled": False,

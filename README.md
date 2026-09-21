@@ -498,6 +498,16 @@ Reference transcript metrics and analysis-only timecoded frame strips are cached
 and content hash; complete reference videos are never retained. Integrated review uses those
 real reference strips and a sampled candidate strip in hash-randomized anonymous packets.
 
+## YouTube-first idea research
+
+Research is integrated into the existing source refresh and weekly planners. Run
+`py -3.12 -m scripts.research_video_ideas --refresh-news` to refresh public references,
+source evidence and a readable idea board without generating a video or spending model credits.
+See [setup and permission gate](research/youtube_idea_radar_setup.md) and
+[research findings](research/youtube_first_idea_research.md). Custom YouTube analytics
+default to disabled until the API project's applicable permission is confirmed.
+The system ranks editorial opportunities, never guarantees virality.
+
 ## Review and publishing policy
 
 - Magic Hour affiliation is disclosed when relevant, but it receives no automatic favorable

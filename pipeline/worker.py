@@ -36,7 +36,7 @@ from .models import MediaAsset
 from .production import (
     CreditLimitExceeded, acquire_episode_screen_recordings,
     configure_news_weekly_model_test, create_news_weekly, create_weekly_slate,
-    produce_canary, produce_episode, produce_next, refresh_sources, review_slate, run_news_weekly_model_tests,
+    produce_canary, produce_episode, produce_next, refresh_sources, research_video_ideas, review_slate, run_news_weekly_model_tests,
 )
 from .project_store import load_project, save_project
 from .viral_clips import (
@@ -51,7 +51,7 @@ store = JobStore(JOB_DB_PATH)
 executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="video-worker")
 
 SUPPORTED_STAGES = {
-    "refresh_sources", "research_slate", "research_news_weekly", "review_slate",
+    "refresh_sources", "research_video_ideas", "research_slate", "research_news_weekly", "review_slate",
     "produce_episode", "produce_next", "produce_canary", "review_final", "approve_credits",
     "acquire_screen_recordings", "generate_browser_demo", "configure_model_test", "run_model_tests",
     "render_editorial", "ingest_licensed_clip", "discover_viral_clips", "discover_broll",
@@ -522,6 +522,8 @@ def _execute(
 ) -> dict:
     if stage == "refresh_sources":
         return refresh_sources()
+    if stage == "research_video_ideas":
+        return research_video_ideas(force_youtube=bool(payload.get("force_youtube", False)))
     if stage == "research_slate":
         start = date.fromisoformat(payload["start_date"]) if payload.get("start_date") else None
         return create_weekly_slate(start=start, recent_topics=payload.get("recent_topics"))

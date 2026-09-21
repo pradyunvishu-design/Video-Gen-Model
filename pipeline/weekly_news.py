@@ -78,6 +78,9 @@ def _tokens(value: str) -> set[str]:
 
 
 def _similar(left: Source, right: Source) -> bool:
+    from .idea_radar import same_event
+    if not same_event(left.title, right.title):
+        return False
     a, b = _tokens(left.title), _tokens(right.title)
     title_overlap = len(a & b) / max(1, len(a | b))
     entities_a = {item.casefold() for item in left.entities if len(item) > 2}
@@ -90,7 +93,7 @@ def cluster_sources(sources: list[Source]) -> list[list[Source]]:
     """Cluster independent coverage of the same event without merging every story about one company."""
     groups: list[list[Source]] = []
     for source in sorted(sources, key=lambda item: item.published_at or datetime.min.replace(tzinfo=timezone.utc), reverse=True):
-        destination = next((group for group in groups if any(_similar(source, member) for member in group)), None)
+        destination = next((group for group in groups if all(_similar(source, member) for member in group)), None)
         if destination is None:
             destination = []
             groups.append(destination)
@@ -185,7 +188,10 @@ def _validate_plan(plan: dict, sources: list[Source]) -> dict:
         if not set(ids).issubset(source_by_id):
             raise ValueError(f"weekly story {story['story_id']} references an unknown source")
         evidence = [source_by_id[source_id] for source_id in ids]
-        if not any(source.signal_role in {"primary_evidence", "independent_reporting"} or source.source_type in {"primary", "secondary"} for source in evidence):
+        if not any(source.signal_role not in {"newsletter_lead", "community_signal"}
+                   and source.capture_status != "failed"
+                   and (source.signal_role in {"primary_evidence", "independent_reporting"}
+                        or source.source_type in {"primary", "secondary"}) for source in evidence):
             raise ValueError(f"weekly story {story['story_id']} is based only on community/newsletter signals")
         clusters = {source.cluster_id for source in evidence}
         if len(clusters) != 1:
@@ -282,8 +288,14 @@ def _repair_story_clusters(plan: dict, sources: list[Source]) -> dict:
     return plan
 
 
-def plan_weekly_digest(sources: list[Source], recent_topics: list[str] | None = None) -> tuple[Brief, dict[str, Any]]:
-    ranked = [item for item in rank_clusters(sources) if len(item["source_ids"]) >= 2][:18]
+def plan_weekly_digest(sources: list[Source], recent_topics: list[str] | None = None,
+                       *, idea_board: dict | None = None) -> tuple[Brief, dict[str, Any]]:
+    from .idea_radar import planner_context
+    idea_packet = planner_context(idea_board, {s.id for s in sources})
+    from .idea_radar import prioritize_clusters
+    ranked = prioritize_clusters(
+        [item for item in rank_clusters(sources) if len(item["source_ids"]) >= 2], idea_board,
+    )[:18]
     if len(ranked) < 5:
         raise ValueError(f"only {len(ranked)} multi-source story clusters are ready; at least five are required")
     valid_source_ids = {source_id for cluster in ranked for source_id in cluster["source_ids"]}
@@ -300,6 +312,10 @@ def plan_weekly_digest(sources: list[Source], recent_topics: list[str] | None = 
             "Humor angles must come from a documented contradiction, awkward limitation, or recognizable user behavior; use an empty string when nothing honest is funny. "
             "The cold open is a rapid promise, not a summary. The show title is THE WEEK IN AI. Do not fabricate a test, URL, result, number, or source. "
             "Use source IDs only within one ranked cluster per story. Avoid recent topics unless a material new event occurred."
+            " Lead with a relevant measured YouTube opportunity from IDEA RESEARCH when the evidence supports it; "
+            "fresh news is the secondary discovery lane. Give every story a concrete viewer payoff. "
+            "Do not copy competing titles or confuse competitor views with verified product performance."
+            f"\nIDEA RESEARCH:\n{idea_packet}\n"
             f"\n{correction}\n\nRECENT TOPICS:\n{json.dumps(recent_topics or [])}\n\nRANKED CLUSTERS:\n{json.dumps(ranked)}\n\n"
             f"SOURCES:\n{json.dumps([source.model_dump(mode='json') for source in candidates], default=str)}",
             WEEKLY_DIGEST_SCHEMA,

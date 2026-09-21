@@ -7,7 +7,7 @@ import re
 import math
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import urljoin, urlsplit
 
 import requests
@@ -150,8 +150,54 @@ def enrich_story(story: dict) -> Source:
     )
 
 
-def enrich_stories(stories: list[dict], limit: int = 100) -> list[Source]:
-    selected = stories[:limit]
+def select_enrichment_pool(stories: list[dict], limit: int = 100,
+                           youtube_topics: list[str] | None = None) -> list[dict]:
+    """Reserve evidence capacity before engagement-sorted community posts crowd it out."""
+    from .idea_radar import MEDIA_TERMS, match_topic
+    now = datetime.now(timezone.utc)
+    def priority(story):
+        title = story.get('title', '')
+        words = set(re.findall(r'[a-z0-9]+', title.casefold()))
+        fit = 25 if words & MEDIA_TERMS else 0
+        relevant = 45 if any(match_topic(title, t) for t in (youtube_topics or [])) else 0
+        try:
+            published = datetime.fromisoformat(str(story.get('published_at') or '').replace('Z', '+00:00'))
+            published = published if published.tzinfo else published.replace(tzinfo=timezone.utc)
+            days = max(0, (now-published).total_seconds()/86400)
+        except ValueError:
+            days = 30
+        return fit+relevant+20*math.exp(-days/5), title
+    ordered = sorted(stories, key=priority, reverse=True)
+    selected, seen = [], set()
+    # Primary evidence and reporting have reserved room; remaining capacity can
+    # be filled by any lane, so a temporarily unavailable feed does not empty the pool.
+    for roles, share in [({'primary'}, .5), ({'reporting'}, .3), ({'newsletter', 'community'}, .2)]:
+        count = 0
+        publishers = Counter()
+        for story in ordered:
+            key = story.get('id') or story.get('url')
+            publisher = story.get('source', '')
+            if story.get('source_role') not in roles or key in seen or publishers[publisher] >= max(3, limit//12):
+                continue
+            if count >= int(limit*share):
+                break
+            selected.append(story)
+            seen.add(key)
+            publishers[publisher] += 1
+            count += 1
+    for story in ordered:
+        if len(selected) >= limit:
+            break
+        key = story.get('id') or story.get('url')
+        if key not in seen:
+            selected.append(story)
+            seen.add(key)
+    return selected[:limit]
+
+
+def enrich_stories(stories: list[dict], limit: int = 100,
+                   youtube_topics: list[str] | None = None) -> list[Source]:
+    selected = select_enrichment_pool(stories, limit, youtube_topics)
     with ThreadPoolExecutor(max_workers=min(RESEARCH_PARALLELISM, max(1, len(selected)))) as executor:
         sources = list(executor.map(enrich_story, selected))
     cluster_counts = Counter(source.cluster_id for source in sources if source.cluster_id)

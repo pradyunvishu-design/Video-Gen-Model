@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "derived_metrics_permission": {"status": "unconfirmed", "approval_reference": ""},
+  "channels": [
+    {"handle": "@theAIsearch", "expected_id": "UCIgnGlGkVRhd4qNFcEwLL4A"},
+    {"handle": "@AILABS-393", "expected_id": "UCelfWQr9sXVMTvBzviPGlFw"},
+    {"handle": "@mreflow"},
+    {"handle": "@aiexplained-official"}
+  ],
+  "discovery_queries": ["AI video generation model", "open source diffusion video model"],
+  "max_channels": 8,
+  "uploads_per_channel": 50,
+  "cache_hours": 6,
+  "history_days": 29,
+  "baseline_upload_days": 120,
+  "idea_window_days": 30,
+  "min_duration_seconds": 240,
+  "max_duration_seconds": 3600,
+  "max_nominal_quota_units": 400,
+  "ranking_note": "Scores are uncalibrated editorial priorities, not probabilities of virality."
+}

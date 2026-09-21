@@ -1,0 +1,28 @@
+{
+  "status": "pass",
+  "artifact": "YouTube-first research implementation and local idea board",
+  "scope": "Tested implementation with analytics permission gate; not proof of viral performance or remote deployment",
+  "hard_blockers": [],
+  "soft_signal_categories": [],
+  "evidence": [
+    "Live metadata collection: 283 eligible videos, 226 nominal YouTube API units, no key printed",
+    "Final raw-reference board: 8 news opportunities, no fabricated viral recommendation",
+    "Unrelated ComfyUI releases no longer merged; camera-crime headlines excluded from media-generation lane",
+    "Blocked captures, newsletter-only proof and stale caches cannot pass the new evidence gate",
+    "Custom API-derived analytics disabled until applicable permission is confirmed",
+    "Independent review completed; findings addressed in code and focused regressions"
+  ],
+  "repair_stage": null,
+  "verification": [
+    "61 targeted tests passed in canonical repository; one upstream deprecation warning",
+    "Changed Python files compiled",
+    "Live news enrichment and cached research-only job completed",
+    "No paid OpenRouter/Magic Hour generation or publishing performed"
+  ],
+  "remaining_limits": [
+    "Not trained or calibrated against this channel's actual results",
+    "Analytics permission unconfirmed; no live derived performance ranking enabled",
+    "No remote n8n update, full video render or full-repository test run",
+    "Native title/thumbnail tests and owner retention review remain future evaluation steps"
+  ]
+}
