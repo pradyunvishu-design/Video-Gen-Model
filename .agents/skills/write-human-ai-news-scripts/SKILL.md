@@ -20,7 +20,8 @@ Use a staged writer's room. Do not ask one model to research, outline, write, hu
 
 ## Writing contract
 
-- Make one answerable promise in the opening. Deliver the first proof or visible example within about 45 seconds. Resolve that promise at the end.
+- Make one answerable promise in the opening. Target visible proof within five seconds, product and practical benefit by twelve, and a truthful scope/bridge by thirty. These are adjustable local production targets, not universal retention laws. Resolve the promise at the end.
+- Use `pipeline.opening_retention.build_opening_contract` to adapt the entry to the episode format and available evidence. Verify the actual spoken/visual timing with `evaluate_opening` before describing an opening as verified. An untimed script remains `awaiting_actual_timeline`; textual quality is not measured retention. See `research/first_30_seconds_hook_system.md` for research, limits, and cohort-based follow-up.
 - Rotate evidence-appropriate opening mechanisms—verdict, demonstration, relatable friction, context reversal, or ranked roundup—rather than reusing one viral-hook shell.
 - Build chapters around a listener question. Supply proof that changes the answer, translate the consequence, state the important limit, and leave through a causal bridge.
 - Write for the ear. Prefer concrete nouns, active verbs, explicit referents, natural contractions, and varied sentence lengths.

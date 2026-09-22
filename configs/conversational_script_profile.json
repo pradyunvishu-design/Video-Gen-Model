@@ -15,7 +15,7 @@
   },
   "selection_rubric": [
     "specificity: a viewer can name the product, result, friction, or decision",
-    "proof: the edit can show supporting evidence in the first 45 seconds",
+    "proof: the edit can show supporting evidence within five seconds, a local production target rather than a guaranteed retention threshold",
     "freshness: the wording and mechanism do not resemble the last episode or a stock hook",
     "clarity: the opening contains one answerable promise",
     "speakability: the thought survives a natural read aloud without trailer voice",
@@ -39,7 +39,7 @@
   },
   "retention": {
     "opening_deadline_seconds": 12,
-    "first_proof_deadline_seconds": 45,
+    "first_proof_deadline_seconds": 5,
     "new_value_interval_seconds": "45-75",
     "midpoint_rehook": "between 40 and 60 percent, introduce new evidence, a failed assumption, or a harder test—not a verbal tease",
     "chapter_exit": "end on a consequence, decision, limitation, or unresolved causal question; a clean cut is valid"

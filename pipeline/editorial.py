@@ -19,6 +19,7 @@ from .config import (
     OPENROUTER_VERIFY_MODEL, PROJECT_ROOT, require,
 )
 from .models import Brief, Claim, DeliveryDirection, EpisodeProject, Script, Source
+from .opening_retention import build_opening_contract, evaluate_opening
 from .tooling_catalog import method_provenance_for
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -567,6 +568,13 @@ def build_opening_lab(
     voice_profile: dict[str, Any], conversational_profile: dict[str, Any],
 ) -> dict[str, Any]:
     """Generate and compare four truthful openings before committing to one script."""
+    retention_contract = build_opening_contract(
+        project.brief.episode_format if project.brief else "deep_dive",
+        evidence=project.editorial_plan.get("opening_evidence", evidence.get("opening_assets", {})),
+        product=str(project.episode.get("product_name", "")),
+        product_spoken_aliases=project.episode.get("product_spoken_aliases", []),
+        recent_openings=project.editorial_plan.get("recent_openings", []),
+    )
     correction = ""
     last_error: ValueError | None = None
     for _attempt in range(3):
@@ -582,6 +590,7 @@ def build_opening_lab(
             "Do not use greetings, stock suspense, generic excitement, or copied creator language. Return only the schema."
             + correction
             + "\n\nCONVERSATIONAL PROFILE:\n" + json.dumps(conversational_profile)
+            + "\n\nFIRST-30-SECOND CONTRACT (takes precedence over older proof deadlines):\n" + json.dumps(retention_contract)
             + "\n\nVOICE PROFILE:\n" + json.dumps(voice_profile)
             + "\n\nPROMISE CONTRACT:\n" + json.dumps(promise_contract)
             + "\n\nFORMAT PLAYBOOK:\n" + json.dumps(format_playbook)
@@ -591,7 +600,10 @@ def build_opening_lab(
             temperature=0.7,
         )
         try:
-            return _validate_opening_lab(data, project)
+            validated = _validate_opening_lab(data, project)
+            # Add metadata locally, leaving the provider schema and old callers compatible.
+            validated["retention_contract"] = retention_contract
+            return validated
         except ValueError as exc:
             last_error = exc
             correction = (
@@ -1091,6 +1103,21 @@ def review_script_quality(project: EpisodeProject) -> dict[str, Any]:
         "conversational_profile", load_conversational_script_profile()
     )
     promise_contract = project.editorial_plan.get("promise_contract", {})
+    retention_contract = project.editorial_plan.get("opening_lab", {}).get("retention_contract")
+    opening_report = None
+    # Draft prose cannot prove seconds. Run this gate only once real alignment and
+    # visual evidence are supplied, and explicitly report otherwise.
+    opening_timeline = project.editorial_plan.get("opening_timeline")
+    if opening_timeline is not None:
+        opening_report = evaluate_opening(
+            opening_timeline.get("beats", []), contract=retention_contract,
+            evidence=opening_timeline.get("evidence", {}),
+            claims=[claim.model_dump(mode="json") for claim in project.claims],
+            payoffs=opening_timeline.get("payoffs", []),
+            asset_root=opening_timeline.get("asset_root"),
+            require_local_assets=True,
+        )
+        deterministic.extend("Opening: " + failure for failure in opening_report["failures"])
     data = call_openrouter(
         OPENROUTER_VERIFY_MODEL,
         "You are an independent spoken-language editor. Judge whether this sounds like an original, clear human "
@@ -1121,6 +1148,10 @@ def review_script_quality(project: EpisodeProject) -> dict[str, Any]:
         "claim support; only flag an unsupported statement here when it creates a clear spoken promise or teaching problem.\n\n"
         f"VOICE PROFILE:\n{json.dumps(voice_profile)}\n\nCONVERSATIONAL PROFILE:\n{json.dumps(conversational_profile)}\n\n"
         f"PROMISE CONTRACT:\n{json.dumps(promise_contract)}\n\n"
+        f"FIRST-30-SECOND CONTRACT:\n{json.dumps(retention_contract)}\n\n"
+        "Judge title/thumbnail alignment, visible proof, one specific viewer promise, an honest limit, and the bridge. "
+        "Timing labels and role annotations are not proof: compare them to the actual words and evidence. "
+        "If no aligned timeline is supplied, assess the writing but do not claim the rendered 30 seconds passed.\n\n"
         f"EDITORIAL PLAN:\n{json.dumps(project.editorial_plan)}\n\nSCRIPT:\n{project.script.model_dump_json()}\n\n"
         f"LOCAL ORAL-EDIT FAILURES:\n{json.dumps(deterministic)}",
         QUALITY_SCHEMA,
@@ -1135,6 +1166,7 @@ def review_script_quality(project: EpisodeProject) -> dict[str, Any]:
     data["deterministic_failures"] = deterministic
     no_major_issues = not any(issue["severity"] in {"major", "blocking"} for issue in data["issues"])
     data["oral_metrics"] = oral_report["metrics"]
+    data["opening_retention"] = opening_report or {"status": "awaiting_actual_timeline", "passed": None}
     data["passed"] = bool(thresholds_pass and no_major_issues and not deterministic)
     return data
 
