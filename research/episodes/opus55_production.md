@@ -50,3 +50,33 @@ py -3.12 -m pytest tests/test_opus55_episode.py -q -p no:cacheprovider --basetem
 Use a fresh dedicated test directory. The default repository pytest temporary directory can be locked on this Windows host.
 
 Final artifacts and actual test results belong under `data/episodes/episode_20260923_opus55`; local rendered media and provider credentials are not GitHub source-code artifacts.
+
+## Six official demo revision
+
+The six user-selected Claude videos are identity-checked against official channel
+`UCV03SRZXJEz-hchIAogeJOg`. This revision uses bounded, silent native-1080p excerpts,
+not full source films. The original export and approved narration remain unchanged.
+
+```powershell
+py -3.12 -m scripts.acquire_opus55_six_demos discover
+py -3.12 -m scripts.acquire_opus55_six_demos acquire
+py -3.12 -m scripts.acquire_opus55_six_demos contacts
+py -3.12 -m scripts.revise_opus55_six_demos plan
+py -3.12 -m scripts.revise_opus55_six_demos render
+py -3.12 -m scripts.revise_opus55_six_demos contacts
+py -3.12 -m scripts.revise_opus55_six_demos delivery_checks
+```
+
+Inspect actual excerpts before rendering: daily-effort footage must begin at local
+2.5 seconds to exclude the presenter; GPS-interactive begins at local 3 seconds to
+skip its title card. Versioned selections and placements live in `configs/opus55_six_demo_*.json`;
+episode-local manifests can override them. Original episode assets are required.
+Never infer download permission or publication clearance from discovery metadata.
+
+Output: `data/episodes/episode_20260923_opus55_six_demos/Claude_Opus_55_Six_Demos_1080p.mp4`.
+The reviewed plan replaces 22 shots and contains 178.7 seconds of real video,
+325.3 seconds of article/source evidence, and 96 seconds of original diagrams.
+Every requested source appears, with non-overlapping source time ranges. Illustrative
+creative demos do not establish the independent benchmark or pricing claims; keep
+the corresponding evidence pages and avoid presenting the source demos as our tests.
+Publishing remains disabled and excerpt rights remain pending human review.
