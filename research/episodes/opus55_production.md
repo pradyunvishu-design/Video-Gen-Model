@@ -68,8 +68,9 @@ py -3.12 -m scripts.revise_opus55_six_demos delivery_checks
 ```
 
 Inspect actual excerpts before rendering: daily-effort footage must begin at local
-2.5 seconds to exclude the presenter; GPS-interactive begins at local 3 seconds to
-skip its title card. Versioned selections and placements live in `configs/opus55_six_demo_*.json`;
+2.5 seconds to exclude the presenter; daily-review-diff starts at local 0.3 seconds
+to exclude a one-frame presenter flash; GPS-interactive starts at local 4 seconds
+to skip its title card. Versioned selections and placements live in `configs/opus55_six_demo_*.json`;
 episode-local manifests can override them. Original episode assets are required.
 Never infer download permission or publication clearance from discovery metadata.
 
