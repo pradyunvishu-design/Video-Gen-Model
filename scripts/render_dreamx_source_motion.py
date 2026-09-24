@@ -110,8 +110,8 @@ def render_source_shot(source_path, destination, duration_seconds, focus=None,
         raise ValueError('Source must exist and destination must be a different MP4')
     if not math.isfinite(seconds) or not 0.2<=seconds<=120:
         raise ValueError('Shot duration must be between 0.2 and 120 seconds')
-    if not math.isfinite(zoom) or not 1<zoom<=1.03:
-        raise ValueError('Directed zoom must be greater than 1 and at most 1.03')
+    if not math.isfinite(zoom) or not 1<=zoom<=1.03:
+        raise ValueError('Directed zoom must be between 1 (locked) and 1.03')
     meta=probe(source); video=next(s for s in meta['streams'] if s['codec_type']=='video')
     if (video['width'],video['height'])!=(W,H):
         raise ValueError('Source screenshot must be exactly 1920x1080')
@@ -168,7 +168,8 @@ def render_source_shot(source_path, destination, duration_seconds, focus=None,
     # Per-frame floating-point affine transform avoids integer-crop zoom jitter.
     # No actual perspective/skew: every corner has the same scale about the focus.
     delta=f'({zoom-1:.8f}*on/{max(1,frames-1)})'
-    filters.append(f"[{current}]perspective=x0='-{fx}*{delta}':y0='-{fy}*{delta}':x1='W+(W-{fx})*{delta}':y1='-{fy}*{delta}':x2='-{fx}*{delta}':y2='H+(H-{fy})*{delta}':x3='W+(W-{fx})*{delta}':y3='H+(H-{fy})*{delta}':sense=destination:eval=frame:interpolation=cubic,scale=out_color_matrix=bt709:out_range=tv,setsar=1,format=yuv420p,setparams=range=limited:color_primaries=bt709:color_trc=bt709:colorspace=bt709[out]")
+    camera=(f"perspective=x0='-{fx}*{delta}':y0='-{fy}*{delta}':x1='W+(W-{fx})*{delta}':y1='-{fy}*{delta}':x2='-{fx}*{delta}':y2='H+(H-{fy})*{delta}':x3='W+(W-{fx})*{delta}':y3='H+(H-{fy})*{delta}':sense=destination:eval=frame:interpolation=cubic," if zoom>1 else '')
+    filters.append(f"[{current}]{camera}scale=out_color_matrix=bt709:out_range=tv,setsar=1,format=yuv420p,setparams=range=limited:color_primaries=bt709:color_trc=bt709:colorspace=bt709[out]")
     temporary=dest.with_name(dest.stem+'.rendering.mp4')
     command+=['-filter_complex',';'.join(filters),'-map','[out]','-an','-frames:v',frames,'-r',FPS,'-c:v','libx264','-preset','veryfast','-crf','18','-threads','2','-pix_fmt','yuv420p','-movflags','+faststart',temporary]
     started=time.monotonic();run(command)
@@ -182,7 +183,7 @@ def render_source_shot(source_path, destination, duration_seconds, focus=None,
     temporary.replace(dest)
     receipt={'path':str(dest),'input_hash':digest,'output_sha256':sha(dest),'cached':False,'checks':checks,
              'duration_seconds':actual_seconds,'elapsed_seconds':round(time.monotonic()-started,3),
-             'motion':'directed subpixel push-in around exact focus; measured underline/cursor when available',
+             'motion':('locked framing; measured underline/cursor when available' if zoom==1 else 'directed subpixel push-in around exact focus; measured underline/cursor when available'),
              'validated_underlines':len(anns),'rejected_annotations':rejected,'spec':spec,'publishing_enabled':False}
     receipt_path.write_text(json.dumps(receipt,indent=2),encoding='utf-8')
     return receipt
