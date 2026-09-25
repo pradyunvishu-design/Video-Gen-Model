@@ -15,6 +15,7 @@ import re
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Literal
 
 import requests
 from pydantic import BaseModel, Field
@@ -39,6 +40,7 @@ OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 
 
 class BrollScene(BaseModel):
+    search_context: Literal["ai_news", "general"] = "ai_news"
     scene_id: str = Field(min_length=1, max_length=120)
     beat_id: str = Field(min_length=1, max_length=120)
     shot_ids: list[str] = Field(default_factory=list, max_length=3)
@@ -52,7 +54,7 @@ class BrollDiscoveryRequest(BaseModel):
     scenes: list[BrollScene] = Field(min_length=1, max_length=70)
     candidates_per_scene: int = Field(default=3, ge=1, le=3)
     search_results_per_scene: int = Field(default=12, ge=3, le=50)
-    published_within_days: int = Field(default=180, ge=1, le=3650)
+    published_within_days: int | None = Field(default=180, ge=1, le=3650)
     caption_candidates_per_scene: int = Field(default=1, ge=0, le=3)
     region_code: str = Field(default="US", min_length=2, max_length=2)
     relevance_language: str = Field(default="en", min_length=2, max_length=12)
@@ -157,7 +159,8 @@ def _response_text(payload: dict) -> str:
 def _fallback_plan(scene: BrollScene) -> dict:
     hint = " ".join(scene.source_hints[:3])
     visual = re.sub(r"\s+", " ", scene.visual_need).strip()
-    query = " ".join(part for part in (hint, visual, "official demo keynote") if part).strip()
+    suffix = "official demo keynote" if scene.search_context == "ai_news" else "demonstration documentary footage"
+    query = " ".join(part for part in (hint, visual, suffix) if part).strip()
     return {
         "scene_id": scene.scene_id,
         "query": query[:220],
@@ -198,6 +201,7 @@ def plan_scene_queries(
     compact_scenes = [
         {
             "scene_id": scene.scene_id,
+            "search_context": scene.search_context,
             "narration": scene.narration[:1200],
             "visual_need": scene.visual_need,
             "source_hints": scene.source_hints,
@@ -225,6 +229,14 @@ def plan_scene_queries(
             }
         },
     }
+    if any(scene.search_context == "general" for scene in scenes):
+        body["instructions"] = (
+            "Create one concise YouTube search query per scene for a nonfiction explanation. "
+            "Adapt to the scene's actual subject: demonstrations, documentary footage, museum or research institution "
+            "material, original reporting, and credible domain specialists. Do not force technology launches or "
+            "keynotes onto unrelated topics. Describe visible evidence, not talking-head reactions. Avoid reuploads, "
+            "misleading matches and unsupported historical reconstructions. Return every scene_id exactly once."
+        )
     try:
         response = requests.post(
             OPENAI_RESPONSES_URL,
@@ -260,20 +272,21 @@ def _iso_duration_seconds(value: str) -> float:
 def _search_video_ids(
     query: str, request: BrollDiscoveryRequest, api_key: str | None = None,
 ) -> list[str]:
-    published_after = datetime.now(timezone.utc) - timedelta(days=request.published_within_days)
     params = {
         "part": "snippet",
         "type": "video",
         "q": query,
         "maxResults": request.search_results_per_scene,
         "order": "relevance",
-        "publishedAfter": published_after.isoformat().replace("+00:00", "Z"),
         "regionCode": request.region_code.upper(),
         "relevanceLanguage": request.relevance_language,
         "safeSearch": "moderate",
         "videoEmbeddable": "true",
         "videoDefinition": "high",
     }
+    if request.published_within_days is not None:
+        published_after = datetime.now(timezone.utc) - timedelta(days=request.published_within_days)
+        params["publishedAfter"] = published_after.isoformat().replace("+00:00", "Z")
     if request.creative_commons_only:
         params["videoLicense"] = "creativeCommon"
     data = _youtube_get("search", params, api_key)
@@ -546,6 +559,7 @@ def discover_project_broll(
     *,
     youtube_api_key: str | None = None,
     openai_api_key: str | None = None,
+    should_cancel=None,
 ) -> dict:
     request = request or build_project_broll_request(project)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -559,6 +573,8 @@ def discover_project_broll(
     captions_dir = output_dir / "public_captions"
 
     for scene in request.scenes:
+        if should_cancel and should_cancel():
+            raise InterruptedError("b-roll discovery canceled")
         plan = plan_by_scene.get(scene.scene_id, _fallback_plan(scene))
         try:
             video_ids = _search_video_ids(str(plan["query"]), request, youtube_api_key)

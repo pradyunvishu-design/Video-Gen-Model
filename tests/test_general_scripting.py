@@ -382,3 +382,18 @@ def test_invalid_revision_limit(tmp_path):
     from pipeline.script_only import run_script_only
     with pytest.raises(ValueError, match="max_revisions"):
         run_script_only(project_for(), tmp_path, max_revisions=3)
+
+
+@pytest.mark.parametrize("cancel_after", [1, 3])
+def test_cooperative_cancel_persists_canceled_not_failed(monkeypatch, tmp_path, cancel_after):
+    from pipeline.script_only import run_script_only
+    from pipeline.project_store import load_project
+    calls = mock_provider(monkeypatch)
+    checks = []
+    def should_cancel():
+        checks.append(True)
+        return len(checks) >= cancel_after
+    with pytest.raises(InterruptedError):
+        run_script_only(project_for(minutes=1), tmp_path, generate=True, should_cancel=should_cancel)
+    assert load_project(tmp_path).status == "script_canceled"
+    assert len(calls) <= 1

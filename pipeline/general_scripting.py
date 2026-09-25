@@ -81,6 +81,9 @@ def _call(project, stage, task, schema, payload, *, review=False, validator=None
     body = {"contract": contract, "task": task, "material": payload}
     cache = project.editorial_plan.setdefault("response_cache", {})
     for attempt in range(2):
+        callback = _checkpoint.get()
+        if callback:
+            callback(project)
         key = digest({"input": script_input_hash(project), "stage": stage, "model": model,
                       "system": system, "body": body, "schema": schema})
         result = copy.deepcopy(cache[key]) if key in cache else editorial.call_openrouter(

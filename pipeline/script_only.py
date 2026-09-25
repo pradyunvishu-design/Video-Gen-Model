@@ -8,12 +8,12 @@ from pathlib import Path
 from . import editorial
 from .general_scripting import checkpoints, preflight
 from .models import EpisodeProject
-from .project_store import load_project, save_project
+from .project_store import canonical_hash, load_project, save_project
 from .script_profiles import script_input_hash
 
 
 def run_script_only(project: EpisodeProject, output_dir: Path, *, generate: bool = False,
-                    max_revisions: int = 1) -> EpisodeProject:
+                    max_revisions: int = 1, should_cancel=None) -> EpisodeProject:
     if not 0 <= max_revisions <= 2:
         raise ValueError("max_revisions must be 0-2")
     preflight(project)
@@ -33,12 +33,21 @@ def run_script_only(project: EpisodeProject, output_dir: Path, *, generate: bool
     save_project(project, output_dir)
     if not generate:
         return project
-    with checkpoints(lambda current: save_project(current, output_dir)):
+    def checkpoint(current):
+        save_project(current, output_dir)
+        if should_cancel and should_cancel():
+            raise InterruptedError("script generation canceled")
+    with checkpoints(checkpoint):
         try:
+            checkpoint(project)
             project.script, report, revisions = editorial.write_verified_script(project, max_revisions=max_revisions)
-            project.qc["fact_check"] = {**report, "automatic_revisions": revisions}
+            project.qc["fact_check"] = {**report, "automatic_revisions": revisions,
+                "reviewed_script_hash": canonical_hash(project.script.model_dump(mode="json"))}
             project.status = ("script_expert_review_required" if report.get("human_expert_review_required") else
                               "script_review_ready" if report["passed"] else "script_revision_required")
+        except InterruptedError:
+            project.status = "script_canceled"
+            raise
         except Exception:
             project.status = "script_stage_failed"
             raise

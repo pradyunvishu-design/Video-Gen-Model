@@ -11,6 +11,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timezone
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
@@ -57,6 +58,7 @@ SUPPORTED_STAGES = {
     "render_editorial", "ingest_licensed_clip", "discover_viral_clips", "discover_broll",
     "approve_and_ingest_clip", "build_clip_segment", "run_fidelity_loop",
     "build_fidelity_reference_profile", "build_ailabs_motion_expert",
+    "compose_customer_video",
 }
 
 
@@ -520,6 +522,9 @@ def _build_clip_segment(payload: dict) -> dict:
 def _execute(
     stage: str, payload: dict, should_cancel=None, report_progress=None,
 ) -> dict:
+    if stage == "compose_customer_video":
+        from .composer_api import execute_job
+        return execute_job(payload, EPISODE_DATA_DIR, should_cancel, report_progress)
     if stage == "refresh_sources":
         return refresh_sources()
     if stage == "research_video_ideas":
@@ -714,3 +719,39 @@ def get_artifact(
     if project_dir not in artifact.parents or not artifact.is_file():
         raise HTTPException(404, "artifact is unavailable")
     return FileResponse(artifact)
+
+
+_composition_schedule_lock = Lock()
+_composition_scheduled: set[str] = set()
+
+
+def _run_composition(job_id: str, payload: dict) -> None:
+    try:
+        _run_job(job_id, "compose_customer_video", payload)
+    finally:
+        with _composition_schedule_lock:
+            _composition_scheduled.discard(job_id)
+
+
+def _enqueue_composition(payload: dict, key: str) -> dict:
+    job, created = store.create("job_" + uuid.uuid4().hex, key, "compose_customer_video", payload)
+    if not created and job["payload"] != payload:
+        raise HTTPException(409, "idempotency key was already used for different project inputs")
+    with _composition_schedule_lock:
+        # A caller retries the same key after restart; queued jobs are scheduled once per process.
+        if job["status"] == "queued" and job["id"] not in _composition_scheduled:
+            _composition_scheduled.add(job["id"])
+            try:
+                executor.submit(_run_composition, job["id"], payload)
+            except Exception:
+                _composition_scheduled.discard(job["id"])
+                raise
+    # Do not expose owner IDs or server payload details to the caller-facing adapter.
+    return {"job_id": job["id"], "status": job["status"],
+            "status_url": f"/composition-projects/{payload['episode_id']}/jobs/{job['id']}"}
+
+
+from .composer_api import create_router as _composer_router
+
+app.include_router(_composer_router(authenticate, lambda: EPISODE_DATA_DIR, _enqueue_composition,
+    lambda job_id: store.get(job_id), lambda job_id: store.update(job_id, cancel_requested=1)))
