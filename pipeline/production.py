@@ -1418,8 +1418,12 @@ def produce_episode(
         "duration_profile": script_profile,
     }
     manual_script_approval = project.qc.get("script_manual_approval", {})
+    if project.script_profile:
+        from .script_profiles import script_input_hash
+        script_input["general_script_input_hash"] = script_input_hash(project)
     manual_script_approved = bool(
         project.script
+        and not project.script_profile
         and manual_script_approval.get("approved") is True
         and manual_script_approval.get("script_hash")
         == canonical_hash(project.script.model_dump(mode="json"))
@@ -1430,7 +1434,7 @@ def produce_episode(
         mark_stage(project, "script", script_input)
         save_project(project, run_dir)
     elif not project.script or not stage_is_current(project, "script", script_input):
-        if resume_script_revision and project.script:
+        if resume_script_revision and project.script and not project.script_profile:
             fact_check = editorial.verify_script(project)
             quality_review = editorial.review_script_quality(project)
             verification = {

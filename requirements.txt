@@ -2,6 +2,7 @@ requests>=2.31
 feedparser>=6.0
 python-dotenv>=1.0
 pydantic>=2.8,<3
+jsonschema>=4.23,<5
 fastapi>=0.115,<1
 uvicorn[standard]>=0.30,<1
 beautifulsoup4>=4.12

@@ -498,6 +498,9 @@ def extract_claims(brief: Brief, sources: list[Source]) -> list[Claim]:
 
 def duration_profile(project: EpisodeProject) -> dict[str, Any]:
     """Return editorial limits for standard episodes and explicitly requested short specials."""
+    if project.script_profile:
+        from .script_profiles import resolve_contract
+        return resolve_contract(project)["duration"]
     target_minutes = float(project.episode.get("target_minutes", 10))
     if target_minutes < 1:
         return {
@@ -615,6 +618,9 @@ def build_opening_lab(
 
 def build_editorial_plan(project: EpisodeProject) -> dict[str, Any]:
     """Translate research into a listener-first argument before prose is written."""
+    if project.script_profile:
+        from .general_scripting import build_plan
+        return build_plan(project)
     if not project.brief or not project.claims:
         raise ValueError("approved brief and claims are required before editorial planning")
     evidence = {
@@ -832,6 +838,9 @@ def build_editorial_plan(project: EpisodeProject) -> dict[str, Any]:
 
 def draft_researched_sections(project: EpisodeProject) -> dict[str, Any]:
     """Draft chapters independently from their evidence before the final voice pass."""
+    if project.script_profile:
+        from .general_scripting import draft_sections
+        return draft_sections(project)
     if not project.editorial_plan:
         build_editorial_plan(project)
     chapters = project.editorial_plan["outline"]["chapters"]
@@ -1094,6 +1103,9 @@ def _spoken_quality_failures(script: Script, profile: dict[str, Any] | None = No
 
 
 def review_script_quality(project: EpisodeProject) -> dict[str, Any]:
+    if project.script_profile:
+        from .general_scripting import review
+        return review(project)
     if not project.script:
         raise ValueError("script is required")
     oral_report = _spoken_quality_report(project.script, duration_profile(project))
@@ -1175,6 +1187,9 @@ def write_script(
     project: EpisodeProject, *, revision_feedback: dict | None = None,
     previous_script: Script | None = None,
 ) -> Script:
+    if project.script_profile:
+        from .general_scripting import write
+        return write(project, revision_feedback=revision_feedback, previous_script=previous_script)
     if not project.brief or not project.claims:
         raise ValueError("approved brief and claims are required before script writing")
     if not project.editorial_plan:
@@ -1338,6 +1353,9 @@ def write_script(
 
 def humanize_script(project: EpisodeProject, script: Script) -> Script:
     """Run a fact-locked spoken line edit before independent verification and narration spend."""
+    if project.script_profile:
+        from .general_scripting import humanize
+        return humanize(project, script)
     profile = duration_profile(project)
     expected_ids = [beat.id for beat in script.beats]
     correction = ""
@@ -1448,6 +1466,9 @@ def write_verified_script(project: EpisodeProject, max_revisions: int = 3) -> tu
         }
         if verification["passed"]:
             return script, verification, revision
+        if project.script_profile and fact_check.get("human_expert_review_required"):
+            # A human-review hold cannot be fixed by buying another rewrite.
+            return script, verification, revision
         if revision < max_revisions:
             script = humanize_script(
                 project,
@@ -1461,6 +1482,9 @@ def write_verified_script(project: EpisodeProject, max_revisions: int = 3) -> tu
 
 
 def verify_script(project: EpisodeProject) -> dict[str, Any]:
+    if project.script_profile:
+        from .general_scripting import verify
+        return verify(project)
     if not project.script:
         raise ValueError("script is required")
     data = call_openrouter(

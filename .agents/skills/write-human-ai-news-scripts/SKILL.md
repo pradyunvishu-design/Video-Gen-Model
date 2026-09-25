@@ -9,6 +9,14 @@ Use a staged writer's room. Do not ask one model to research, outline, write, hu
 
 ## Project route
 
+For an episode outside AI/technology news, use the optional typed
+`EpisodeProject.script_profile` contract and `docs/GENERAL_SCRIPT_WRITER.md`.
+The existing editorial entrypoints route it through `pipeline/general_scripting.py`.
+Do not load the AI-news channel voice or impose product-demo/weekly-show patterns
+on those episodes. Distinguish niche, audience, format and voice; preserve source
+evidence and expert-review holds. Use `pipeline.script_only` for script-only work.
+Do not describe mocked routing tests as proof of natural writing or virality.
+
 1. Require an approved brief, source bundle, and claim records.
 2. Load `configs/editorial_voice_profile.json`. Keep one audience relationship and vocabulary range across the episode without turning them into catchphrases.
 3. Load `configs/conversational_script_profile.json`, then run `pipeline.editorial.build_editorial_plan`. The plan generates four evidence-backed opening candidates across at least three mechanisms and selects one before outlining.

@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
+from .script_profiles import ScriptProfile
 
 
 class Source(BaseModel):
@@ -251,6 +252,7 @@ class EpisodeProject(BaseModel):
     sources: list[Source] = Field(default_factory=list)
     claims: list[Claim] = Field(default_factory=list)
     editorial_plan: dict[str, Any] = Field(default_factory=dict)
+    script_profile: ScriptProfile | None = None
     script: Script | None = None
     shots: list[Shot] = Field(default_factory=list)
     media: list[MediaAsset] = Field(default_factory=list)
