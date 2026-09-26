@@ -150,6 +150,7 @@ class SegmentAxisScore(BaseModel):
 
 
 class HeldoutFidelityReview(BaseModel):
+    score_policy: str = "legacy_scoped"
     reviewer_model: str
     independent: bool
     blind_packet_hash: str
@@ -1042,6 +1043,7 @@ def run_independent_blind_review(
     if not scores:
         failures.append("independent reviewer returned no candidate segment scores")
     review = HeldoutFidelityReview(
+        score_policy="fresh_matrix_v2",
         reviewer_model=AI_LABS_MOTION_REVIEW_MODEL,
         independent=True,
         blind_packet_hash=packet_hash,
@@ -1070,28 +1072,33 @@ def scope_post_repair_review(
     raw_after: HeldoutFidelityReview,
     iteration: dict[str, Any],
 ) -> HeldoutFidelityReview:
-    """Use fresh judgment for the edited axis/segment and freeze every untouched score."""
-    target = iteration["target"]
-    target_segment = str(target["segment_id"])
-    target_axis = str(target["axis"])
-    after_by_segment = {score.segment_id: score for score in raw_after.segment_scores}
-    visual_cap = float((raw_after.deterministic or {}).get("visual_score") or 5)
-    placement_cap = float((raw_after.deterministic or {}).get("placement_score") or 5)
+    """Recompute the complete fresh review; freeze artifacts, never judgments.
+
+    Reusing prior scores on untouched segments hides regressions and can produce
+    a false pass. Missing/duplicate segments must not silently inherit old scores.
+    ``iteration`` remains in the interface for existing callers/checkpoints.
+    """
+    expected = {score.segment_id for score in before.segment_scores}
+    received = [score.segment_id for score in raw_after.segment_scores]
+    failures = list(raw_after.hard_failures)
+    if set(received) != expected or len(received) != len(expected) or not expected:
+        failures.append("post-repair review must score every expected segment exactly once")
+    caps = raw_after.deterministic or {}
+    if any(key not in caps for key in ("visual_score", "placement_score")):
+        failures.append("post-repair review is missing deterministic score caps")
+    visual_cap = max(1.0, min(5.0, float(caps.get("visual_score", 1))))
+    placement_cap = max(1.0, min(5.0, float(caps.get("placement_score", 1))))
     scores: list[SegmentAxisScore] = []
-    for old in before.segment_scores:
-        fresh = after_by_segment.get(old.segment_id, old)
-        visual = fresh.visual_fidelity if old.segment_id == target_segment and target_axis == "visual" else old.visual_fidelity
-        placement = fresh.placement_fidelity if old.segment_id == target_segment and target_axis == "placement" else old.placement_fidelity
+    for fresh in raw_after.segment_scores:
         scores.append(SegmentAxisScore(
-            segment_id=old.segment_id,
-            visual_fidelity=min(visual, visual_cap),
-            placement_fidelity=min(placement, placement_cap),
-            notes=fresh.notes if old.segment_id == target_segment else old.notes,
+            segment_id=fresh.segment_id,
+            visual_fidelity=min(fresh.visual_fidelity, visual_cap),
+            placement_fidelity=min(fresh.placement_fidelity, placement_cap),
+            notes=fresh.notes,
         ))
     values = [value for score in scores for value in (score.visual_fidelity, score.placement_fidelity)]
     mean = round(sum(values) / max(1, len(values)), 3)
     minimum = round(min(values) if values else 1.0, 3)
-    failures = list(raw_after.hard_failures)
     return raw_after.model_copy(update={
         "segment_scores": scores,
         "mean_score": mean,
@@ -1262,11 +1269,23 @@ def finalize_or_revert_repair(
     unrelated_regressed = _axis_mean(after, unrelated_axis) + 1e-6 < _axis_mean(before, unrelated_axis)
     overall_regressed = after.mean_score + 1e-6 < before.mean_score
     target_improved = target_after > target_before + 1e-6
+    before_by_id = {s.segment_id: s for s in before.segment_scores}
+    after_by_id = {s.segment_id: s for s in after.segment_scores}
+    incomplete = set(before_by_id) != set(after_by_id) or len(after_by_id) != len(after.segment_scores)
+    segment_regressed = any(
+        getattr(after_by_id[sid], field) + 1e-6 < getattr(old, field)
+        for sid, old in before_by_id.items() if sid in after_by_id
+        for field in ("visual_fidelity", "placement_fidelity")
+    )
     rejected_reason = ""
-    if unrelated_regressed:
+    if after.hard_failures or incomplete:
+        rejected_reason = "post-repair review failed integrity or quality gates"
+    elif unrelated_regressed:
         rejected_reason = f"{unrelated_axis} fidelity regressed"
     elif overall_regressed:
         rejected_reason = "overall fidelity regressed"
+    elif segment_regressed:
+        rejected_reason = "individual segment fidelity regressed"
     elif not target_improved and not after.passed:
         rejected_reason = f"targeted {axis} score did not improve"
     if rejected_reason:
@@ -1295,7 +1314,8 @@ def run_paid_fidelity_repair_loop(
     reconcile_repair_state(run)
     output, local_qc = render_evaluation_package(run, project_dir)
     metrics = {**metrics, "render": str(output), "local_qc": local_qc}
-    if 0 <= run.accepted_review_index < len(run.reviews):
+    if (0 <= run.accepted_review_index < len(run.reviews)
+            and run.reviews[run.accepted_review_index].score_policy == "fresh_matrix_v2"):
         review = run.reviews[run.accepted_review_index]
     else:
         review = run_independent_blind_review(
@@ -1312,6 +1332,7 @@ def run_paid_fidelity_repair_loop(
         # Refuse the paid request before changing the accepted package.
         run.budget.reserve(estimated_review_usd)
         before = review
+        accepted_review_path = run.artifacts.get("heldout_review")
         decisions, metrics, iteration = apply_targeted_repair(
             run, before, catalog, placement_model,
         )
@@ -1327,12 +1348,17 @@ def run_paid_fidelity_repair_loop(
             motion_expert_run_dir(run.run_id) / f"heldout_review_round_{iteration['round']:02d}.json",
             after.model_dump(mode="json"),
         )
-        run.artifacts["heldout_review"] = str(review_path)
+        run.artifacts["latest_attempt_review"] = str(review_path)
         accepted = finalize_or_revert_repair(run, before, after)
         if accepted:
+            run.artifacts["heldout_review"] = str(review_path)
             run.accepted_review_index = len(run.reviews) - 1
             review = after
         else:
+            if accepted_review_path:
+                run.artifacts["heldout_review"] = accepted_review_path
+            else:
+                run.artifacts.pop("heldout_review", None)
             review = before
         save_motion_expert_run(run)
     return review
@@ -1902,6 +1928,7 @@ def motion_expert_status(run: MotionExpertRun) -> dict[str, Any]:
         if run.reviews and 0 <= run.accepted_review_index < len(run.reviews)
         else run.reviews[-1] if run.reviews else None
     )
+    requires_fresh_review = bool(latest and latest.score_policy != "fresh_matrix_v2")
     catalog_count = 0
     if run.pattern_catalog_path and Path(run.pattern_catalog_path).is_file():
         catalog_count = len(json.loads(Path(run.pattern_catalog_path).read_text(encoding="utf-8")).get("patterns", []))
@@ -1911,8 +1938,8 @@ def motion_expert_status(run: MotionExpertRun) -> dict[str, Any]:
         replicated_count = int(json.loads(evaluation_path.read_text(encoding="utf-8")).get("unique_patterns") or 0)
     return {
         "run_id": run.run_id,
-        "status": run.status,
-        "stop_reason": run.stop_reason,
+        "status": "awaiting_independent_review" if requires_fresh_review else run.status,
+        "stop_reason": "legacy_score_policy" if requires_fresh_review else run.stop_reason,
         "channel": run.channel_snapshot,
         "split": {
             "training_count": len(run.training_ids), "holdout_count": len(run.holdout_ids),
@@ -1924,7 +1951,10 @@ def motion_expert_status(run: MotionExpertRun) -> dict[str, Any]:
             "path": run.pattern_catalog_path,
         },
         "placement_model": {"path": run.placement_model_path, "hash": run.placement_model_hash},
-        "fidelity": ({"mean": latest.mean_score, "minimum": latest.minimum_score, "passed": latest.passed} if latest else None),
+        "fidelity": ({"mean": latest.mean_score, "minimum": latest.minimum_score,
+                      "passed": latest.passed and not requires_fresh_review,
+                      "score_policy": latest.score_policy,
+                      "requires_fresh_review": requires_fresh_review} if latest else None),
         "budget": {**run.budget.model_dump(), "remaining_usd": round(run.budget.remaining_usd, 6)},
         "openrouter": run.openrouter_snapshot,
         "repair_iterations": run.repair_iterations,
@@ -1933,6 +1963,7 @@ def motion_expert_status(run: MotionExpertRun) -> dict[str, Any]:
         "errors": run.errors[-5:],
         "resolved_errors": run.resolved_errors[-5:],
         "remaining_work": (
+            ["legacy scores require a fresh complete independent review"] if requires_fresh_review else
             [] if latest and latest.passed else
             ["run independent held-out review"] if not latest else
             ["repair the lowest held-out visual or placement dimension and rerun the evaluation package"]

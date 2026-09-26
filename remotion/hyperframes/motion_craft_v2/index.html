@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1920,height=1080">
+<title>Motion craft — purposeful footage</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#131614;color:#f2f0e9;font-family:system-ui,sans-serif;overflow:hidden}
+#root{position:relative;width:100%;height:100%;overflow:hidden}.clip{position:absolute;inset:0;background:#131614}
+.eyebrow{position:absolute;left:128px;top:90px;font-size:25px;color:#aab3ac;letter-spacing:.06em}
+h1{position:absolute;left:128px;top:145px;margin:0;font-size:72px;font-weight:550;line-height:1.08;letter-spacing:-.045em;max-width:1460px}
+.footer{position:absolute;bottom:58px;left:128px;font-size:22px;color:#aab3ac}.rule{height:1px;background:#414b43;width:1664px;position:absolute;left:128px;bottom:107px}
+.small{font-size:26px;fill:#aab3ac}.strong{font-size:38px;fill:#f2f0e9}.mono{font-family:monospace;font-size:25px}.diagram{position:absolute;left:0;top:0;width:100%;height:100%}
+.wire{fill:none;stroke:#718478;stroke-width:3}.active-wire{stroke:#b6cdbb;stroke-width:4;fill:none}.muted{color:#aab3ac}
+.speech{position:absolute;left:128px;top:414px;width:555px;font-size:49px;line-height:1.22;letter-spacing:-.025em}.speech em{font-style:normal;color:#b6cdbb}
+.quote-caption{position:absolute;left:128px;top:645px;font-size:25px;color:#aab3ac}
+.result-note{position:absolute;left:1000px;top:847px;font-size:30px;color:#b6cdbb}.bottom-line{position:absolute;left:128px;top:825px;font-size:36px;letter-spacing:-.02em}
+.timeline-caption{font-size:29px;fill:#aab3ac}.clip-label{font-size:32px;fill:#f2f0e9}.token{fill:#202522;stroke:#48594d;stroke-width:2}
+</style></head><body>
+<div id="root" data-composition-id="motion-craft" data-width="1920" data-height="1080" data-duration="27">
+<section class="clip" id="selection" data-start="0" data-duration="9" data-track-index="0">
+ <div class="eyebrow">01 / Match the action</div><h1 id="selection-title">The right topic isn't enough.</h1>
+ <div id="spoken" class="speech">“The editor removes <em>background noise.</em>”</div><div class="quote-caption">Example narration</div>
+ <svg class="diagram" viewBox="0 0 1920 1080" aria-label="One narration line selects a noise-removal demonstration instead of a presenter or a logo">
+  <path id="selection-wire" class="wire" pathLength="1" d="M730 545 H838 V464 H981"/>
+  <g id="candidate-good"><rect x="984" y="363" width="746" height="198" rx="8" class="token"/>
+   <g id="wave-noisy" stroke="#b6cdbb" stroke-width="4"><path d="M1029 462h16l8-44 10 80 10-103 10 124 10-94 10 78 10-65 10 42 10-32 10 20h12" fill="none"/></g>
+   <path id="clean-wave" stroke="#b6cdbb" stroke-width="4" fill="none" pathLength="1" d="M1029 462h27l9-17 10 34 10-44 10 43 10-27 9 11h41"/>
+   <text x="1215" y="441" class="strong">Noise removal</text><text x="1215" y="487" class="small">The action being explained</text>
+   <path id="select-tick" d="M1635 461l17 18 34-40" class="active-wire" pathLength="1"/>
+  </g>
+  <g id="candidate-other"><line x1="984" y1="631" x2="1730" y2="631" stroke="#414b43"/>
+   <circle cx="1085" cy="674" r="19" stroke="#aab3ac" stroke-width="3" fill="none"/><path d="M1058 729v-11a27 27 0 0 1 54 0v11" stroke="#aab3ac" stroke-width="3" fill="none"/>
+   <text x="1215" y="708" class="strong">Someone discussing it</text>
+   <text x="1215" y="751" class="small">Related subject. Less useful proof.</text>
+  </g>
+ </svg><div id="match-note" class="result-note">Show what changes.</div>
+ <div class="rule"></div><div class="footer">Illustrative selection • not a product performance claim</div>
+</section>
+<section class="clip" id="gate" data-start="9" data-duration="9" data-track-index="0">
+ <div class="eyebrow">02 / Check the evidence</div><h1 id="gate-title">A match is only the first check.</h1>
+ <svg class="diagram" viewBox="0 0 1920 1080" aria-label="Source, exact excerpt and permission converge before a clip is used">
+ <g id="gate-source"><text x="156" y="402" class="small">Where it came from</text><text x="156" y="453" class="strong">Source URL</text><path d="M145 490h452" stroke="#414b43" stroke-width="2"/></g>
+ <g id="gate-time"><text x="156" y="584" class="small">The part that matters</text><text x="156" y="635" class="strong">In / out points</text><path d="M145 672h452" stroke="#414b43" stroke-width="2"/></g>
+ <g id="gate-rights"><text x="156" y="766" class="small">Can we use it?</text><text x="156" y="817" class="strong">Usage permission</text></g>
+ <path id="wire-source" class="wire" pathLength="1" d="M653 438H810Q850 438 850 478V611H1030"/>
+ <path id="wire-time" class="wire" pathLength="1" d="M653 611H1030"/>
+ <path id="wire-rights" class="wire" pathLength="1" d="M653 793H810Q850 793 850 753V611H1030"/>
+ <g id="gate-result"><rect x="1065" y="430" width="632" height="363" fill="#202522" rx="8" stroke="#48594d" stroke-width="2"/>
+  <path d="M1120 487h56v63h-56z M1161 487v17h15" fill="none" stroke="#b6cdbb" stroke-width="3"/>
+  <g id="gate-result-copy"><text x="1120" y="632" class="strong">A traceable excerpt.</text><text x="1120" y="687" class="small">Then it can enter the edit.</text></g>
+  <path id="gate-tick" class="active-wire" pathLength="1" d="M1590 512l17 18 34-40"/>
+ </g></svg><div class="rule"></div><div class="footer">Source: pipeline/video_composer.py • conceptual workflow</div>
+</section>
+<section class="clip" id="reuse" data-start="18" data-duration="9" data-track-index="0">
+ <div class="eyebrow">03 / Keep the edit varied</div><h1 id="reuse-title">Don't show the same thing again.</h1>
+ <svg class="diagram" viewBox="0 0 1920 1080" aria-label="A timeline permits two appearances of one clip; a third is replaced with a different relevant clip">
+  <g id="ruler"><line x1="144" y1="449" x2="1776" y2="449" stroke="#536057" stroke-width="2"/>
+   <text x="144" y="419" class="timeline-caption">First use</text><text x="969" y="419" class="timeline-caption">Second use</text><text x="1390" y="419" class="timeline-caption">Choose another</text></g>
+  <g id="slot-a"><rect x="144" y="477" width="370" height="224" rx="5" fill="#34453a"/><path d="M200 609h37l18-38 21 70 22-53 17 21h132" fill="none" stroke="#b6cdbb" stroke-width="5"/><text x="177" y="533" class="clip-label">Clip A</text></g>
+  <g id="slot-b"><rect x="560" y="477" width="370" height="224" rx="5" fill="#202522" stroke="#536057" stroke-width="2"/><path d="M614 638l58-61 57 37 56-71 79 95z" fill="#48594d"/><text x="593" y="533" class="clip-label">Clip B</text></g>
+  <g id="slot-a2"><rect x="977" y="477" width="370" height="224" rx="5" fill="#34453a"/><path d="M1033 609h37l18-38 21 70 22-53 17 21h132" fill="none" stroke="#b6cdbb" stroke-width="5"/><text x="1010" y="533" class="clip-label">Clip A</text></g>
+  <g id="slot-repeat"><rect x="1393" y="477" width="370" height="224" rx="5" fill="#302924" stroke="#c8947e" stroke-width="2"/><text x="1426" y="533" class="clip-label">Clip A — again?</text><path d="M1554 594l39 39m0-39-39 39" stroke="#c8947e" stroke-width="4"/></g>
+  <g id="slot-c"><rect x="1393" y="477" width="370" height="224" rx="5" fill="#202522" stroke="#b6cdbb" stroke-width="2"/><path d="M1465 648v-48h40v48m22 0v-77h40v77m22 0v-111h40v111" fill="none" stroke="#b6cdbb" stroke-width="4"/><text x="1426" y="533" class="clip-label">Clip C</text></g>
+  <path id="reuse-link" pathLength="1" d="M329 747v20q0 20 20 20h793q20 0 20-20v-20" class="wire"/>
+ </svg><div id="reuse-note" class="bottom-line">Same file, two uses. After that, find a new angle.</div>
+ <div class="rule"></div><div class="footer">Source: pipeline/video_composer.py • illustrative edit, not footage</div>
+</section></div>
+<script type="module">
+import {draw} from './framework/ui/draw.js';
+window.__timelines=window.__timelines||{};
+const tl=gsap.timeline({paused:true});
+const enter=(selector,at,duration=.45)=>tl.fromTo(selector,{opacity:0,y:18},{opacity:1,y:0,duration,ease:'power2.out'},at);
+const connect=(id,at,dur=.65)=>draw(tl,{el:document.querySelector(id),at,dur,ease:'power2.inOut'});
+enter('#selection-title',0);enter('#spoken',.6);enter('#candidate-good',1.3);enter('#candidate-other',1.65);
+connect('#selection-wire',2.4);tl.to('#candidate-other',{opacity:.45,duration:.5},3.3);
+tl.to('#wave-noisy',{opacity:0,duration:.3},4);connect('#clean-wave',4,.65);connect('#select-tick',4.8,.4);enter('#match-note',5.3);
+enter('#gate-title',9);enter('#gate-result',9.3);enter('#gate-source',9.7);connect('#wire-source',10.3);
+enter('#gate-time',11);connect('#wire-time',11.6);enter('#gate-rights',12.3);connect('#wire-rights',13);
+enter('#gate-result-copy',13.7);connect('#gate-tick',14.6,.4);
+enter('#reuse-title',18);enter('#ruler',18.5);enter('#slot-a',18.8);enter('#slot-b',19.4);enter('#slot-a2',20);
+connect('#reuse-link',20.6,.8);enter('#slot-repeat',21.5);tl.to('#slot-repeat',{opacity:0,duration:.25},23);
+enter('#slot-c',23.2);enter('#reuse-note',24);
+window.__timelines['motion-craft']=tl;
+</script></body></html>

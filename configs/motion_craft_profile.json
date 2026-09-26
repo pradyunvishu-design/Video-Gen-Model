@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-preview",
+  "status": "practice_not_fidelity_certified",
+  "reference_channel": "@AILABS-393",
+  "canvas": {"width": 1920, "height": 1080, "fps": 30},
+  "palette": {"background": "#131614", "surface": "#202522", "ink": "#f2f0e9", "muted": "#aab3ac", "active": "#b6cdbb", "caution": "#c8947e"},
+  "motion": {"camera": "locked", "enter_seconds": 0.45, "distance_px": 18, "ease": "power2.out", "connector_seconds": 0.65, "transition": "cut", "ambient_motion": false},
+  "families": [
+    {"id": "semantic_selection", "trigger": "Explain why one example fits a spoken claim", "contraindication": "Actual demo already shows the action clearly", "relationship": "one claim to multiple candidates to one selected action"},
+    {"id": "evidence_gate", "trigger": "Explain requirements or a conditional workflow", "contraindication": "Narration contains no actual conditions", "relationship": "separate requirements converge on a result"},
+    {"id": "reuse_timeline", "trigger": "Explain sequencing or repetition", "contraindication": "Timeline implies dates or quantities not supported by evidence", "relationship": "ordered intervals reveal reuse then replacement"}
+  ],
+  "gates": {"max_focal_groups": 3, "no_decorative_zoom": true, "no_fake_benchmarks": true, "no_reference_artwork_reuse": true, "require_human_preview": true, "sealed_holdout_access": false},
+  "evidence_limit": "Sampled training frames inform layout only. Entrance curves and timing are authored hypotheses pending temporal comparison. No model weights were trained."
+}

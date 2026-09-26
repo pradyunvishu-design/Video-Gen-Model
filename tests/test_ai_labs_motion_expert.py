@@ -53,9 +53,11 @@ def _review(visual: float, placement: float, *, note: str = "") -> expert.Heldou
         placement_fidelity=placement, notes=[note] if note else [],
     )
     return expert.HeldoutFidelityReview(
+        score_policy="fresh_matrix_v2",
         reviewer_model="reviewer", independent=True, blind_packet_hash=f"{visual}-{placement}",
         segment_scores=[score], mean_score=(visual + placement) / 2,
         minimum_score=min(visual, placement), passed=False,
+        deterministic={"visual_score": 5, "placement_score": 5},
     )
 
 
@@ -293,7 +295,7 @@ def test_repair_reverts_when_overall_score_drops_even_if_other_axis_is_stable(mo
     assert "overall fidelity regressed" in run.repair_iterations[-1]["reason"]
 
 
-def test_scoped_review_keeps_untouched_segment_scores_frozen():
+def test_scoped_review_preserves_fresh_regressions_on_untouched_segments():
     before = expert.HeldoutFidelityReview(
         reviewer_model="reviewer", independent=True, blind_packet_hash="before",
         segment_scores=[
@@ -316,9 +318,27 @@ def test_scoped_review_keeps_untouched_segment_scores_frozen():
         before, raw_after, {"target": {"segment_id": "segment_01", "axis": "visual"}},
     )
     assert scoped.segment_scores[0].visual_fidelity == 4.95
-    assert scoped.segment_scores[0].placement_fidelity == 5
-    assert scoped.segment_scores[1] == before.segment_scores[1]
-    assert scoped.passed
+    assert scoped.segment_scores[0].placement_fidelity == 4.8
+    assert scoped.segment_scores[1] == raw_after.segment_scores[1]
+    assert not scoped.passed
+    assert scoped.mean_score == 4.763
+
+
+@pytest.mark.parametrize("defect", ["missing", "duplicate", "unknown", "caps"])
+def test_scoped_review_fails_closed_on_incomplete_evidence(defect):
+    before = _review(5.0, 5.0)
+    after = before.model_copy(deep=True)
+    if defect == "missing":
+        after.segment_scores = []
+    elif defect == "duplicate":
+        after.segment_scores.append(after.segment_scores[0])
+    elif defect == "unknown":
+        after.segment_scores[0].segment_id = "unexpected"
+    else:
+        after.deterministic = {}
+    result = expert.scope_post_repair_review(before, after, {"target": {}})
+    assert not result.passed
+    assert result.hard_failures
 
 
 def test_resume_audit_reverts_legacy_accepted_regression(monkeypatch, tmp_path: Path):
@@ -360,7 +380,8 @@ def test_motion_trace_resume_reuses_completed_checkpoint(monkeypatch, tmp_path: 
     assert not calls
 
 
-def test_paid_repair_loop_accepts_only_reviewed_improvement(monkeypatch, tmp_path: Path):
+@pytest.mark.parametrize("reject", [False, True])
+def test_paid_repair_loop_accepts_only_reviewed_improvement(monkeypatch, tmp_path: Path, reject):
     catalog, _training = _catalog(tmp_path)
     placement_model = expert.build_placement_model(catalog)
     monkeypatch.setattr(expert, "AI_LABS_MOTION_DATA_DIR", tmp_path / "runs")
@@ -368,6 +389,8 @@ def test_paid_repair_loop_accepts_only_reviewed_improvement(monkeypatch, tmp_pat
     project_dir, decisions, metrics = expert.write_evaluation_package(run, catalog, placement_model)
     reviews = [_review(3.0, 5.0, note="Typography is too loose."), _review(5.0, 5.0)]
     reviews[1].passed = True
+    if reject:
+        reviews[1].hard_failures = ["unreadable evidence"]
 
     def fake_review(current_run, *_args, **_kwargs):
         result = reviews.pop(0)
@@ -381,14 +404,18 @@ def test_paid_repair_loop_accepts_only_reviewed_improvement(monkeypatch, tmp_pat
     )
     result = expert.run_paid_fidelity_repair_loop(
         run, decisions, [], metrics, catalog, placement_model, project_dir,
-        max_rounds=2, estimated_review_usd=1,
+        max_rounds=1, estimated_review_usd=1,
     )
-    assert result.passed
-    assert run.accepted_review_index == 1
-    assert run.repair_iterations[0]["accepted"] is True
+    assert result.passed is not reject
+    assert run.accepted_review_index == (0 if reject else 1)
+    assert run.repair_iterations[0]["accepted"] is not reject
+    assert Path(run.artifacts['heldout_review']).name == (
+        'heldout_review_round_00.json' if reject else 'heldout_review_round_01.json')
+    assert Path(run.artifacts['latest_attempt_review']).name == 'heldout_review_round_01.json'
 
 
-def test_paid_repair_loop_reuses_accepted_review_on_resume(monkeypatch, tmp_path: Path):
+@pytest.mark.parametrize("legacy", [False, True])
+def test_paid_repair_loop_reuses_only_current_score_policy_on_resume(monkeypatch, tmp_path: Path, legacy):
     catalog, _training = _catalog(tmp_path)
     placement_model = expert.build_placement_model(catalog)
     monkeypatch.setattr(expert, "AI_LABS_MOTION_DATA_DIR", tmp_path / "runs")
@@ -396,12 +423,17 @@ def test_paid_repair_loop_reuses_accepted_review_on_resume(monkeypatch, tmp_path
     project_dir, decisions, metrics = expert.write_evaluation_package(run, catalog, placement_model)
     accepted = _review(5.0, 5.0)
     accepted.passed = True
+    if legacy:
+        accepted.score_policy = "legacy_scoped"
     run.reviews = [accepted]
     run.accepted_review_index = 0
-    monkeypatch.setattr(
-        expert, "run_independent_blind_review",
-        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("paid review must be reused")),
-    )
+    def fresh_review(current_run, *_args, **_kwargs):
+        assert legacy, "current-policy review must be reused"
+        fresh = _review(5.0, 5.0)
+        fresh.passed = True
+        current_run.reviews.append(fresh)
+        return fresh
+    monkeypatch.setattr(expert, "run_independent_blind_review", fresh_review)
     monkeypatch.setattr(
         expert, "render_evaluation_package",
         lambda _run, _project: (_project / "render.mp4", {"passed": True}),
@@ -411,7 +443,7 @@ def test_paid_repair_loop_reuses_accepted_review_on_resume(monkeypatch, tmp_path
         max_rounds=2, estimated_review_usd=1,
     )
     assert result.passed
-    assert len(run.reviews) == 1
+    assert len(run.reviews) == (2 if legacy else 1)
 
 
 def test_evaluation_package_is_exactly_1080p_and_sixty_seconds(monkeypatch, tmp_path: Path):
@@ -503,3 +535,17 @@ def test_worker_accepts_motion_expert_stage(monkeypatch):
 
     monkeypatch.setattr(worker, "build_ai_labs_motion_expert", lambda payload, **_kwargs: {"run_id": payload["run_id"]})
     assert worker._execute("build_ailabs_motion_expert", {"run_id": "motion"}) == {"run_id": "motion"}
+
+
+def test_legacy_perfect_status_is_exposed_as_unverified_without_rewriting_history():
+    run = expert.MotionExpertRun(run_id="old", status="perfect_fidelity", stop_reason="perfect_fidelity")
+    review = _review(5, 5)
+    review.score_policy = "legacy_scoped"
+    review.passed = True
+    run.reviews = [review]
+    run.accepted_review_index = 0
+    status = expert.motion_expert_status(run)
+    assert status['status'] == 'awaiting_independent_review'
+    assert status['fidelity']['requires_fresh_review']
+    assert not status['fidelity']['passed']
+    assert run.status == 'perfect_fidelity'
