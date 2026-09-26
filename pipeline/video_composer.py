@@ -19,6 +19,7 @@ from .models import Brief, Claim, EpisodeProject, Shot, Source
 from .project_store import canonical_hash
 from .script_profiles import ScriptProfile
 from .youtube_broll import BrollDiscoveryRequest, BrollScene
+from .motion_library import MotionSpec, VERSION as MOTION_VERSION, catalog as motion_catalog, write_package, choose_style
 
 MODEL_ID = "editorial-composer-v1"
 PRESETS = {
@@ -177,7 +178,8 @@ def build_search_request(project):
 
 def plan_input_hash(project):
     state = composition_state(project)
-    return canonical_hash({"version": "composition-plan-v1", "script": approval_hash(project, "script"),
+    return canonical_hash({"version": "composition-plan-v2", "script": approval_hash(project, "script"),
+        "motion_library": MOTION_VERSION, "motion_specs": state.get("motion_specs", {}),
         "media": [m.model_dump() for m in project.media], "rights": project.rights,
         "annotations": state["asset_annotations"], "narration": project.narration,
         "request": state["request"]})
@@ -232,6 +234,25 @@ def _motion_template(beat):
     return None
 
 
+def set_motion_spec(project, beat_id: str, spec: MotionSpec):
+    """Attach structured graphic content; the normal plan review still approves it."""
+    require_script(project)
+    beat = next((b for b in project.script.beats if b.id == beat_id), None)
+    if not beat:
+        raise ValueError('unknown script beat')
+    if not spec.evidence_ids or not spec.source_label:
+        raise ValueError('episode graphics require source_label and evidence binding, including illustrations')
+    if not set(spec.evidence_ids) <= set(beat.claim_ids):
+        raise ValueError('graphic evidence must reference claims in this script beat')
+    state = composition_state(project)
+    state.setdefault('motion_specs', {})[beat_id] = spec.model_dump(mode='json')
+    state.pop('motion_preview_approvals', None)
+    state.pop('compiled_plan_hash', None)
+    state['approvals'].pop('plan', None)
+    state.pop('plan', None)
+    return {'beat_id': beat_id, 'kind': spec.kind, 'review_required': True}
+
+
 def plan_composition(project):
     require_script(project)
     state = composition_state(project)
@@ -244,20 +265,36 @@ def plan_composition(project):
     cursor, motion_seconds = 0.0, 0.0
     total = sum(durations)
     for beat, seconds in zip(project.script.beats, durations):
+        raw_spec = state.get('motion_specs', {}).get(beat.id)
+        spec = MotionSpec.model_validate(raw_spec) if raw_spec else None
+        if spec and (not spec.evidence_ids or not spec.source_label or not set(spec.evidence_ids) <= set(beat.claim_ids)):
+            raise ValueError('motion evidence no longer matches the approved script')
         count = max(1, math.ceil(seconds / 8))
-        for part in range(count):
-            span = seconds / count
-            template = _motion_template(beat) if part == 0 else None
+        spans = [seconds / count] * count
+        if spec:
+            first = min(seconds, spec.duration_seconds)
+            remaining = seconds-first
+            rest = math.ceil(remaining/8)
+            spans = [first] + ([remaining/rest]*rest if rest else [])
+        for part, span in enumerate(spans):
+            template = (spec.kind if spec else _motion_template(beat)) if part == 0 else None
             scene = {"id": f"composition_{len(scenes)+1}", "beat_id": beat.id,
                      "start_seconds": round(cursor, 4), "duration_seconds": round(span, 4),
                      "claim_ids": beat.claim_ids, "visual_need": beat.visual_direction,
                      "kind": "missing", "asset_id": None, "template": None, "source_in_seconds": 0,
                      "source_audio": "muted", "transition": "cut", "camera": "locked"}
-            if template and template not in motion_families and motion_seconds + span <= total * state["request"]["max_motion_fraction"]:
+            scene['suggested_motion_style'] = spec.kind if spec else choose_style(beat.visual_direction)
+            readable = not spec or span >= spec.minimum_seconds()
+            if template and readable and (spec or template not in motion_families) and motion_seconds + span <= total * state["request"]["max_motion_fraction"]:
                 scene.update(kind="motion_graphic", template=template, reason="Explanation benefits from a structured visual")
+                if spec:
+                    scene['motion_spec'] = spec.model_copy(update={'duration_seconds': span}).model_dump(mode='json')
                 motion_families.add(template)
                 motion_seconds += span
             else:
+                if spec and part == 0:
+                    gaps.append({'scene_id': scene['id'], 'beat_id': beat.id,
+                                 'reason': 'Assigned graphic exceeds reading-time or motion-share limits; revise the assignment or timing'})
                 for asset_id, annotation in sorted(state["asset_annotations"].items()):
                     asset, right = assets.get(asset_id), rights.get(asset_id, {})
                     if not asset or asset.qc_status != "passed" or asset.kind not in {"licensed_source_clip", "generated_video", "screen_recording"}:
@@ -309,6 +346,7 @@ def compile_plan(project, project_dir: Path | None = None):
     root = Path(project_dir).resolve()
     assets = {a.id: a for a in project.media}
     compiled = []
+    motion_packages = {}
     for scene in plan["scenes"]:
         asset = assets.get(scene["asset_id"])
         asset_path = ""
@@ -321,19 +359,30 @@ def compile_plan(project, project_dir: Path | None = None):
             if actual != asset.sha256:
                 raise ValueError("clip bytes changed after review")
             asset_path = str(path)
+        if scene.get('motion_spec'):
+            package = root / 'motion_graphics' / scene['id']
+            if not package.resolve().is_relative_to(root):
+                raise ValueError('motion package path escapes the episode')
+            write_package(MotionSpec.model_validate(scene['motion_spec']), package)
+            from .motion_library import stage_runtime
+            stage_runtime(package)
+            motion_packages[scene['id']] = str(package / 'index.html')
         compiled.append(Shot(id=scene["id"], beat_id=scene["beat_id"],
             asset_type="official_demo" if asset else "motion_graphic", asset_path=asset_path,
             source_id=asset.source_id if asset else None, prompt=scene["visual_need"],
             start_seconds=scene["start_seconds"], duration_seconds=scene["duration_seconds"],
             source_in_seconds=scene["source_in_seconds"], motion_style="locked", transition="cut",
-            motion_template=scene["template"] or "auto", presentation="full_bleed",
+            motion_template="library_graphic" if scene.get('motion_spec') else scene["template"] or "auto", presentation="full_bleed",
             visual_category="youtube_broll" if asset else "motion_graphics",
             fallback_reason="" if asset else "explanatory_data_visualization"))
     project.shots = compiled
+    state['compiled_plan_hash'] = approval_hash(project, 'plan')
+    for scene_id, path in motion_packages.items():
+        project.artifacts['motion_package_'+scene_id] = path
     project.episode["publishing_enabled"] = False
     project.status = "composition_ready_for_motion_render"
     return {"episode_id": project.episode_id, "status": project.status, "shot_count": len(compiled),
-            "video_rendered": False, "publishing_enabled": False}
+            "video_rendered": False, "publishing_enabled": False, "motion_package_count": len(motion_packages)}
 
 
 def project_summary(project):

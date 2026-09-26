@@ -41,6 +41,16 @@ class AssetAlignment(composer.StrictInput):
     alignment_reviewed: Literal[True]
 
 
+class MotionAssignment(composer.StrictInput):
+    beat_id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,120}$')
+    expected_script_hash: str = Field(pattern=r'^[a-f0-9]{64}$')
+    spec: composer.MotionSpec
+
+
+class MotionPreviewApproval(composer.StrictInput):
+    expected_hash: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
 def owned_project(root: Path, project_id: str, owner: str):
     if not re.fullmatch(r"episode_comp_[a-z0-9]{1,64}", project_id):
         raise HTTPException(404, "composition project not found")
@@ -91,6 +101,78 @@ def create_router(authenticate, root_getter, enqueue, get_job=None, cancel_job=N
     @router.get("/video-models")
     def models():
         return composer.model_catalog()
+
+    @router.get('/motion-styles')
+    def motion_styles():
+        return composer.motion_catalog()
+
+    @router.post('/composition-projects/{project_id}/motion-specs')
+    def motion_spec(project_id: str, request: MotionAssignment, owner: str = Depends(customer)):
+        with _mutation_lock:
+            project, directory = owned_project(root_getter(), project_id, owner)
+            if composer.approval_hash(project, 'script') != request.expected_script_hash:
+                raise HTTPException(409, 'script changed; refresh before assigning graphics')
+            try:
+                result = composer.set_motion_spec(project, request.beat_id, request.spec)
+            except ValueError as exc:
+                raise HTTPException(409, str(exc)) from None
+            save_project(project, directory)
+            return result
+
+    @router.get('/composition-projects/{project_id}/motion-previews')
+    def motion_previews(project_id: str, owner: str = Depends(customer)):
+        from .motion_library import package_hash
+        project, directory = owned_project(root_getter(), project_id, owner)
+        state = composer.composition_state(project)
+        previews = []
+        if (any(k.startswith('motion_package_') for k in project.artifacts)
+                and (state.get('compiled_plan_hash') != composer.approval_hash(project, 'plan')
+                     or state.get('approvals',{}).get('plan') != composer.approval_hash(project,'plan')
+                     or state.get('plan',{}).get('input_hash') != composer.plan_input_hash(project))):
+            raise HTTPException(409, 'compile the current plan before reviewing previews')
+        for scene in state.get('plan', {}).get('scenes', []):
+            if not scene.get('motion_spec'):
+                continue
+            raw = project.artifacts.get('motion_package_'+scene['id'])
+            if not raw:
+                continue
+            path = Path(raw).resolve()
+            if not path.is_relative_to(directory):
+                raise HTTPException(409, 'motion preview unavailable')
+            try:
+                digest = package_hash(path.parent)
+            except (OSError, ValueError):
+                raise HTTPException(409, 'motion preview changed; rebuild it') from None
+            previews.append({'scene_id':scene['id'], 'kind':scene['motion_spec']['kind'],
+                             'expected_hash':digest, 'duration_seconds':scene['duration_seconds'],
+                             'approved':state.get('motion_preview_approvals',{}).get(scene['id'])==digest})
+        return {'previews':previews, 'review_required':True}
+
+    @router.post('/composition-projects/{project_id}/motion-previews/{scene_id}/approve')
+    def approve_motion_preview(project_id: str, scene_id: str, request: MotionPreviewApproval, owner: str = Depends(customer)):
+        from .motion_library import package_hash
+        with _mutation_lock:
+            project, directory = owned_project(root_getter(), project_id, owner)
+            state = composer.composition_state(project)
+            if (state.get('approvals', {}).get('plan') != composer.approval_hash(project,'plan')
+                    or state.get('compiled_plan_hash') != composer.approval_hash(project,'plan')
+                    or state.get('plan',{}).get('input_hash') != composer.plan_input_hash(project)):
+                raise HTTPException(409,'current plan approval required')
+            raw = project.artifacts.get('motion_package_'+scene_id)
+            if not raw:
+                raise HTTPException(404,'motion preview not found')
+            path = Path(raw).resolve()
+            if not path.is_relative_to(directory):
+                raise HTTPException(409,'motion preview unavailable')
+            try:
+                digest = package_hash(path.parent)
+            except (OSError, ValueError):
+                raise HTTPException(409,'motion preview changed; rebuild it') from None
+            if digest != request.expected_hash:
+                raise HTTPException(409,'preview changed; refresh before approving')
+            state.setdefault('motion_preview_approvals',{})[scene_id] = digest
+            save_project(project,directory)
+            return {'scene_id':scene_id,'approved':True,'video_rendered':False}
 
     @router.post("/composition-projects", status_code=201)
     def create(request: composer.CompositionRequest, response: Response, owner: str = Depends(customer)):

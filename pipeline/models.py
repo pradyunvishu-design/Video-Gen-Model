@@ -162,7 +162,7 @@ class Shot(BaseModel):
         "auto", "ui_stage", "orbit_map", "step_flow", "comparison",
         "stat_reveal", "evidence_focus", "chapter_title", "news_intro",
         "list_reveal", "timeline", "prompt_anatomy", "news_workflow",
-        "seedance_editorial",
+        "seedance_editorial", "library_graphic",
     ] = "auto"
     annotations: list[VisualAnnotation] = Field(default_factory=list, max_length=2)
     rights_note: str = ""

@@ -39,6 +39,112 @@ def test_customer_defaults_search_and_no_publication():
     assert p.episode["composition"]["owner_id"] == "customer_a"
 
 
+def graphic(kind='process'):
+    from pipeline.motion_library import MotionSpec
+    count=1 if kind in {'quote','metric'} else 3
+    return MotionSpec(kind=kind,title='Explain the evidence',duration_seconds=8,
+        source_label='Customer research',evidence_ids=['claim_1_1'],
+        items=[{'label':f'Part {i+1}',**({'value':i+1} if kind in {'bars','metric'} else {})}
+               for i in range(count)])
+
+
+@pytest.mark.parametrize('kind',['process','timeline','comparison','bars','layers','hub_spoke','checklist','quote','metric'])
+def test_every_library_style_compiles_through_existing_shot_contract(kind,tmp_path,monkeypatch):
+    from pipeline import motion_library as library
+    staged=[]
+    monkeypatch.setattr(library,'stage_runtime',lambda path: staged.append(path))
+    p=project(); add_clip(p,tmp_path); add_clip(p,tmp_path,'clip2',b'different')
+    p.narration['beat_timings']=[{'beat_id':'b1','start_seconds':0,'end_seconds':8},
+                              {'beat_id':'b2','start_seconds':8,'end_seconds':32}]
+    composer.set_motion_spec(p,'b1',graphic(kind))
+    plan=composer.plan_composition(p)
+    assert plan['status']=='ready_for_review'
+    composer.approve(p,'plan',composer.approval_hash(p,'plan'))
+    result=composer.compile_plan(p,tmp_path)
+    assert result['motion_package_count']==1 and len(staged)==1
+    assert p.shots[0].motion_template=='library_graphic'
+    assert (tmp_path/'motion_graphics/composition_1/index.html').is_file()
+    from pipeline.remotion_renderer import render_motion_video
+    with pytest.raises(ValueError,match='approve'):
+        render_motion_video(p,p.shots[0],tmp_path/'not-approved.mp4')
+
+
+def test_explicit_same_family_is_reusable_but_budget_failure_is_visible():
+    p=project()
+    p.narration['beat_timings']=[{'beat_id':'b1','start_seconds':0,'end_seconds':20},
+                              {'beat_id':'b2','start_seconds':20,'end_seconds':40}]
+    composer.composition_state(p)['request']['max_motion_fraction']=.7
+    composer.approve(p,'script',composer.approval_hash(p,'script'))
+    composer.set_motion_spec(p,'b1',graphic()); composer.set_motion_spec(p,'b2',graphic())
+    plan=composer.plan_composition(p)
+    assert sum('motion_spec' in s for s in plan['scenes'])==2
+    composer.composition_state(p)['request']['max_motion_fraction']=.1
+    composer.approve(p,'script',composer.approval_hash(p,'script'))
+    plan=composer.plan_composition(p)
+    assert any('Assigned graphic' in g['reason'] for g in plan['gaps'])
+
+
+def test_graphic_assignment_requires_binding_and_invalidates_approval():
+    p=project(); state=composer.composition_state(p)
+    state['approvals']['plan']='old'; state['motion_preview_approvals']={'old':'hash'}
+    before=composer.plan_input_hash(p)
+    composer.set_motion_spec(p,'b1',graphic())
+    assert composer.plan_input_hash(p)!=before
+    assert 'plan' not in state['approvals'] and 'motion_preview_approvals' not in state
+    with pytest.raises(ValueError,match='binding'):
+        composer.set_motion_spec(p,'b1',graphic().model_copy(update={'illustrative':True,'evidence_ids':[]}))
+    with pytest.raises(ValueError,match='claims'):
+        composer.set_motion_spec(p,'b1',graphic().model_copy(update={'evidence_ids':['other']}))
+
+
+def test_motion_api_auth_owner_and_stale_input(api,tmp_path):
+    from pipeline.project_store import save_project
+    client,headers,_=api
+    assert client.get('/motion-styles').status_code==401
+    assert len(client.get('/motion-styles',headers=headers).json()['styles'])==9
+    p=project(); save_project(p,tmp_path/p.episode_id)
+    url=f'/composition-projects/{p.episode_id}/motion-specs'
+    payload={'beat_id':'b1','expected_script_hash':composer.approval_hash(p,'script'),'spec':graphic().model_dump()}
+    assert client.post(url,headers={**headers,'X-Customer-ID':'other'},json=payload).status_code==404
+    assert client.post(url,headers=headers,json={**payload,'expected_script_hash':'0'*64}).status_code==409
+    assert client.post(url,headers=headers,json=payload).status_code==200
+    assert client.get(f'/composition-projects/{p.episode_id}/motion-previews',headers=headers).json()['previews']==[]
+
+
+def test_motion_preview_approval_is_owned_and_bound_to_compiled_plan(api,tmp_path,monkeypatch):
+    from pipeline.project_store import save_project,load_project
+    from pipeline import motion_library as library
+    monkeypatch.setattr(library,'stage_runtime',lambda path: None)
+    client,headers,_=api
+    p=project(); directory=tmp_path/p.episode_id; directory.mkdir()
+    add_clip(p,directory); add_clip(p,directory,'clip2',b'second')
+    p.narration['beat_timings']=[{'beat_id':'b1','start_seconds':0,'end_seconds':8},
+                               {'beat_id':'b2','start_seconds':8,'end_seconds':32}]
+    composer.set_motion_spec(p,'b1',graphic()); composer.plan_composition(p)
+    composer.approve(p,'plan',composer.approval_hash(p,'plan')); composer.compile_plan(p,directory)
+    save_project(p,directory)
+    url=f'/composition-projects/{p.episode_id}/motion-previews'
+    preview=client.get(url,headers=headers).json()['previews'][0]
+    assert not preview['approved'] and 'path' not in str(preview)
+    endpoint=url+'/'+preview['scene_id']+'/approve'
+    body={'expected_hash':preview['expected_hash']}
+    assert client.post(endpoint,headers={**headers,'X-Customer-ID':'other'},json=body).status_code==404
+    assert client.post(endpoint,headers=headers,json={'expected_hash':'0'*64}).status_code==409
+    assert client.post(endpoint,headers=headers,json=body).status_code==200
+    p=load_project(directory)
+    state=composer.composition_state(p)
+    annotation=next(iter(state['asset_annotations'].values()))
+    annotation['start_seconds']=1
+    save_project(p,directory)
+    assert client.get(url,headers=headers).status_code==409
+    annotation['start_seconds']=0
+    composer.set_motion_spec(p,'b1',graphic().model_copy(update={'theme':'paper'}))
+    composer.plan_composition(p); composer.approve(p,'plan',composer.approval_hash(p,'plan'))
+    save_project(p,directory)
+    assert client.post(endpoint,headers=headers,json=body).status_code==409
+    assert client.get(url,headers=headers).status_code==409
+
+
 @pytest.mark.parametrize("preset", ["explainer", "tutorial", "comparison", "documentary", "news"])
 def test_presets(preset):
     p = composer.create_project("episode_comp_test", "customer_a", request(preset=preset))

@@ -279,6 +279,19 @@ def render_motion_video(
     project: EpisodeProject, shot: Shot, destination: Path, *, scratch: Path | None = None,
 ) -> Path:
     """Render the single 1920x1080 master, with an optional emergency fallback."""
+    if shot.motion_template == 'library_graphic':
+        from .motion_library import render_approved_package
+        from .video_composer import composition_state, approval_hash, plan_input_hash
+        state = composition_state(project)
+        if (state.get('approvals', {}).get('plan') != approval_hash(project, 'plan')
+                or state.get('compiled_plan_hash') != approval_hash(project, 'plan')
+                or state.get('plan', {}).get('input_hash') != plan_input_hash(project)):
+            raise ValueError('current composition plan approval is required')
+        package = project.artifacts.get('motion_package_'+shot.id)
+        if not package:
+            raise ValueError('compile the motion package before rendering')
+        return render_approved_package(Path(package).parent, destination,
+            state.get('motion_preview_approvals', {}).get(shot.id), shot.duration_seconds)
     if not REMOTION_RENDER_ENABLED:
         from .motion_graphics import render_motion_video as fallback
         return fallback(project, shot, destination, shot.duration_seconds)
